@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Testes das partes de cálculo, direto no Node (sem navegador): previsão, máscara circular, correlação e
 // modelo de objetos (várias massas e centro de massa).
 // Uso:  node tests/test_calculo.mjs

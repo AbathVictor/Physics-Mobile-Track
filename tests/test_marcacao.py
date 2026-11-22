@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Marcação manual, zoom de pinça, reprodução, exportação e recuperação após recarregar.
 
 Usa o vídeo de exemplo embutido na página (360 × 640, escala de 30 cm já definida, origem no equilíbrio),

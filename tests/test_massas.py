@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Várias massas e centros de massa: escala genérica (1 px = 1 u.a., como no Tracker), marcar duas massas, centro
 de massa criado vazio e formado pelas massas que o usuário escolhe, com massas iguais, reais e faltante, um segundo
 centro de massa com outras massas, CSV com vários objetos no formato do Tracker, rastrear para a massa ativa, excluir, limite de 10 massas, recuperar ao recarregar

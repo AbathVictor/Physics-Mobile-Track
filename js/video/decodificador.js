@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Decodificação com WebCodecs: grupos de quadros (de um quadro-chave ao próximo), caches em baixa resolução e em
  * resolução cheia, prévias dos quadros-chave, fila de trabalhos (pump/nextJob) e vigia do decodificador.

@@ -1,0 +1,40 @@
+Videoanálise Móvel
+Copyright (C) 2026 Victor Abath da Silva
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
+License in the file LICENSE for more details.
+
+The documentation is licensed under CC BY-SA 4.0 (see LICENSE-docs.md).
+
+Source code: https://github.com/AbathVictor/Physics-Mobile-Track
+
+
+Third-party components
+======================
+
+The following components are distributed with this program under their own licenses.
+
+mp4box.js 0.5.4
+  File:      vendor/mp4box.all.min.js (unmodified build)
+  Source:    https://github.com/gpac/mp4box.js
+  Copyright: Copyright (c) 2012. Telecom ParisTech/TSI/MM/GPAC Cyril Concolato
+  License:   BSD 3-Clause License; the full text is in vendor/mp4box.LICENSE.txt
+
+IBM Plex (Sans, Sans Condensed and Mono)
+  Files:     fonts/*.woff2 (subsets of the original fonts)
+  Source:    https://github.com/IBM/plex
+  Copyright: Copyright © 2017 IBM Corp. with Reserved Font Name "Plex"
+  License:   SIL Open Font License, Version 1.1; the full text is in fonts/OFL.txt
+
+
+Acknowledgement
+===============
+
+Videoanálise Móvel is inspired by Tracker (https://physlets.org/tracker/), created by Douglas Brown, Wolfgang
+Christian and Robert M. Hanson on the Open Source Physics framework (https://www.opensourcephysics.org/), both
+licensed under the GNU GPL. The workflow, the structure of the exported CSV and the ideas behind automatic tracking
+follow Tracker. No Tracker code was copied: Videoanálise Móvel is an independent implementation and is not
+affiliated with or endorsed by the Tracker or Open Source Physics projects.

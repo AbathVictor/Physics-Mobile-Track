@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Vídeo de exemplo embutido (base64), para o aplicativo funcionar sem nenhum vídeo do aluno.
  *

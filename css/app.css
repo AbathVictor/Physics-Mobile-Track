@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
 /* Videoanálise Móvel · estilos */
 
 /* base que a hospedagem de artifacts acrescentava: sem margem no body e [hidden] sempre oculto */
@@ -232,5 +233,8 @@ button.item:hover, button.item:focus-visible { background: var(--soft); }
 .ajuda section h3 { margin: 6px 0 4px; font: 600 0.8rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
 .ajuda p { margin: 0 0 8px; font-size: 0.88rem; }
 .ajuda code { font-family: var(--font-mono); font-size: 0.8rem; }
+.sobre h3 { margin: 6px 0 -4px; font: 600 0.8rem var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.sobre p { margin: 0; font-size: 0.88rem; }
+.sobre a { color: var(--accent); overflow-wrap: anywhere; }
 @media (prefers-reduced-motion: reduce) { .gaveta, .gaveta-fundo { transition: none !important; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

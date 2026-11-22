@@ -1,10 +1,13 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Confere o padrão dos comentários do código (decidido com o autor em 22/11/2026, base do manual técnico).
  *
- * Todo arquivo em js/ começa com um bloco JSDoc com @file (o que o módulo faz). Toda função no nível do módulo
+ * Todo arquivo em js/ começa com a linha da licença (// SPDX-License-Identifier: AGPL-3.0-or-later) e, logo depois, um bloco JSDoc
+ * com @file (o que o módulo faz). Toda função no nível do módulo
  * (declaração `function`, com ou sem `export` e `async`, e constante com função de seta) tem, logo acima, um bloco
  * JSDoc com uma primeira frase dizendo o que ela faz e um @param para cada parâmetro. O @returns vem quando a função
- * devolve um valor que se usa.
+ * devolve um valor que se usa. Os outros arquivos de código (sw.js, css/, index.html e os testes) também têm a linha
+ * da licença no começo (publicação de 22/11/2026).
  *
  * Uso:  node tests/test_comentarios.mjs        (lista o que falta e sai com código 1 se faltar algo)
  */
@@ -13,6 +16,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const RAIZ = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "js");
+const SPDX = "SPDX-License-Identifier: AGPL-3.0-or-later";
 
 /**
  * Lista os arquivos .js de uma pasta e das subpastas.
@@ -66,7 +70,8 @@ let funcoes = 0;
 for (const arq of arquivos(RAIZ)) {
   const rel = path.relative(path.join(RAIZ, ".."), arq).split(path.sep).join("/");
   const L = fs.readFileSync(arq, "utf8").split(/\r?\n/);
-  const primeira = L.findIndex((l) => l.trim());
+  if (L[0] !== `// ${SPDX}`) faltas.push(`${rel}: a primeira linha não é a da licença (// ${SPDX})`);
+  const primeira = L.findIndex((l, i) => i > 0 && l.trim());
   if (!(L[primeira] || "").startsWith("/**") || !L.slice(primeira, primeira + 40).join("\n").split("*/")[0].includes("@file"))
     faltas.push(`${rel}: falta o bloco @file no começo`);
   L.forEach((linha, i) => {
@@ -87,9 +92,17 @@ for (const arq of arquivos(RAIZ)) {
     if (nTag !== nParam) faltas.push(`${rel}:${i + 1} ${nome}: ${nParam} parâmetro(s) e ${nTag} @param`);
   });
 }
+// os outros arquivos de código: a linha da licença nas três primeiras linhas
+const PROJETO = path.join(RAIZ, "..");
+const outros = ["sw.js", "index.html", ...fs.readdirSync(path.join(PROJETO, "css")).filter((f) => f.endsWith(".css")).map((f) => "css/" + f),
+  ...fs.readdirSync(path.join(PROJETO, "tests")).filter((f) => /\.(py|mjs)$/.test(f)).map((f) => "tests/" + f)];
+for (const rel of outros) {
+  if (!fs.readFileSync(path.join(PROJETO, rel), "utf8").split(/\r?\n/).slice(0, 3).some((l) => l.includes(SPDX)))
+    faltas.push(`${rel}: falta a linha da licença (${SPDX})`);
+}
 if (faltas.length) {
   console.log(faltas.join("\n"));
   console.log(`\n${faltas.length} falta(s) em ${funcoes} funções.`);
   process.exit(1);
 }
-console.log(`Tudo certo: ${funcoes} funções documentadas no padrão.`);
+console.log(`Tudo certo: ${funcoes} funções documentadas no padrão; linha da licença em ${outros.length} outros arquivos de código.`);

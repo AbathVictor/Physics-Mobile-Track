@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Tema do aplicativo: automático (segue o sistema, prefers-color-scheme), claro ou escuro.
  *

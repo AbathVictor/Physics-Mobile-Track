@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Dados: tabela t, x, y e gráfico do objeto ativo (como no Tracker, uma tabela por objeto); copiar tabela e
  * exportar CSV com todos os objetos, no formato do Tracker (formatos Excel e internacional), com as linhas de massas,

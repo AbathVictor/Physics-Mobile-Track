@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Contêiner MP4/MOV: lê só ftyp + moov com o mp4box (pelo leitor em blocos), monta o índice de quadros (tempo
  * de cada quadro pelo carimbo do arquivo, guardado em S.frames; a análise usa o tempo como no Tracker, analise.js),

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
 /* Celular deitado: diagramação em três colunas (etapas · vídeo e controles · painel), variação B (vídeo em pé, com
    o gráfico numa coluna ao lado) e C (tela cheia, com etapas e controles flutuando). O js/paisagem.js põe a classe
    "paisagem" (e "pais-b" ou "pais-c") no body quando a tela está deitada com no máximo 500 px de altura e move os

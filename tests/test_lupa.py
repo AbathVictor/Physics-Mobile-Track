@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Lupa da escala: aparece só ao arrastar uma ponta da fita de calibração (não nos eixos, na mira, ao marcar ou ao
 arrastar a imagem); fica acima do dedo, passa para baixo perto do topo da tela e para o outro lado perto das bordas
 laterais; acompanha o dedo; o centro mostra o pixel do vídeo onde está a ponta; aumento de 2,5× a vista (de 3 a 12 px

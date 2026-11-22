@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Fase 1 da memória e decodificação (21/11/2026): com a leitura do arquivo lenta como no celular do autor (0,9 s por
 leitura) e a decodificação por software (mais perto da velocidade do celular), confere que:
 - o arquivo é lido em poucos blocos grandes (um vídeo pequeno, uma vez só);

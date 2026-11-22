@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Mede o desempenho da página com vídeos grandes, no Chrome do computador, com a mesma medição do botão "Medir este
 vídeo" do celular (js/medicao.js): salto entre quadros, arrasto na barra, play, decodificador à parte e memória.
 Não é teste (não dá ok/FALHA): serve para comparar antes e depois de uma mudança na decodificação.

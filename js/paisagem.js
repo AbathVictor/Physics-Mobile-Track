@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Celular deitado (paisagem, com no máximo 500 px de altura): diagramação em três colunas.
  *   esquerda: coluna das etapas (Intervalo, Escala, Eixos, Massas, Marcar, Dados);

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Análise: valores iniciais e salvamento por vídeo no localStorage (persist), escala e conversão para unidades
  * físicas (phys), alça dos eixos, intervalo de análise, tempo de cada quadro (como no Tracker) e previsão da mira na

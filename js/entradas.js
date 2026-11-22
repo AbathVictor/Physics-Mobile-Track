@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Entradas dos passos: liga ao estado os campos e botões de intervalo, escala, eixos, passo da marcação,
  * trilha, rastreamento e "Apagar as marcações" da massa ativa (as massas ficam em massas.js).

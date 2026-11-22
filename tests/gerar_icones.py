@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Gera os ícones do app instalado (img/icone-*.png): fundo na cor principal da página (#0F766E) com eixos, uma
 trajetória de pontos (como a de um lançamento marcada quadro a quadro) e a mira no último ponto.
 icone-192/512: quadrado de cantos arredondados (aba do navegador, ícone comum).

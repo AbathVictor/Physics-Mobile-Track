@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Desenho: vista com zoom (S.view), imagem do quadro (exata, prévia ou a última mostrada) e sobreposições (eixos,
  * escala, trilhas e pontos de cada objeto, mira, alvo do rastreamento, etiqueta "prévia" e lupa).

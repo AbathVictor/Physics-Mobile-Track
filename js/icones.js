@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Ícones em SVG embutido (sem arquivos de fora): traço na cor do texto (currentColor), caixa de 24 × 24.
  *
@@ -24,6 +25,7 @@ export const IC = {
   pulso: svg('<path d="M3 12h4l3-8 4 16 3-8h4"/>'),
   tema: svg('<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/>'),
   ajuda: svg('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 1 1 3.6 2.4c-.7.3-1.1.9-1.1 1.6v.6M12 17.2v.1"/>'),
+  info: svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.6v.1"/>'),
   telaCheia: svg('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>'),
   sairTela: svg('<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>'),
   // celular deitado com a seta do giro (aviso "Gire o celular")

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Previsão da posição do objeto no próximo quadro, como no autotracker do Tracker (aceleração ou velocidade
  * constante). Função pura (recebe as dimensões da imagem), testada no Node.

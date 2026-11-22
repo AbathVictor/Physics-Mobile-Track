@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Medição do desempenho com o vídeo aberto ("Medir este vídeo", gaveta ≡ → Diagnóstico; fase 0 do plano de
  * memória e decodificação, combinado com o autor em 21/11/2026).

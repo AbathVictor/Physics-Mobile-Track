@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Lupa da escala: enquanto o dedo arrasta uma ponta da fita de calibração, um círculo ampliado mostra a região
  * em volta da ponta, com uma cruz fina no centro (a posição exata da ponta).

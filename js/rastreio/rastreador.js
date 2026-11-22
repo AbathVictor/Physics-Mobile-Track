@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Rastreamento automático: medição do alvo ao tocar, preparo do modelo, busca em dois níveis e o laço que
  * decodifica os quadros com um decodificador próprio (o do aplicativo é fechado antes e o pump fica parado durante o

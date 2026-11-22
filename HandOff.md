@@ -1,6 +1,6 @@
-# Videoanálise Móvel (Tracker-mobile)
+# Videoanálise Móvel (Physics-Mobile-Track)
 
-Contexto para o Claude Code. Leia antes de mexer nesta pasta.
+Contexto para o Claude Code. Leia antes de mexer neste repositório.
 
 ## O que é
 
@@ -8,14 +8,16 @@ Um aplicativo web (`index.html` com módulos JavaScript em `js/`) de vídeo-aná
 [Tracker](https://github.com/OpenSourcePhysics/tracker) do Open Source Physics, para as atividades experimentais
 de Física Básica (sistema massa-mola, pêndulo). O aluno grava o vídeo no próprio celular, define o intervalo,
 calibra a escala e os eixos, informa as massas, marca a posição de cada objeto (à mão ou com rastreamento
-automático; até 10 massas e centros de massa formados pelas massas que ele escolher) e exporta t, x, y para analisar no [Laboratório de Oscilações](../laboratorio-oscilacoes/OscLab.html), numa planilha ou em Python.
+automático; até 10 massas e centros de massa formados pelas massas que ele escolher) e exporta t, x, y para analisar no [Laboratório de Oscilações](https://abathvictor.github.io/Physics_artifacts/laboratorio-oscilacoes/OscLab.html), numa planilha ou em Python.
 
 - Público: alunos com celular **Android e Chrome**. iOS ainda não é alvo.
 - Tudo roda no navegador; o vídeo nunca sai do aparelho. Nada para instalar (instalar como app pelo Chrome é
   opcional; o app instalado abre sempre deitado e em tela cheia). Por hora, só com o celular deitado.
 - Funciona **sem internet** depois de aberto: o aluno abre o link uma vez com conexão e o aplicativo continua
   funcionando em modo avião, e até recarrega sem conexão (service worker, `sw.js`).
-- Publicado pelo GitHub Pages em `https://abathvictor.github.io/Physics_artifacts/Tracker-mobile/`.
+- Repositório `AbathVictor/Physics-Mobile-Track`, publicado pelo GitHub Pages em
+  `https://abathvictor.github.io/Physics-Mobile-Track/`. Até 22/11/2026 era a pasta `Tracker-mobile/` do repositório
+  `Physics_artifacts` (ver **Publicação e licença**).
 
 ## Como trabalhar com o autor
 
@@ -29,7 +31,7 @@ automático; até 10 massas e centros de massa formados pelas massas que ele esc
 - Textos da interface: curtos, diretos, escritos para o aluno; mensagens de erro dizem o que aconteceu e como resolver.
 - Nomes (decisão do autor em 22/11/2026): para o aluno e na interface, **aplicativo**; no texto técnico, **aplicação
   web** ou **aplicativo web**. Nunca "página" para o produto; "página" só para o documento HTML (rolar a página)
-  e para as páginas dentro da gaveta ≡ (Diagnóstico, Ajuda).
+  e para as páginas dentro da gaveta ≡ (Diagnóstico, Ajuda, Sobre).
 - Comentários do código (base do manual técnico): cada arquivo de `js/` começa com um bloco `/** @file … */` que
   diz o que o módulo faz, e cada função do módulo tem um bloco JSDoc em português logo acima: a primeira frase, com
   o verbo no presente, diz o que a função faz; depois vêm os detalhes, as decisões e a data dos pedidos do autor;
@@ -38,6 +40,32 @@ automático; até 10 massas e centros de massa formados pelas massas que ele esc
   O `tests/test_comentarios.mjs` confere o padrão; rode-o junto com os outros testes. Ele confere só a forma (bloco
   presente, um `@param` por parâmetro), não se o texto ainda está certo: ao mudar o que uma função faz, atualize o
   bloco dela no mesmo commit.
+
+## Publicação e licença
+
+Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (não só para os alunos):
+- **Repositório próprio**: `AbathVictor/Physics-Mobile-Track`, na conta pessoal do autor, criado com o histórico da
+  pasta `Tracker-mobile/` do `Physics_artifacts` (`git subtree split`). "Tracker" não entra no nome (o projeto não
+  tem vínculo com o Tracker). O produto continua **Videoanálise Móvel** (o autor pode rebatizá-lo depois).
+- **Endereço**: `https://abathvictor.github.io/Physics-Mobile-Track/`, a mesma origem do endereço antigo: as
+  marcações salvas no navegador continuam valendo (armadilha 26). O endereço antigo vira um aviso que leva ao novo
+  e pede para reinstalar o app.
+- **Licenças**: código em **AGPL-3.0-or-later** (`LICENSE`; linha `SPDX-License-Identifier` no começo de cada
+  arquivo de código, conferida pelo `test_comentarios.mjs`); documentação (README, CHANGELOG, este HandOff e os
+  manuais) em **CC BY-SA 4.0** (`LICENSE-docs.md`). A tela **Sobre** (gaveta ≡) mostra a licença e um link visível
+  para o código-fonte.
+- **Terceiros**: o `NOTICE` lista o mp4box.js 0.5.4 (BSD-3-Clause, aviso em `vendor/mp4box.LICENSE.txt`) e as IBM
+  Plex (OFL, `fonts/OFL.txt`). Um componente de terceiros novo entra no `NOTICE`, com o aviso de licença junto do
+  arquivo, e na tela Sobre.
+- **Autoria**: Victor Abath da Silva, único autor e titular, sem afiliação institucional (as cores da UFRRJ, quando
+  vierem, são homenagem, não vínculo). Citação "Silva, V. A." (`CITATION.cff`; falta o ORCID). O Claude não entra
+  nos metadados; o README tem a seção "AI-assisted development": concepção, modelagem física, equações, decisões e
+  validação são do autor, que dirige o desenvolvimento.
+- **Idiomas**: README, CHANGELOG, NOTICE e CITATION em inglês; interface, comentários e este HandOff em português.
+  Toda mudança notável entra no `CHANGELOG.md` (seção Unreleased).
+- **Zenodo e DOI**: só na v1.0, sem releases antes; a integração com o Zenodo é ativada logo antes da v1.0.
+- **Fora por ora**: manual, `.zenodo.json`, CONTRIBUTING e código de conduta. Divulgação só para alunos e colegas,
+  sem artigo.
 
 ## Especificação decidida (não mude sem combinar)
 
@@ -79,7 +107,7 @@ janela de download do CSV, fluidez. O rastreamento automático foi testado num v
 (1080p, massa de 28 px): funciona depois da medição automática do tamanho do alvo (ver armadilha 9).
 
 **Rastreamento comparado com o Tracker de computador** (21/11/2026, rastreamento automático nos dois programas, no
-mesmo vídeo; arquivos em `Test_videos/`, fora do git):
+mesmo vídeo; arquivos em `Physics_artifacts/Test_videos/`, fora dos repositórios):
 - `Pendulum_test.mp4` (1080p, 254 quadros; `Pendulum_test_desktop_version.trk/.txt` × `Pendulum_test_mobile_version.csv`
   já com a linha de calibração): levando o CSV do celular a pixels da imagem pela própria calibração (eixos em
   (948,50; 775,45) px, inclinados −0,86°; 1 px por u.a.), **sem ajuste nenhum**, a diferença para os pixels do .trk é
@@ -107,13 +135,18 @@ mesmo vídeo; arquivos em `Test_videos/`, fora do git):
 
 ```
 index.html                 marcação do aplicativo; carrega vendor/mp4box.all.min.js e js/main.js (type="module")
-sw.js                      service worker: cópia local de todos os arquivos (lista ARQUIVOS, conferida por teste)
+sw.js                      service worker: cópia local de todos os arquivos (lista ARQUIVOS, conferida por teste),
+                           com o prefixo "vam-" no nome das cópias (armadilha 26)
 manifest.webmanifest, img/ app instalável: abre deitado (orientation landscape), ícones de 192 e 512 px e um para o
                            recorte do Android (maskable), desenhados por tests/gerar_icones.py (Pillow: fundo
                            #0F766E, eixos, trajetória de pontos e a mira)
 css/app.css                estilos e tokens de cor (temas claro e escuro)
 css/fontes.css, fonts/     IBM Plex (cópia local, SIL OFL em fonts/OFL.txt)
 vendor/mp4box.all.min.js   mp4box.js 0.5.4 (BSD-3), globais MP4Box e DataStream
+vendor/mp4box.LICENSE.txt  aviso da licença do mp4box.js, junto do arquivo (a tela Sobre o abre)
+LICENSE, LICENSE-docs.md   AGPL-3.0-or-later (código) e CC BY-SA 4.0 (documentação)
+NOTICE                     componentes de terceiros (mp4box.js, IBM Plex) e o crédito ao Tracker
+README.md, CHANGELOG.md    em inglês, para o público; CITATION.cff: metadados de citação
 js/main.js                 entrada: importa todos os módulos (vários só registram eventos), registra o sw.js e inicia
 js/util.js                 $, fmt, parseNum, LS, toast, clampF, dist (sem estado)
 js/estado.js               estado S, exposto em globalThis.__va (os testes dependem disso; não remova); orçamento de memória
@@ -156,6 +189,7 @@ Regras da estrutura:
 - Código de cálculo (sem DOM ao carregar) fica em módulos que o Node consegue importar, para ter testes rápidos
   (`tests/test_calculo.mjs`). `estado.js` usa `globalThis` por isso.
 - Arquivo novo no aplicativo: inclua em `ARQUIVOS` no `sw.js` e mude `VERSAO` (o `test_offline.py` confere a lista).
+  Todo arquivo de código novo começa com a linha da licença (`SPDX-License-Identifier: AGPL-3.0-or-later`).
 - Objetos: `S.objs` (massas e cm) e `S.ativo` (índice do objeto ativo). `S.marks` é um *getter* definido em
   `objetos.js`: os pontos do objeto ativo (para o cm, os calculados). Escreva pontos só em `objeto.marks` de uma
   massa. Toda alteração de pontos, massas ou sistema passa por `persist()`, que aumenta `S.ver`; é o `S.ver` que
@@ -334,6 +368,15 @@ do eixo x medido no sentido anti-horário.
     o play parar. O play (`tick`, `navegacao.js`) só avança para o próximo
     quadro quando chega a hora dele e ele já está decodificado; atrasado, o relógio recomeça desse quadro.
 
+26. **Cópias offline num endereço de origem dividido** (22/11/2026, na mudança para o repositório próprio): as
+    cópias do service worker (Cache Storage), como o `localStorage`, pertencem ao endereço de origem
+    (`abathvictor.github.io`), que o aplicativo divide com o endereço antigo (`Physics_artifacts/Tracker-mobile/`)
+    e com o Laboratório de Oscilações. O `sw.js` apagava, ao ativar, todas as cópias com nome diferente do seu: com
+    dois aplicativos na mesma origem, um apagaria as do outro. Agora o nome tem o prefixo `vam-`, e cada um só apaga
+    as cópias com o seu prefixo; o service worker de despedida do endereço antigo só apaga as `videoanalise-N`. O
+    `localStorage` dividido é o que leva as marcações dos alunos para o endereço novo sem nada a fazer (mesmas
+    chaves). Mudar de conta do GitHub ou usar um domínio próprio mudaria a origem, e as marcações ficariam para trás.
+
 ## Testes
 
 Os testes abrem o aplicativo, servido por um servidor local que o próprio `helpers.py` sobe, num **Google Chrome de verdade** (o Chromium do Playwright não decodifica H.264),
@@ -349,13 +392,13 @@ python tests/test_marcacao.py              # play, intervalo, pinça, marcação
 python tests/test_rastreamento.py          # medição do alvo, precisão, um decodificador só, perda do alvo, botão Parar
 python tests/test_massas.py                # escala genérica, duas massas, cm vazio e escolha das massas, dois cm, CSV com vários objetos, migração
 python tests/test_tema.py                  # cores dos dois temas, contraste de todo texto, theme-color, tema manual, mira, pontos futuros, cor da massa
-python tests/test_gaveta.py                # gaveta ≡: abrir, fechar (✕, toque fora, Esc, Voltar), páginas (Diagnóstico com "Medir este vídeo"), tema, cada ação
+python tests/test_gaveta.py                # gaveta ≡: abrir, fechar (✕, toque fora, Esc, Voltar), páginas (Diagnóstico com "Medir este vídeo"; Sobre com a licença e o link para o código-fonte), tema, cada ação
 python tests/test_paisagem.py              # deitado (915 × 412), sem liberar o em pé: aviso "Gire o celular", abre em tela cheia, etapas, barra e alças, pinça, gaveta dos objetos, pior caso 10 massas + 2 cm, girar, B, C, janela do gráfico (arrastar, bordas, mínimo, toque duplo, lugar lembrado), gaveta ≡, Voltar uma vez só (pinça e Esc duplo), alça a 640 × 360, temas, arquivo que não é vídeo
 python tests/test_lupa.py                  # lupa da escala: só nas pontas da fita, lado certo perto das bordas, pixel do centro, some ao soltar
 python tests/test_desempenho.py            # fases 1 e 2, com a leitura lenta do celular simulada (0,9 s) e decodificação por software: arquivo em poucas leituras, abrir vídeo durante a decodificação do anterior, arrasto na barra e na alça com prévia, quadro exato e certo ao soltar, quadros B com trabalho abandonado, play sem pular quadros, play com grupos longos sem recomeçar do quadro-chave (gop150.mp4), memória dentro dos limites, segundo plano, vídeo de até 960 px sem cópia repetida
 python tests/test_offline.py               # modo avião com o aplicativo aberto, recarregar sem conexão, lista do sw.js, nada externo, app instalável e deitado
 node tests/test_calculo.mjs                # previsão, máscara, correlação e modelo de objetos, direto no Node (sem navegador)
-node tests/test_comentarios.mjs            # padrão dos comentários: bloco @file em cada arquivo e JSDoc em cada função do módulo, com um @param por parâmetro
+node tests/test_comentarios.mjs            # padrão dos comentários: bloco @file em cada arquivo e JSDoc em cada função do módulo, com um @param por parâmetro, e a linha da licença em cada arquivo de código
 python tests/medir_desempenho.py [--software] [--leitura-lenta] v.mp4   # não é teste: a mesma medição do "Medir este vídeo" do celular, para comparar antes e depois
 ```
 
@@ -459,4 +502,8 @@ Vídeo 1080p a 30 quadros/s, H.264: decodificação por hardware; cerca de 10 ms
   gerado deles a qualquer momento por um script em Node sem dependências, com a introdução tirada deste HandOff
   (arquitetura, coordenadas, decisões técnicas). Antes de escrever o gerador, combinar com o autor: o leitor (quem
   mantém o código, ou também professores), o formato (HTML no GitHub Pages, fora da cópia offline, ou Markdown no
-  repositório) e o visual (identidade da UFRRJ sem logotipo, ou neutro).
+  repositório) e o visual (identidade da UFRRJ sem logotipo, ou neutro). Licença dos manuais: CC BY-SA 4.0.
+- **Publicação** (22/11/2026; ver **Publicação e licença**): falta trocar a pasta antiga (`Physics_artifacts/
+  Tracker-mobile/`) por um aviso que leva ao endereço novo e pede para reinstalar o app, com um service worker de
+  despedida, depois do teste do autor no celular; o ORCID do autor no `CITATION.cff`, quando houver; ativar o
+  Zenodo logo antes da v1.0.

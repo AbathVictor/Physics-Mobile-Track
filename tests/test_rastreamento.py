@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Rastreamento automático: medição do tamanho da massa ao tocar, precisão, parada ao perder o alvo e botão Parar.
 Uso:  python tests/test_rastreamento.py
 """

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Gaveta ≡: abre pela direita com fundo escurecido; fecha no ✕, num toque fora, com Esc e com o Voltar do Android
 (histórico do navegador), sem sair da página; páginas internas (Diagnóstico e Ajuda) com ‹ e Voltar; escolha do
 tema; ações (câmera, galeria, vídeo de exemplo, exportar CSV nos dois formatos, copiar tabela) chamando as funções
@@ -48,7 +49,7 @@ async def main():
                    "página inerte por baixo; o foco vai para o ✕")
         grupos = await pg.evaluate("[...document.querySelectorAll('#gavetaCorpo .grupo h3')].map((h) => h.textContent)")
         itens = await pg.evaluate("[...document.querySelectorAll('#gavetaCorpo .item')].map((b) => b.dataset.item || 'tema')")
-        R.conferir(grupos == ["Vídeo", "Dados", "Ferramentas"] and itens == ["camera", "galeria", "exemplo", "csvExcel", "csvIntl", "copiar", "diag", "tema", "ajuda"],
+        R.conferir(grupos == ["Vídeo", "Dados", "Ferramentas"] and itens == ["camera", "galeria", "exemplo", "csvExcel", "csvIntl", "copiar", "diag", "tema", "ajuda", "sobre"],
                    f"grupos e itens montados da lista ({grupos})")
         R.conferir(await pg.evaluate("['csvExcel', 'csvIntl', 'copiar'].every((i) => document.querySelector(`[data-item=${i}]`).disabled)"),
                    "sem pontos marcados: exportar e copiar desativados")
@@ -98,6 +99,15 @@ async def main():
         await pg.go_back()
         await pg.wait_for_function("document.getElementById('gavetaT').textContent === 'Menu'")
         R.conferir(await pg.evaluate(aberta), "Voltar numa página volta ao menu")
+        await pg.click("[data-item=sobre]")
+        sobre = await pg.evaluate("(() => { const a = [...document.querySelectorAll('.sobre a')]; return { texto: document.querySelector('.sobre').innerText, links: a.map((x) => x.getAttribute('href')), outraAba: a.every((x) => x.target === '_blank' && x.rel.includes('noopener')) }; })()")
+        R.conferir("https://github.com/AbathVictor/Physics-Mobile-Track" in sobre["links"] and "github.com/AbathVictor/Physics-Mobile-Track" in sobre["texto"],
+                   "Sobre: link visível para o código-fonte")
+        locais = await pg.evaluate("Promise.all(['vendor/mp4box.LICENSE.txt', 'fonts/OFL.txt'].map((u) => fetch(u).then((r) => r.ok)))")
+        R.conferir("AGPL" in sobre["texto"] and {"vendor/mp4box.LICENSE.txt", "fonts/OFL.txt"} <= set(sobre["links"]) and all(locais) and sobre["outraAba"],
+                   f"Sobre: licença, avisos de terceiros (arquivos do aplicativo) e links em outra aba ({sobre['links']})")
+        await pg.go_back()
+        await pg.wait_for_function("document.getElementById('gavetaT').textContent === 'Menu'")
         await pg.go_back()
         R.conferir(await fechada(pg) and pg.url == url, "Voltar de novo fecha a gaveta")
 

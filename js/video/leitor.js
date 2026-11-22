@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Leitura do arquivo do vídeo em blocos grandes guardados na memória (fase 1 do plano de memória e
  * decodificação).

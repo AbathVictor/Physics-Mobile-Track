@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Diagnóstico do aparelho: dados do vídeo, do decodificador, da leitura do arquivo e do navegador, e o resultado
  * de "Medir este vídeo" (medicao.js), para copiar e enviar ao autor.

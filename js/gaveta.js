@@ -1,10 +1,12 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Gaveta ≡: menu que desliza da direita, com fundo escurecido. Fecha no ✕, num toque fora dela, com Esc ou com
  * o botão Voltar do Android (cada abertura entra no histórico do navegador; o Voltar dispara popstate).
  *
  * O menu é montado a partir da lista MENU (grupo → itens com rótulo, ícone e ação). As ações chamam as mesmas funções dos
  * botões do aplicativo (arquivos.js, dados.js, diagnostico.js, tema.js): nada é duplicado. Os botões continuam onde
- * estavam; a gaveta é só mais um caminho até eles. Diagnóstico e Ajuda abrem uma página dentro da gaveta (‹ volta).
+ * estavam; a gaveta é só mais um caminho até eles. Diagnóstico, Ajuda e Sobre abrem uma página dentro da gaveta
+ * (‹ volta).
  * Também exporta voltarHistorico, usada pelas duas gavetas (esta e a dos objetos, paisagem.js).
  */
 
@@ -32,6 +34,7 @@ const MENU = [
     { id: "diag", rotulo: "Diagnóstico do aparelho", icone: IC.pulso, pagina: "diag" },
     { id: "tema", rotulo: "Tema", icone: IC.tema, tipo: "tema" },
     { id: "ajuda", rotulo: "Ajuda", icone: IC.ajuda, pagina: "ajuda" },
+    { id: "sobre", rotulo: "Sobre", icone: IC.info, pagina: "sobre" },
   ] },
 ];
 const TEMAS = [["auto", "Automático"], ["claro", "Claro"], ["escuro", "Escuro"]];
@@ -56,6 +59,7 @@ const PAGINAS = {
     } },
   // a ajuda começa com as dicas que já estão em cada passo do aplicativo (o autor vai escrever o texto próprio depois)
   ajuda: { titulo: "Ajuda", html: ajudaHtml },
+  sobre: { titulo: "Sobre", html: sobreHtml },
 };
 /**
  * Monta a página Ajuda com as dicas que já estão em cada passo (o autor vai escrever o texto próprio depois).
@@ -127,6 +131,18 @@ function mostrar() {
   (pg ? $("gavetaVolta") : $("gavetaFecha")).focus({ preventScroll: true });
 }
 /**
+ * Monta a página Sobre: autor, privacidade, licença com o link visível para o código-fonte (pedido do autor em
+ * 22/11/2026, ao publicar o aplicativo com a licença AGPL), créditos ao Tracker e avisos dos componentes de terceiros.
+ * Os avisos de terceiros são arquivos do próprio aplicativo (abrem sem internet); a licença e o código-fonte ficam no
+ * GitHub. Os links abrem em outra aba, para não tirar o aluno do aplicativo.
+ * @returns {string} HTML da página.
+ */
+function sobreHtml() {
+  const a = (href, txt) => `<a href="${href}" target="_blank" rel="noopener">${txt}</a>`;
+  return `<div class="gpag sobre"><p><strong>Videoanálise Móvel</strong>: vídeo-análise quadro a quadro no celular, para as atividades experimentais de Física.</p><p>Autor: Victor Abath da Silva.</p><p>O vídeo é processado no próprio aparelho: nada é enviado para servidor algum. As marcações ficam salvas neste navegador.</p><h3>Código aberto</h3><p>Software livre, sob a licença ${a("https://github.com/AbathVictor/Physics-Mobile-Track/blob/main/LICENSE", "GNU AGPL 3.0 ou posterior")}: pode ser usado, estudado, modificado e redistribuído; quem distribuir uma versão modificada, ou oferecê-la pela internet, precisa abrir o código dela sob a mesma licença.</p><p>Código-fonte: ${a("https://github.com/AbathVictor/Physics-Mobile-Track", "github.com/AbathVictor/Physics-Mobile-Track")}</p><h3>Créditos</h3><p>Inspirado no ${a("https://physlets.org/tracker/", "Tracker")}, de Douglas Brown, Wolfgang Christian e Robert M. Hanson (Open Source Physics). É uma implementação independente, sem vínculo com o projeto Tracker.</p><p>Usa o ${a("vendor/mp4box.LICENSE.txt", "mp4box.js")} (licença BSD de 3 cláusulas) e as fontes ${a("fonts/OFL.txt", "IBM Plex")} (SIL Open Font License 1.1).</p></div>`;
+}
+
+/**
  * Abre a gaveta na lista (nível 1), com uma entrada no histórico para o Voltar do Android fechá-la.
  */
 export function abrirGaveta() {
@@ -137,7 +153,7 @@ export function abrirGaveta() {
 }
 /**
  * Abre uma página dentro da gaveta (nível 2), com outra entrada no histórico.
- * @param {"diag"|"ajuda"} p Qual página.
+ * @param {"diag"|"ajuda"|"sobre"} p Qual página.
  */
 function abrirPagina(p) {
   history.pushState({ va: "pagina" }, "");

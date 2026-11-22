@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Janela do gráfico na tela cheia (variação C do celular deitado).
  *

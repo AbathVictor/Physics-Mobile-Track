@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Funcionamento sem internet: a página aberta continua funcionando em modo avião e pode ser recarregada sem conexão.
 Também confere que a lista de arquivos do service worker (sw.js) está completa, que a página não busca nada fora
 do próprio endereço e que ela pode ser instalada como app (manifesto lido pelo Chrome, abrindo deitado).
@@ -15,7 +16,9 @@ from helpers import EXTERNOS, PAGINA, Resultado, abrir, ir_para
 from test_rastreamento import preparar, rastrear
 
 PASTA = PAGINA.parent
-FORA = {"sw.js", "HandOff.md", ".gitignore"}  # não precisam estar guardados (o próprio sw.js o navegador guarda)
+# não precisam estar guardados: o próprio sw.js (o navegador guarda) e os arquivos do repositório que o aplicativo
+# não usa (a tela Sobre leva à licença no GitHub; os avisos de terceiros que ela mostra estão na lista)
+FORA = {"sw.js", "HandOff.md", ".gitignore", "README.md", "LICENSE", "LICENSE-docs.md", "NOTICE", "CITATION.cff", "CHANGELOG.md"}
 
 
 def tamanho_png(caminho):
@@ -28,7 +31,7 @@ async def main():
 
     print("lista de arquivos do service worker")
     lista = set(re.findall(r'^\s*"([^"]+)",\s*$', (PASTA / "sw.js").read_text(encoding="utf-8"), re.M)) - {"./"}
-    no_disco = {p.relative_to(PASTA).as_posix() for p in PASTA.rglob("*") if p.is_file() and p.relative_to(PASTA).parts[0] != "tests"} - FORA
+    no_disco = {p.relative_to(PASTA).as_posix() for p in PASTA.rglob("*") if p.is_file() and p.relative_to(PASTA).parts[0] not in ("tests", ".git")} - FORA
     R.conferir(lista == no_disco, "sw.js lista todos os arquivos da página"
                + (f" (faltam: {sorted(no_disco - lista)}; sobram: {sorted(lista - no_disco)})" if lista != no_disco else ""))
 

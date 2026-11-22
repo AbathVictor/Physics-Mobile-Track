@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Celular deitado (915 × 412, com toque), sem liberar a diagramação em pé (por hora a página só funciona deitada:
 em pé, o aviso "Gire o celular" cobre tudo; a página abre em tela cheia e o aluno sai dela no botão), diagramação em
 três colunas (etapas · vídeo e controles · painel),

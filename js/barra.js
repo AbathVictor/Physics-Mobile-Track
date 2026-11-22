@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Barra de quadros com o celular deitado: o trilho do vídeo inteiro, o trecho do intervalo de análise destacado,
  * duas alças em âmbar (início e fim do intervalo) e o indicador do quadro atual, também em âmbar.

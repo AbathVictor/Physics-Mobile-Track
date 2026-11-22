@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Utilidades sem estado: acesso a elementos ($), números em pt-BR (fmt, parseNum), texto seguro em HTML (esc),
  * localStorage protegido (LS), avisos (toast) e contas simples (clampF, dist).

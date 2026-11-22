@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Objetos da análise, no molde do Tracker (sem DOM: testado no Node).
  *

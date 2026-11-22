@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Abrir arquivos: vídeo da câmera ou da galeria e o vídeo de exemplo.
  *

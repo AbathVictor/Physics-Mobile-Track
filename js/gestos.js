@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Gestos no vídeo: pinça para aproximar, arrastar a imagem ou as pontas da escala e dos eixos, toque para pôr a
  * mira.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Estado do aplicativo (S), exposto em globalThis.__va para os testes, e o limite de memória dos quadros
  * guardados.

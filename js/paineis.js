@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Painéis: linha de situação do vídeo (setSrc), liberar os controles, leitura do quadro atual, volta ao estado
  * inicial ao abrir outro vídeo, informações da escala e atualização dos painéis dos passos (renderPanels).

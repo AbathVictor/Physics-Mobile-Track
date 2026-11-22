@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Leitura do vídeo quadro a quadro: o quadro mostrado é o pedido e o tempo de cada quadro vem do arquivo.
 
 Cobre: índice no fim do arquivo, taxa variável, quadros B (reordenados), câmera lenta com grupo longo,

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Ferramentas (Navegar, Escala, Eixos, Marcar), textos de ajuda de cada uma e marcar ou apagar pontos.
  */

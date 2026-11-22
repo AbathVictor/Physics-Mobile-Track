@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Navegação e reprodução: ir para um quadro (show), botões de avanço que repetem enquanto pressionados, play
  * (todos os quadros, no máximo em velocidade real), reprodução do intervalo e teclado.

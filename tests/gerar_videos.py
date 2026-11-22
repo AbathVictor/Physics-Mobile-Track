@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Gera os vídeos sintéticos usados nos testes (em tests/videos/, fora do git).
 
 Cada quadro mostra uma massa oscilando presa a um fio, uma régua de 11 traços, o número do quadro e o tempo

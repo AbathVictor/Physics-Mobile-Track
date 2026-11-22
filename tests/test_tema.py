@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Cores e temas: fundo e cores principais de cada tema (claro e escuro, seguindo o sistema), contraste de todo
 texto visível com o fundo (≥ 4,5:1), cor da barra do navegador (theme-color), escolha manual do tema guardada fora do
 salvamento por vídeo, mira âmbar em forma de anel, pontos futuros na cor de borda (vídeo e gráfico), botão Marcar

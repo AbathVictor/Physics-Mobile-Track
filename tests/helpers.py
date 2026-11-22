@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Funções comuns aos testes: abre o index.html num Chrome de verdade, com tela de celular e toque.
 
 O Chromium que vem com o Playwright não decodifica H.264; por isso os testes usam o Google Chrome instalado

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Modelo do rastreamento automático (cálculo, sem interface): recorte da imagem, máscara circular,
  * correlação normalizada nas cores, ajuste de subpixel e evolução do modelo com âncora.

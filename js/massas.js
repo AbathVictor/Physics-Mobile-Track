@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Interface dos objetos: fileira de botões (escolher o objeto ativo, criar massa ou centro de massa), escolha das
  * massas do centro de massa ativo, lista das massas no passo 5 (cor, valor, incerteza, excluir), unidade das massas e

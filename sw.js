@@ -1,12 +1,18 @@
-// Service worker da Videoanálise Móvel: guarda uma cópia de todos os arquivos da página no aparelho, para que ela
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Service worker da Videoanálise Móvel: guarda uma cópia de todos os arquivos do aplicativo no aparelho, para que ele
 // continue funcionando sem internet (modo avião, por exemplo) e possa até ser recarregada sem conexão.
 //
 // Estratégia: rede primeiro. Com conexão, cada arquivo vem da rede (o aluno recebe sempre a versão publicada) e a
 // cópia guardada é atualizada; sem conexão, ou se a rede demorar, usa a cópia guardada.
 //
-// Ao criar, renomear ou apagar um arquivo da página, atualize a lista ARQUIVOS (o teste test_offline.py confere)
+// Ao criar, renomear ou apagar um arquivo do aplicativo, atualize a lista ARQUIVOS (o teste test_offline.py confere)
 // e mude VERSAO, para que a cópia antiga seja descartada.
-const VERSAO = "videoanalise-10";
+// As cópias guardadas ficam no armazenamento do endereço de origem (abathvictor.github.io), que este aplicativo
+// divide com outros: o endereço antigo (Physics_artifacts/Tracker-mobile/, cópias "videoanalise-N") e o Laboratório
+// de Oscilações. Por isso o nome tem um prefixo próprio, e cada um apaga só as cópias com o seu prefixo (antes, o
+// service worker apagava todas as outras, o que apagaria as de outro aplicativo no mesmo endereço).
+const PREFIXO = "vam-";
+const VERSAO = PREFIXO + "11";
 const ARQUIVOS = [
   "./",
   "index.html",
@@ -66,6 +72,7 @@ const ARQUIVOS = [
   "js/video/exemplo.js",
   "js/video/leitor.js",
   "vendor/mp4box.all.min.js",
+  "vendor/mp4box.LICENSE.txt",
 ];
 // sem resposta da rede neste tempo, usa a cópia guardada (conexão ruim se comporta como sem conexão)
 const ESPERA_REDE_MS = 4000;
@@ -76,8 +83,8 @@ self.addEventListener("install", (e) => {
 
 self.addEventListener("activate", (e) => {
   e.waitUntil((async () => {
-    for (const nome of await caches.keys()) if (nome !== VERSAO) await caches.delete(nome);
-    // passa a atender já a página aberta na primeira visita, sem precisar recarregar
+    for (const nome of await caches.keys()) if (nome.startsWith(PREFIXO) && nome !== VERSAO) await caches.delete(nome);
+    // passa a atender já o aplicativo aberto na primeira visita, sem precisar recarregar
     await self.clients.claim();
   })());
 });
