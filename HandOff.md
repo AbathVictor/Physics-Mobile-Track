@@ -47,7 +47,8 @@ Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (não só par
 - **Repositório próprio**: `AbathVictor/Physics-Mobile-Track`, na conta pessoal do autor, criado com o histórico da
   pasta `Tracker-mobile/` do `Physics_artifacts` (`git subtree split`). "Tracker" não entra no nome (o projeto não
   tem vínculo com o Tracker). O produto continua **Videoanálise Móvel** (o autor pode rebatizá-lo depois).
-- **Endereço**: `https://abathvictor.github.io/Physics-Mobile-Track/`, a mesma origem do endereço antigo: as
+- **Endereço**: `https://abathvictor.github.io/Physics-Mobile-Track/` (o caminho distingue maiúsculas: em
+  minúsculas dá 404; divulgue o link, não peça para digitar), a mesma origem do endereço antigo: as
   marcações salvas no navegador continuam valendo (armadilha 26). O endereço antigo vira um aviso que leva ao novo
   e pede para reinstalar o app.
 - **Licenças**: código em **AGPL-3.0-or-later** (`LICENSE`; linha `SPDX-License-Identifier` no começo de cada
