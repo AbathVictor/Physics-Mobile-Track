@@ -75,8 +75,17 @@
       <div class="objs" id="cmSelM" role="group" aria-label="Massas que formam o centro de massa"></div>
       <div class="row"><button class="btn danger small" id="delCm" type="button">Excluir o centro de massa</button></div>
     </div>
-    <!-- massa ativa: excluir (como o Excluir do centro de massa) -->
-    <div class="row massdel" id="massDel" hidden><button class="btn danger small" id="delMassa" type="button">Excluir a massa</button></div>
+    <!-- massa ativa: valor e incerteza (os mesmos do passo 5) e excluir (como o Excluir do centro de massa) -->
+    <div class="massdel" id="massDel" hidden>
+      <div class="mativa" role="group" aria-labelledby="maNome">
+        <span class="oname" id="maNome">massa A</span>
+        <input class="num" id="maVal" data-k="val" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="massa" aria-label="Valor da massa ativa">
+        <span class="pm">±</span>
+        <input class="num" id="maSig" data-k="sig" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="incert." aria-label="Incerteza da massa ativa">
+        <select class="sel" id="maUnit" aria-label="Unidade das massas"><option value="g">g</option><option value="kg">kg</option></select>
+      </div>
+      <div class="row"><button class="btn danger small" id="delMassa" type="button">Excluir a massa</button></div>
+    </div>
     <div class="zoomrow" id="zoomRow" hidden>
       <span id="zoomTxt"></span>
       <button class="btn ghost small" id="zoomReset" type="button">Ver tudo</button>

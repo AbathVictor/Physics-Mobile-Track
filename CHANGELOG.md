@@ -43,3 +43,5 @@ There are no releases yet. Version 1.0.0 will be the first one, archived on Zeno
 - The active mass can be deleted right from the object picker (*Excluir a massa A*, two taps, like the center of
   mass); in landscape, choosing a mass keeps the object drawer open to show it. A delete confirmation only applies
   to the object it was armed for.
+- The object picker also takes the active mass's value, uncertainty and unit (the same fields as step 5), so a mass
+  can be set right when it is chosen.

@@ -372,6 +372,13 @@ async def main():
         R.conferir("massa A" in await pg.inner_text("#pObjBtn") and await pg.evaluate("__va.ativo") == 0 and await gaveta_aberta(pg)
                    and await dentro(pg, "#delMassa") and await pg.inner_text("#delMassa") == "Excluir a massa A",
                    "escolher uma massa troca o objeto; a gaveta fica aberta, com Excluir a massa A")
+        # valor e incerteza da massa ativa na própria gaveta (os mesmos do passo 5)
+        await pg.fill("#maVal", "120"); await pg.fill("#maSig", "0,5"); await pg.select_option("#maUnit", "kg")
+        R.conferir(await pg.evaluate("""__va.objs[0].massa.val === '120' && __va.objs[0].massa.sig === '0,5' && __va.massUnit === 'kg'
+          && document.querySelector('#massList [data-l=A] [data-k=val]').value === '120' && document.getElementById('mUnit').value === 'kg'""")
+                   and await gaveta_aberta(pg) and await dentro(pg, "#maSig"),
+                   "na gaveta, a massa A ganha valor, incerteza e unidade (os mesmos do passo 5), com a gaveta aberta")
+        await pg.fill("#maVal", ""); await pg.fill("#maSig", ""); await pg.select_option("#maUnit", "g")
         await pg.click("#pObjBtn"); await esperar_gaveta(pg, False)
         R.conferir(True, "tocar de novo na alça fecha")
         await pg.evaluate("__va.cross = { x: 1, y: 1 }")
@@ -549,6 +556,11 @@ async def main():
         await pg.wait_for_timeout(300)
         estreito = "(() => { const n = document.querySelector('#pObjBtn .nome'), p = n.querySelector('.pre'); return [getComputedStyle(p).display, n.scrollWidth <= n.clientWidth + 1]; })()"
         R.conferir(await pg.evaluate(estreito) == ["none", True], f"640 × 360: a alça mostra \"● A\" inteiro ({await pg.evaluate(estreito)})")
+        await pg.click("#pObjBtn"); await esperar_gaveta(pg, True)
+        cabe = await pg.evaluate("""(() => { const c = document.getElementById('pObjsCorpo').getBoundingClientRect();
+          return ['maVal', 'maSig', 'maUnit', 'delMassa'].every((id) => { const r = document.getElementById(id).getBoundingClientRect(); return r.width > 30 && r.left >= c.left - 0.5 && r.right <= c.right + 0.5; }); })()""")
+        R.conferir(cabe and await sem_rolagem_lateral(pg), "640 × 360: valor, incerteza, unidade e Excluir cabem na gaveta")
+        await pg.click("#pObjBtn"); await esperar_gaveta(pg, False)
         await pg.set_viewport_size(DEITADO)
         await pg.wait_for_timeout(300)
         R.conferir(await pg.evaluate(estreito) == ["inline", True], "915 × 412: a alça mostra \"massa A\" inteiro")

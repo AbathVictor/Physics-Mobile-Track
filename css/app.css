@@ -155,6 +155,12 @@ input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; heigh
 .corbtn:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 0; }
 .mrow .pm { font-family: var(--font-mono); color: var(--ink-soft); }
 .mrow .del { padding-left: 8px; padding-right: 8px; }
+/* massa ativa, abaixo dos objetos (na gaveta, deitado): valor ± incerteza e unidade numa linha, e o Excluir */
+.massdel { display: grid; gap: 8px; }
+.mativa { display: grid; grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 0.8fr) auto; gap: 6px; align-items: center; }
+.mativa .oname { font-weight: 500; white-space: nowrap; font-size: 0.86rem; }
+.mativa .pm { font-family: var(--font-mono); color: var(--ink-soft); }
+.mativa select.sel { width: auto; }
 .cmsel { display: grid; gap: 6px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); }
 .cmsel .note { margin: 0; }
 .cmsel .objs button[aria-pressed="true"] { background: color-mix(in srgb, var(--ok) 22%, var(--surface)); border-color: var(--ok); color: var(--ink); }

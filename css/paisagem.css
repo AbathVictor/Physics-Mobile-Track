@@ -101,6 +101,9 @@ body.paisagem:not(.pais-b) #pais:not([data-aba="graf"]) .palca #plotSeg { displa
 .paisagem #cmSelM, .paisagem .cmsel > .row { display: contents; }
 .paisagem #delCm, .paisagem #delMassa { height: 40px; padding: 0 10px; font-size: 0.8rem; }
 .paisagem .massdel { padding: 0; }
+/* na gaveta, a massa ativa já está destacada nos botões: sem o nome repetido, os campos ficam com mais espaço */
+.paisagem .mativa { grid-template-columns: minmax(0, 1fr) auto minmax(0, 0.8fr) auto; }
+.paisagem .mativa .oname { display: none; }
 .pabas { display: flex; align-items: center; gap: 2px; padding: 2px 2px 2px 8px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .pseg { flex: 1; min-width: 0; display: flex; }
 .pseg button { flex: 1; min-width: 0; min-height: 36px; padding: 4px; font-family: var(--font-ui); font-size: 0.8rem;

@@ -49,7 +49,8 @@ export function renderObjs() {
     const b = $("delCm");
     if (!b.classList.contains("arm")) b.textContent = `Excluir o ${cm.nome}`;
   }
-  // massa ativa: Excluir logo abaixo (pedido do autor, 22/11/2026, como o do centro de massa)
+  // massa ativa: valor e incerteza e o Excluir logo abaixo (pedidos do autor, 22/11/2026; os valores são
+  // preenchidos por renderMassas)
   const ms = o && o.tipo === "massa" ? o : null;
   $("massDel").hidden = !ms;
   if (ms) { const b = $("delMassa"); if (!b.classList.contains("arm")) b.textContent = `Excluir a ${ms.nome}`; }
@@ -98,6 +99,18 @@ export function renderMassas() {
     }
   }
   $("mUnit").value = S.massUnit;
+  // massa ativa, abaixo dos objetos (na gaveta, deitado): os mesmos valor, incerteza e unidade, sem mexer no campo
+  // em que se está digitando
+  const ma = objAtivo();
+  if (ma && ma.tipo === "massa") {
+    $("maNome").textContent = ma.nome;
+    for (const [id, k] of [["maVal", "val"], ["maSig", "sig"]]) {
+      const inp = $(id), v = ma.massa[k];
+      if (document.activeElement !== inp) inp.value = v;
+      inp.classList.toggle("bad", v !== "" && !(k === "val" ? parseNum(v) > 0 : parseNum(v) >= 0));
+    }
+    $("maUnit").value = S.massUnit;
+  }
   // situação: todas informadas, nenhuma (massas genéricas de 1 u.a.) ou só parte
   const cheias = ms.filter((m) => parseNum(m.massa.val) > 0).length, vazias = ms.filter((m) => String(m.massa.val).trim() === "").length;
   const st = $("stMass");
@@ -253,3 +266,17 @@ $("massList").addEventListener("click", (e) => {
   armar(b, "Excluir?", () => excluir(i));
 });
 $("mUnit").addEventListener("change", (e) => { S.massUnit = e.target.value; persist(); renderMassas(); renderData(); });
+// massa ativa na gaveta dos objetos: os mesmos campos do passo 5 (pedido do autor, 22/11/2026: definir o valor ao
+// escolher a massa)
+$("massDel").addEventListener("input", (e) => {
+  const k = e.target.dataset.k, m = objAtivo(); if (!k || !m || m.tipo !== "massa") return;
+  m.massa[k] = e.target.value;
+  persist(); renderMassas(); renderData(); render();
+});
+$("maUnit").addEventListener("change", (e) => { S.massUnit = e.target.value; persist(); renderMassas(); renderData(); });
+// "concluído" do teclado: fecha o teclado (no valor, passa para a incerteza)
+$("massDel").addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" || !e.target.dataset.k) return;
+  e.preventDefault();
+  if (e.target.id === "maVal") $("maSig").focus(); else e.target.blur();
+});
