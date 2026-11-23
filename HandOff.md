@@ -49,8 +49,7 @@ Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (não só par
   tem vínculo com o Tracker). O produto continua **Videoanálise Móvel** (o autor pode rebatizá-lo depois).
 - **Endereço**: `https://abathvictor.github.io/Physics-Mobile-Track/` (o caminho distingue maiúsculas: em
   minúsculas dá 404; divulgue o link, não peça para digitar), a mesma origem do endereço antigo: as
-  marcações salvas no navegador continuam valendo (armadilha 26). O endereço antigo vira um aviso que leva ao novo
-  e pede para reinstalar o app.
+  marcações salvas no navegador continuam valendo (armadilha 26). O endereço antigo só redireciona para o novo.
 - **Licenças**: código em **AGPL-3.0-or-later** (`LICENSE`; linha `SPDX-License-Identifier` no começo de cada
   arquivo de código, conferida pelo `test_comentarios.mjs`); documentação (README, CHANGELOG, este HandOff e os
   manuais) em **CC BY-SA 4.0** (`LICENSE-docs.md`). A tela **Sobre** (gaveta ≡) mostra a licença e um link visível
@@ -504,7 +503,7 @@ Vídeo 1080p a 30 quadros/s, H.264: decodificação por hardware; cerca de 10 ms
   (arquitetura, coordenadas, decisões técnicas). Antes de escrever o gerador, combinar com o autor: o leitor (quem
   mantém o código, ou também professores), o formato (HTML no GitHub Pages, fora da cópia offline, ou Markdown no
   repositório) e o visual (identidade da UFRRJ sem logotipo, ou neutro). Licença dos manuais: CC BY-SA 4.0.
-- **Publicação** (22/11/2026; ver **Publicação e licença**): falta trocar a pasta antiga (`Physics_artifacts/
-  Tracker-mobile/`) por um aviso que leva ao endereço novo e pede para reinstalar o app, com um service worker de
-  despedida, depois do teste do autor no celular; o ORCID do autor no `CITATION.cff`, quando houver; ativar o
-  Zenodo logo antes da v1.0.
+- **Publicação** (22/11/2026; ver **Publicação e licença**): ~~mudança de endereço~~ (feita: a pasta antiga
+  `Physics_artifacts/Tracker-mobile/` só redireciona, direto e sem aviso, porque por ora só o autor tem o app
+  instalado; um service worker de despedida apaga as cópias `videoanalise-N` e se remove). Falta: o ORCID do
+  autor no `CITATION.cff`, quando houver; ativar o Zenodo logo antes da v1.0.
