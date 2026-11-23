@@ -39,7 +39,7 @@ export const S = {
   // (pontos do objeto ativo) é definido em objetos.js
   objs: [], ativo: 0, massUnit: "g", ver: 0,
   // celular deitado (paisagem.js): etapa e aba do painel escolhidas e tela cheia; não vão no salvamento por vídeo.
-  // O aplicativo abre em tela cheia (pedido do autor, 21/11/2026); sair dela é escolha do aluno, no botão do canto de cima
+  // O aplicativo abre em tela cheia (pedido do autor, 21/11/2026); sair dela é escolha do usuário, no botão do canto de cima
   etapa: "intervalo", aba: "param", telaCheia: true,
 };
 // exposto para os testes (não remova); globalThis é o window no navegador e também existe no Node

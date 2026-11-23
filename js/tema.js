@@ -15,7 +15,7 @@ export const TEMAS = ["auto", "claro", "escuro"];
 const FUNDO = { claro: "#F5F6F8", escuro: "#121619" };
 
 /**
- * Devolve o tema escolhido pelo aluno (o guardado no localStorage).
+ * Devolve o tema escolhido pelo usuário (o guardado no localStorage).
  * @returns {"auto"|"claro"|"escuro"} O tema; "auto" se não houver escolha válida.
  */
 export function temaEscolhido() { const t = LS.get(CHAVE); return TEMAS.includes(t) ? t : "auto"; }
@@ -43,7 +43,7 @@ export function aplicarTema() {
   }
 }
 /**
- * Guarda e aplica um tema escolhido pelo aluno (gaveta ≡ → Tema).
+ * Guarda e aplica um tema escolhido pelo usuário (gaveta ≡ → Tema).
  * @param {"auto"|"claro"|"escuro"} t O tema; outro valor é ignorado.
  */
 export function escolherTema(t) {

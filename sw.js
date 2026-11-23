@@ -2,7 +2,7 @@
 // Service worker da Videoanálise Móvel: guarda uma cópia de todos os arquivos do aplicativo no aparelho, para que ele
 // continue funcionando sem internet (modo avião, por exemplo) e possa até ser recarregada sem conexão.
 //
-// Estratégia: rede primeiro. Com conexão, cada arquivo vem da rede (o aluno recebe sempre a versão publicada) e a
+// Estratégia: rede primeiro. Com conexão, cada arquivo vem da rede (o usuário recebe sempre a versão publicada) e a
 // cópia guardada é atualizada; sem conexão, ou se a rede demorar, usa a cópia guardada.
 //
 // Ao criar, renomear ou apagar um arquivo do aplicativo, atualize a lista ARQUIVOS (o teste test_offline.py confere)

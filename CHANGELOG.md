@@ -14,7 +14,7 @@ There are no releases yet. Version 1.0.0 will be the first one, archived on Zeno
   uncertainties, and marking by hand with pinch zoom.
 - Automatic tracking: template matching in two levels with subpixel fit, an evolving template anchored to the
   original, and position prediction.
-- Up to 10 masses per video and centers of mass made of the masses the student chooses.
+- Up to 10 masses per video and centers of mass made of the masses the user chooses.
 - Graph and table kept in sync with playback; CSV export in Tracker's format (Excel and international), with
   masses, units and calibration lines.
 - Time as in Tracker: the same Δt for every frame over the analysis interval.
@@ -34,3 +34,5 @@ There are no releases yet. Version 1.0.0 will be the first one, archived on Zeno
 - The app moved from the `Tracker-mobile/` folder of
   [AbathVictor/Physics_artifacts](https://github.com/AbathVictor/Physics_artifacts) to this repository, with its
   full history (November 2026).
+- The last remaining mass can now be deleted too (✕ in step 5); with no masses, marking waits until the user
+  creates one with *+ massa*, and an empty object list is saved and restored as it is.

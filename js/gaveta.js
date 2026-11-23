@@ -134,7 +134,7 @@ function mostrar() {
  * Monta a página Sobre: autor, privacidade, licença com o link visível para o código-fonte (pedido do autor em
  * 22/11/2026, ao publicar o aplicativo com a licença AGPL), créditos ao Tracker e avisos dos componentes de terceiros.
  * Os avisos de terceiros são arquivos do próprio aplicativo (abrem sem internet); a licença e o código-fonte ficam no
- * GitHub. Os links abrem em outra aba, para não tirar o aluno do aplicativo.
+ * GitHub. Os links abrem em outra aba, para não tirar o usuário do aplicativo.
  * @returns {string} HTML da página.
  */
 function sobreHtml() {

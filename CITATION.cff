@@ -4,7 +4,7 @@ type: software
 title: "Videoanálise Móvel"
 abstract: >-
   Videoanálise Móvel is a web application for frame-by-frame video analysis on
-  Android phones, for introductory physics labs. Students record an experiment
+  Android phones, for introductory physics labs. Users record an experiment
   with the phone's camera, calibrate the scale and the axes, mark the position
   of each object by hand or with automatic tracking, and export t, x, y as CSV
   in the format of Tracker. Everything runs in the browser, and the video

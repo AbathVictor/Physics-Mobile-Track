@@ -82,7 +82,7 @@ function medicaoPairs() {
 $("diag").addEventListener("toggle", () => { if ($("diag").open) kv($("kvDiag"), diagPairs()); });
 /**
  * Copia o diagnóstico em texto (botão do bloco Diagnóstico e gaveta ≡); sem acesso à área de transferência,
- * mostra o texto selecionado para o aluno copiar pelo menu do sistema.
+ * mostra o texto selecionado para o usuário copiar pelo menu do sistema.
  */
 export function copiarDiagnostico() {
   const txt = "Videoanálise Móvel · diagnóstico\n" + diagPairs().map(([k, v]) => `${k}: ${v}`).join("\n") + "\nuser agent: " + navigator.userAgent;

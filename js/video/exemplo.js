@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /**
- * @file Vídeo de exemplo embutido (base64), para o aplicativo funcionar sem nenhum vídeo do aluno.
+ * @file Vídeo de exemplo embutido (base64), para o aplicativo funcionar sem nenhum vídeo do usuário.
  *
  * É o tests/videos/exemplo.mp4 gerado por tests/gerar_videos.py (massa oscilando presa a um fio, régua de 30 cm).
  */

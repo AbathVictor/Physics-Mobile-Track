@@ -80,7 +80,7 @@ export function renderMassas() {
       <input class="num" data-k="val" inputmode="decimal" autocomplete="off" placeholder="valor" aria-label="Valor da ${esc(m.nome)}">
       <span class="pm">±</span>
       <input class="num" data-k="sig" inputmode="decimal" autocomplete="off" placeholder="incert." aria-label="Incerteza da ${esc(m.nome)}">
-      <button type="button" class="btn ghost small del" data-del="${m.letra}" aria-label="Excluir a ${esc(m.nome)}" title="Excluir a ${esc(m.nome)}"${ms.length < 2 ? " hidden" : ""}>✕</button>
+      <button type="button" class="btn ghost small del" data-del="${m.letra}" aria-label="Excluir a ${esc(m.nome)}" title="Excluir a ${esc(m.nome)}">✕</button>
     </div>`).join("");
   }
   for (const m of ms) {
@@ -149,6 +149,10 @@ function adicionarCm() {
 }
 /**
  * Exclui um objeto; uma massa excluída sai também dos centros de massa que a usavam.
+ *
+ * Desde 22/11/2026 (pedido do autor), a última massa também pode ser excluída: sem massas, não há o que marcar até
+ * o usuário criar outra em "+ massa"; os centros de massa ficam, vazios. Sem objeto nenhum, S.ativo fica 0 e
+ * objAtivo() devolve null.
  * @param {number} i Índice do objeto em S.objs.
  */
 function excluir(i) {

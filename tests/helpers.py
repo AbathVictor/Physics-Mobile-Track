@@ -69,7 +69,7 @@ def endereco():
 async def abrir(p, retrato=True):
     """Abre a página num Chrome com tela de celular em pé. Por hora a página só funciona deitada (em pé, o aviso
     "Gire o celular" cobre tudo); retrato=True libera a diagramação em pé (localStorage "va-retrato"), que continua no
-    código e é onde a maior parte dos testes roda. O test_paisagem.py abre sem ela, como o aluno."""
+    código e é onde a maior parte dos testes roda. O test_paisagem.py abre sem ela, como o usuário."""
     kw = {"executable_path": os.environ["CHROME_PATH"]} if os.environ.get("CHROME_PATH") else {"channel": "chrome"}
     nav = await p.chromium.launch(**kw)
     ctx = await nav.new_context(viewport={"width": 412, "height": 915}, device_scale_factor=2.6, is_mobile=True, has_touch=True)

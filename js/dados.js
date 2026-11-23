@@ -14,6 +14,8 @@ import { avisoFaltam, cmsDe, objAtivo, pontosDe, sistemaCm } from "./objetos.js"
 import { renderPanels } from "./paineis.js";
 import { $, esc, fmt, parseNum, toast } from "./util.js";
 
+// aviso da tabela e do gráfico sem objeto nenhum (a última massa pode ser excluída desde 22/11/2026)
+const SEM_OBJETOS = "Não há massas. Crie uma em + massa.";
 /**
  * Linhas de um objeto dentro do intervalo de análise: quadro, tempo (como no Tracker, analise.js) e posição em
  * unidades físicas.
@@ -49,7 +51,7 @@ export function renderData() {
   note.hidden = !sc; note.textContent = sc ? sc.txt : ""; note.className = "status" + (sc && sc.bad ? " bad" : "");
   // (celular deitado: o objeto ativo e o aviso do centro de massa ficam na alça da gaveta dos objetos, paisagem.js)
   // o aviso do centro de massa aparece uma vez só, acima do gráfico
-  const vazio = sc && sc.bad ? "O centro de massa ainda não tem posições." : sc ? "Nenhum quadro com todas as massas do sistema marcadas." : "Nenhum ponto marcado ainda.";
+  const vazio = !o ? SEM_OBJETOS : sc && sc.bad ? "O centro de massa ainda não tem posições." : sc ? "Nenhum quadro com todas as massas do sistema marcadas." : "Nenhum ponto marcado ainda.";
   const head = `<thead><tr><th>quadro</th><th>t (s)</th><th>x (${u})</th><th>y (${u})</th></tr></thead>`;
   const body = R.map((r) => `<tr data-i="${r.i}"${r.i === S.cur ? ' class="cur"' : ""}><td>${r.i}</td><td>${fmt(r.t, 4)}</td><td>${fmt(r.x, d)}</td><td>${fmt(r.y, d)}</td></tr>`).join("");
   $("table").innerHTML = head + `<tbody>${body || `<tr><td colspan="4" style="text-align:center;cursor:default">${esc(vazio)}</td></tr>`}</tbody>`;
@@ -104,7 +106,7 @@ export function drawPlot() {
   const o = objAtivo(), R = S.frames.length ? rows(o).filter((q) => Number.isFinite(q.x)) : [];
   $("plotEmpty").hidden = R.length >= 1;
   const sc = o && o.tipo === "cm" ? situacaoCm(o) : null;
-  $("plotEmpty").textContent = sc && sc.bad ? "O centro de massa ainda não tem posições." : "Os pontos marcados aparecem aqui.";
+  $("plotEmpty").textContent = !o ? SEM_OBJETOS : sc && sc.bad ? "O centro de massa ainda não tem posições." : "Os pontos marcados aparecem aqui.";
   plotMap = null;
   // quadro que o gráfico mostra como o atual (anel âmbar); os testes conferem que acompanha o vídeo no play
   S.graficoNoQuadro = S.cur;

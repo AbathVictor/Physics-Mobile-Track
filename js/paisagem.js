@@ -229,7 +229,8 @@ export function atualizarEtapas() {
   if (o && o.tipo === "cm") { const s = sistemaCm(o, S.objs); aviso = !s.membros.length ? "escolha as massas" : s.faltam.length ? avisoFaltam(s.faltam) : ""; }
   // "massa " some com o painel estreito (css/paisagem.css), como nos botões compactos da fileira; "cm A" fica inteiro
   const nome = o && o.tipo === "massa" ? `<span class="pre">massa </span>${esc(o.letra)}` : o ? esc(o.nome) : "";
-  btn.innerHTML = o ? `<i class="dot" style="background:${o.cor}"></i><span class="nome">${nome}</span>${aviso ? `<span class="aviso">${esc(aviso)}</span>` : ""}${IC.abaixo}` : "";
+  // sem objeto nenhum (a última massa pode ser excluída), a alça continua lá para abrir a gaveta e criar uma massa
+  btn.innerHTML = o ? `<i class="dot" style="background:${o.cor}"></i><span class="nome">${nome}</span>${aviso ? `<span class="aviso">${esc(aviso)}</span>` : ""}${IC.abaixo}` : `<span class="nome">objetos</span>${IC.abaixo}`;
   btn.disabled = !on;
   // sem vídeo (um arquivo que não abriu), a gaveta não tem o que mostrar
   if (!on) fecharObjs();

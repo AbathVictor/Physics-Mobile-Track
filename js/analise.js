@@ -38,7 +38,8 @@ export function restoreOrDefaults() {
     if (saved.axes && saved.axes.o) S.axes = saved.axes;
     if (saved.v === 2) {
       const objs = desserializar(saved.objs, N);
-      if (objs.length) { S.objs = objs; S.ativo = clampI(saved.ativo, 0, objs.length - 1); }
+      // a lista pode voltar vazia: a última massa pode ser excluída (22/11/2026)
+      if (Array.isArray(saved.objs)) { S.objs = objs; S.ativo = objs.length ? clampI(saved.ativo, 0, objs.length - 1) : 0; }
       if (saved.massUnit === "g" || saved.massUnit === "kg") S.massUnit = saved.massUnit;
     } else {
       // formato antigo (uma massa só): as marcações e a massa viram a "massa A"
@@ -98,7 +99,7 @@ function flushPersist() { if (saveTimer) { clearTimeout(saveTimer); writeNow(); 
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushPersist(); });
 window.addEventListener("pagehide", flushPersist);
 /**
- * Escala digitada pelo aluno, em unidades por pixel.
+ * Escala digitada pelo usuário, em unidades por pixel.
  * @returns {number} Unidades por pixel, ou NaN enquanto não houver distância real ou se as pontas estiverem juntas
  * demais (menos de 3 px).
  */
@@ -120,7 +121,7 @@ export function unitPerPx() { const k = escalaReal(); return k > 0 ? k : 1; }
  */
 export const unidade = () => escalaReal() > 0 ? S.scale.unit : UA;
 /**
- * Converte um ponto em pixels do vídeo para unidades físicas, nos eixos do aluno (origem, ângulo do eixo x no
+ * Converte um ponto em pixels do vídeo para unidades físicas, nos eixos do usuário (origem, ângulo do eixo x no
  * sentido anti-horário e y para cima).
  * @param {{x: number, y: number}} p Ponto em pixels do vídeo.
  * @returns {{x: number, y: number}|null} Posição em unidades físicas, ou null sem ponto.

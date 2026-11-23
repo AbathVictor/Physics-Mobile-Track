@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Celular deitado (915 × 412, com toque), sem liberar a diagramação em pé (por hora a página só funciona deitada:
-em pé, o aviso "Gire o celular" cobre tudo; a página abre em tela cheia e o aluno sai dela no botão), diagramação em
+em pé, o aviso "Gire o celular" cobre tudo; a página abre em tela cheia e o usuário sai dela no botão), diagramação em
 três colunas (etapas · vídeo e controles · painel),
 etapas com selos, barra de controles e barra de quadros com as duas alças do intervalo, pinça, gaveta dos objetos
 (alça numa linha só com y(t)/x(t), abrir, fechar por alça, toque fora, Esc e Voltar, escolha das massas do cm),
@@ -224,7 +224,7 @@ async def janela_do_grafico(pg, R):
 async def main():
     R = Resultado()
     async with async_playwright() as p:
-        # sem liberar a diagramação em pé: a página como o aluno a vê
+        # sem liberar a diagramação em pé: a página como o usuário a vê
         nav, ctx, pg, erros = await abrir(p, retrato=False)
         pg.on("console", lambda m: print("        " + m.text) if m.text.startswith("coberto") else None)
 
@@ -245,7 +245,7 @@ async def main():
                    "abre em tela cheia, com o botão de sair no canto de cima")
         await pg.click("#btnTela")
         await pg.wait_for_function("!document.body.classList.contains('pais-c')")
-        R.conferir(await pg.evaluate("!__va.telaCheia && document.getElementById('btnTela').getAttribute('aria-label') === 'Tela cheia'"), "sair da tela cheia é escolha do aluno, no botão")
+        R.conferir(await pg.evaluate("!__va.telaCheia && document.getElementById('btnTela').getAttribute('aria-label') === 'Tela cheia'"), "sair da tela cheia é escolha do usuário, no botão")
 
         print("variação B (vídeo de exemplo, em pé)")
         R.conferir(await pg.evaluate("document.body.classList.contains('pais-b') && document.getElementById('pGrafB').contains(document.getElementById('plotBox'))"),

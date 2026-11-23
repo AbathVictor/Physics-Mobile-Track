@@ -38,7 +38,7 @@ export const fmtBytes = (b) => b >= 1e9 ? fmt(b / 1e9, 2) + " GB" : b >= 1e6 ? f
  */
 export const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 /**
- * Lê um número digitado pelo aluno: aceita vírgula ou ponto decimal, espaços, o menos tipográfico e notação
+ * Lê um número digitado pelo usuário: aceita vírgula ou ponto decimal, espaços, o menos tipográfico e notação
  * científica.
  * @param {*} s Texto digitado.
  * @returns {number} O número, ou NaN se o texto não for um número.

@@ -6,14 +6,14 @@ Contexto para o Claude Code. Leia antes de mexer neste repositório.
 
 Um aplicativo web (`index.html` com módulos JavaScript em `js/`) de vídeo-análise quadro a quadro no celular, inspirado no
 [Tracker](https://github.com/OpenSourcePhysics/tracker) do Open Source Physics, para as atividades experimentais
-de Física Básica (sistema massa-mola, pêndulo). O aluno grava o vídeo no próprio celular, define o intervalo,
+de Física Básica (sistema massa-mola, pêndulo). O usuário grava o vídeo no próprio celular, define o intervalo,
 calibra a escala e os eixos, informa as massas, marca a posição de cada objeto (à mão ou com rastreamento
 automático; até 10 massas e centros de massa formados pelas massas que ele escolher) e exporta t, x, y para analisar no [Laboratório de Oscilações](https://abathvictor.github.io/Physics_artifacts/laboratorio-oscilacoes/OscLab.html), numa planilha ou em Python.
 
-- Público: alunos com celular **Android e Chrome**. iOS ainda não é alvo.
+- Público: usuários com celular **Android e Chrome**. iOS ainda não é alvo.
 - Tudo roda no navegador; o vídeo nunca sai do aparelho. Nada para instalar (instalar como app pelo Chrome é
   opcional; o app instalado abre sempre deitado e em tela cheia). Por hora, só com o celular deitado.
-- Funciona **sem internet** depois de aberto: o aluno abre o link uma vez com conexão e o aplicativo continua
+- Funciona **sem internet** depois de aberto: o usuário abre o link uma vez com conexão e o aplicativo continua
   funcionando em modo avião, e até recarrega sem conexão (service worker, `sw.js`).
 - Repositório `AbathVictor/Physics-Mobile-Track`, publicado pelo GitHub Pages em
   `https://abathvictor.github.io/Physics-Mobile-Track/`. Até 22/11/2026 era a pasta `Tracker-mobile/` do repositório
@@ -28,10 +28,12 @@ automático; até 10 massas e centros de massa formados pelas massas que ele esc
 - O autor testa no próprio celular Android. Diga claramente o que você conseguiu verificar no computador e o que
   só dá para confirmar no aparelho (sensação do toque, desempenho, janela de download).
 - Rode os testes (seção **Testes**) antes de cada commit que mexa no aplicativo (`index.html`, `js/`, `css/`).
-- Textos da interface: curtos, diretos, escritos para o aluno; mensagens de erro dizem o que aconteceu e como resolver.
-- Nomes (decisão do autor em 22/11/2026): para o aluno e na interface, **aplicativo**; no texto técnico, **aplicação
+- Textos da interface: curtos, diretos, escritos para o usuário; mensagens de erro dizem o que aconteceu e como resolver.
+- Nomes (decisão do autor em 22/11/2026): para o usuário e na interface, **aplicativo**; no texto técnico, **aplicação
   web** ou **aplicativo web**. Nunca "página" para o produto; "página" só para o documento HTML (rolar a página)
-  e para as páginas dentro da gaveta ≡ (Diagnóstico, Ajuda, Sobre).
+  e para as páginas dentro da gaveta ≡ (Diagnóstico, Ajuda, Sobre). Quem usa o aplicativo é o **usuário** (pode ser
+  qualquer um), nunca "aluno", em todo texto: interface, comentários, HandOff, testes (em inglês, *user*, nunca
+  *student*). Decisão do autor em 22/11/2026.
 - Comentários do código (base do manual técnico): cada arquivo de `js/` começa com um bloco `/** @file … */` que
   diz o que o módulo faz, e cada função do módulo tem um bloco JSDoc em português logo acima: a primeira frase, com
   o verbo no presente, diz o que a função faz; depois vêm os detalhes, as decisões e a data dos pedidos do autor;
@@ -43,7 +45,7 @@ automático; até 10 massas e centros de massa formados pelas massas que ele esc
 
 ## Publicação e licença
 
-Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (não só para os alunos):
+Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (antes, era só para as turmas do autor):
 - **Repositório próprio**: `AbathVictor/Physics-Mobile-Track`, na conta pessoal do autor, criado com o histórico da
   pasta `Tracker-mobile/` do `Physics_artifacts` (`git subtree split`). "Tracker" não entra no nome (o projeto não
   tem vínculo com o Tracker). O produto continua **Videoanálise Móvel** (o autor pode rebatizá-lo depois).
@@ -64,7 +66,7 @@ Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (não só par
 - **Idiomas**: README, CHANGELOG, NOTICE e CITATION em inglês; interface, comentários e este HandOff em português.
   Toda mudança notável entra no `CHANGELOG.md` (seção Unreleased).
 - **Zenodo e DOI**: só na v1.0, sem releases antes; a integração com o Zenodo é ativada logo antes da v1.0.
-- **Fora por ora**: manual, `.zenodo.json`, CONTRIBUTING e código de conduta. Divulgação só para alunos e colegas,
+- **Fora por ora**: manual, `.zenodo.json`, CONTRIBUTING e código de conduta. Divulgação só para usuários próximos e colegas,
   sem artigo.
 
 ## Especificação decidida (não mude sem combinar)
@@ -75,7 +77,7 @@ Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (não só par
 | Forma | Página nesta pasta em **módulos JavaScript nativos, sem passo de montagem** (sem Node/npm para publicar): edita e publica. Decidido em 14/11/2026, substituiu o arquivo único (que existia só por causa do artefato do claude.ai, hoje obsoleto) |
 | Sem internet | uma vez aberto, o aplicativo **não pode perder nenhuma função sem conexão** (modo avião). Nada é carregado de fora: `mp4box.js` e as fontes são cópias locais; todos os módulos são importados no início (sem `import()` tardio); o `sw.js` guarda tudo para recarregar sem conexão |
 | Compatibilidade com o Tracker | princípio permanente: a versão móvel e o Tracker de computador **devem conversar sempre**. Os formatos e o modelo de dados seguem os do Tracker (objetos como os *point mass* dele, coordenadas em pixels da imagem, eixos, fita de calibração, intervalo do clipe), para que no futuro um trabalho feito no celular abra no Tracker e vice-versa (arquivo `.trk`) |
-| Várias massas | até **10 massas** no mesmo vídeo (massa A a massa J, cores do Tracker em A a D) e **centros de massa** (cm A a cm J), como o `CenterOfMass` do Tracker: cada um **nasce vazio** e é formado pelas massas que o usuário escolher (nunca entram sozinhas; pedido do autor), e pode haver vários, cada um com as suas massas. Posição: média das posições ponderada pelas massas, calculada em pixels, só nos quadros em que todas as massas do sistema têm ponto. A escolha das massas fica logo abaixo dos botões dos objetos, quando o cm está ativo (no Tracker é a janela `CenterOfMassInspector`). Todos na cor verde do Tracker; o nome os distingue. Feito em 14/11/2026. Falta rastrear todas numa passada só de decodificação |
+| Várias massas | até **10 massas** no mesmo vídeo (massa A a massa J, cores do Tracker em A a D) e **centros de massa** (cm A a cm J), como o `CenterOfMass` do Tracker: cada um **nasce vazio** e é formado pelas massas que o usuário escolher (nunca entram sozinhas; pedido do autor), e pode haver vários, cada um com as suas massas. Posição: média das posições ponderada pelas massas, calculada em pixels, só nos quadros em que todas as massas do sistema têm ponto. A escolha das massas fica logo abaixo dos botões dos objetos, quando o cm está ativo (no Tracker é a janela `CenterOfMassInspector`). Todos na cor verde do Tracker; o nome os distingue. Feito em 14/11/2026. Falta rastrear todas numa passada só de decodificação. Desde 22/11/2026 (pedido do autor), **a última massa também pode ser excluída** (✕ do passo 5): sem massas, Marcar ponto e Rastrear ficam sem efeito e os avisos mandam criar uma em "+ massa"; os cm ficam, vazios; sem objeto nenhum, `objAtivo()` é `null`. O salvamento guarda e reabre a lista vazia como está (só um vídeo novo começa com a massa A) |
 | Cores das massas | A a D com as cores do Tracker; E a J escolhidas para não confundir (E azul `#1791cf` e J framboesa `#c2185b`, longe do âmbar da mira). O usuário pode **trocar a cor de cada massa** tocando na bolinha dela no passo 5 (pedido do autor); a cor trocada vai no salvamento |
 | Cores e temas | tokens combinados com o autor em 14/11/2026 (tabela em `css/app.css`): fundo `#F5F6F8`/`#121619`, cartões `#FFFFFF`/`#1A1F24`, texto `#1F2933`/`#E6EAEE`, texto secundário `#52606D`/`#9AA5B1`, bordas `#DDE1E6`/`#2E363E`, botão principal `#0F766E` (texto branco) / `#2DD4BF` (texto `#06201D`), botão suave `#E6F2F1`/`#0F766E` e `#17302E`/`#5EEAD4`, âmbar `#D97706`/`#F59E0B`, área do vídeo `#1E2228`/`#0B0D10`. Tema automático (segue o sistema) ou escolhido à mão, guardado em `localStorage` (`va-tema`) fora do salvamento por vídeo. **Âmbar só** na mira (anel com contorno escuro), no indicador do quadro atual e nas alças do intervalo, nunca em botão de texto. Cor de objeto só em bolinha ou borda (o botão Marcar ponto é verde-petróleo, com a bolinha da massa ativa); objeto ativo com fundo suave e borda. Marcas e pontos com contorno fino (escuro no claro, claro no escuro); pontos fora do intervalo ou futuros (depois do quadro atual) na cor de borda, no vídeo e no gráfico. Todo texto com contraste ≥ 4,5:1 (conferido pelo `test_tema.py`) |
 | Sem escala | como no Tracker, **1 px = 1 u.a.** (unidade arbitrária), a partir da origem dos eixos. A tabela, o gráfico e o CSV funcionam sem escala; digitar a distância real converte tudo na hora (os pontos ficam sempre em pixels) |
@@ -83,7 +85,7 @@ Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (não só par
 | Tabela e gráfico | de **um objeto por vez**, o ativo, como no Tracker (uma tabela por trilha). Copiar e CSV levam todos os objetos com pontos |
 | Fluxo | vídeo (câmera ou galeria) → intervalo → escala → eixos → massa → marcação → tabela e gráfico |
 | Dados | apenas **t, x, y** por quadro de cada objeto, mais a **massa** de cada um (valor ± incerteza, g ou kg). Velocidade e aceleração ficaram de fora por decisão |
-| Saída | **Copiar tabela** (tabulação) e **Exportar CSV** em dois formatos que o aluno escolhe: *Excel/Planilhas Google* (`;` entre colunas, vírgula decimal, com marca UTF-8 no início) e *Internacional/Python* (`,` entre colunas, ponto decimal) |
+| Saída | **Copiar tabela** (tabulação) e **Exportar CSV** em dois formatos que o usuário escolhe: *Excel/Planilhas Google* (`;` entre colunas, vírgula decimal, com marca UTF-8 no início) e *Internacional/Python* (`,` entre colunas, ponto decimal) |
 | Estrutura do CSV | igual à do Tracker, com metadados antes: `massa: (0,250 ± 0,001) kg`, `unidades: t em s · x e y em cm`, `calibração: origem x0 = 946,37 px · y0 = 668,52 px · ângulo 0,80° (0,013963 rad) · escala 12,8000 px por cm` (desde 21/11/2026, pedido do autor, para ficar em conformidade com o .trk do Tracker, que guarda a calibração: os mesmos xorigin, yorigin, angle e xscale do sistema de coordenadas da imagem; origem em pixels da imagem, x para a direita e y para baixo; ângulo do eixo x no sentido anti-horário; escala em pixels por unidade, 1 px por u.a. sem escala; a linha não tem o separador de colunas), linha do objeto (`;massa A`), cabeçalho `t;x;y`, dados. No Python: `pd.read_csv(arquivo, skiprows=4)`. O Laboratório de Oscilações lê os dois formatos (testado; a linha de calibração é texto de uma célula, como as outras de metadados) | Com vários objetos, o formato de várias trilhas do Tracker (`ExportDataDialog`): uma linha por massa (`massa A: …`), uma linha por centro de massa (`cm A: massa A + massa B · …`), `unidades`, `calibração`, `#multi:`, a linha dos nomes `;massa A;;massa B;;cm A;;`, o cabeçalho `t;x;y;x;y;x;y;` e os dados (célula vazia no quadro em que o objeto não tem ponto). Com um objeto só, o formato continua o de antes |
 | Descartado | botão "Enviar para o Laboratório de Oscilações" |
 | Reprodução | play em **velocidade real** (sem câmera lenta) e botão **Reproduzir do início ao fim**, com opção **Repetir**. Desde 21/11/2026 (fase 1 do plano de memória e decodificação, decisão do autor): o play **mostra todos os quadros**, um de cada vez, **no máximo em velocidade real**; quando o celular não dá conta, **desacelera** em vez de pular quadros (o intuito é avaliar o movimento, não precisa ser em tempo real). Consequência: vídeo com mais quadros por segundo que a tela (câmera lenta de 120 ou 240 q/s) toca mais devagar que o real, um quadro por quadro de tela |
@@ -94,7 +96,7 @@ Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (não só par
 | Objetos deitado (gaveta) | decidido em 15/11/2026, para tirar a poluição visual em volta do gráfico (o autor escolheu **gaveta** em vez de menu flutuante): no alto do painel fica **uma linha só**, a alça (bolinha, nome do objeto ativo, seta e, num centro de massa sem posição, um aviso curto em vermelho: "escolha as massas" ou "massa B faltante") e, **na mesma linha, y(t)/x(t)** (em A, só com a aba Gráfico; em B, sempre). Tocar na alça faz descer, por cima do conteúdo, a fileira dos objetos de sempre (+ massa, + cm) e a escolha das massas do cm ativo, com rolagem se não couber. Fecha ao tocar de novo na alça, ao tocar fora (o toque segue: tocar no vídeo também põe a mira), com Esc, com o Voltar do Android e ao escolher ou criar uma massa; ao escolher ou criar um cm, ela fica aberta para a escolha das massas dele. A linha repetida com o nome do objeto acima do gráfico e da tabela saiu. Na **tela cheia**, a alça sobe para o canto de cima (no lugar do antigo indicador do objeto ativo) e abre a gaveta ali mesmo; o painel (Parâmetros e Tabela) abre por um **botão do painel** ao lado dela e começa logo abaixo dessa linha, que fica por cima dele (com o painel aberto ainda dá para trocar de objeto, sair da tela cheia e abrir o ≡). **Em pé, nada mudou** (a fileira continua abaixo dos controles do vídeo; desde 21/11/2026, por hora, a diagramação em pé fica coberta pelo aviso "Gire o celular") |
 | Abrir deitado | pedido do autor em 16/11/2026, **por hora**: o app abre deitado. Um aplicativo web numa aba do Chrome não consegue girar a tela (o Chrome só deixa travar a orientação em tela cheia ou no app instalado), então o aplicativo virou **app instalável** (`manifest.webmanifest`: `"orientation": "landscape"`, `"display": "fullscreen"` desde 21/11/2026, ícones em `img/`). Instalado pelo Chrome (⋮ → Instalar app), abre sempre deitado e sem as barras do sistema, mesmo com a rotação automática desligada; em pé fica inalcançável no app. Numa aba comum quem gira a tela é o celular. Para voltar atrás, basta trocar `"orientation"` para `"any"` (e `"display"` para `"standalone"`) |
 | Só deitado | pedido do autor em 21/11/2026, **por hora**: as funções em pé ficam desativadas. Com o celular em pé, o aviso **"Gire o celular"** cobre a tela, com o botão **"Deitar em tela cheia"** (pede a tela cheia e trava a orientação deitada; numa aba, o Chrome só trava a orientação em tela cheia, e a tela cheia exige um toque). A diagramação em pé continua no código, intacta e montada por baixo do aviso (girar não perde nada); `SO_DEITADO = false` em `paisagem.js` a devolve. Computador e tablet (deitados, com mais de 500 px de altura) continuam com a diagramação de sempre |
-| Abrir em tela cheia | pedido do autor em 21/11/2026: o aplicativo **abre na tela cheia (C)** (`S.telaCheia` começa `true`), e sair dela é escolha do aluno, no botão do canto de cima; nada fica guardado, a próxima abertura volta à tela cheia. No app instalado, o manifesto já tira as barras do sistema; numa aba comum, é a diagramação de tela cheia com as barras do navegador (a tela cheia do sistema exige um toque: o botão do aviso em pé ou sair e entrar de novo no botão do canto). Girar em pé na tela cheia não sai dela: o aviso cobre a tela e, ao deitar de novo, a tela cheia continua |
+| Abrir em tela cheia | pedido do autor em 21/11/2026: o aplicativo **abre na tela cheia (C)** (`S.telaCheia` começa `true`), e sair dela é escolha do usuário, no botão do canto de cima; nada fica guardado, a próxima abertura volta à tela cheia. No app instalado, o manifesto já tira as barras do sistema; numa aba comum, é a diagramação de tela cheia com as barras do navegador (a tela cheia do sistema exige um toque: o botão do aviso em pé ou sair e entrar de novo no botão do canto). Girar em pé na tela cheia não sai dela: o aviso cobre a tela e, ao deitar de novo, a tela cheia continua |
 | Etapas deitado | sem marca nas etapas concluídas (o ✓ saiu a pedido do autor em 16/11/2026: informação demais). Fica só o selo neutro "u.a." em Escala e Massas sem valor |
 | Rastreamento | automático no estilo do autotracker do Tracker (ver abaixo) |
 | Toque | sensibilidade "aceitável"; otimizar no futuro |
@@ -254,16 +256,16 @@ do eixo x medido no sentido anti-horário.
     por um `Blob`. Não remova esse caminho sem combinar.
 11. O **vídeo de exemplo** está embutido como base64 (`SAMPLE_B64`, em `js/video/exemplo.js`); é o
     `tests/videos/exemplo.mp4` gerado por `tests/gerar_videos.py`.
-12. **Service worker com rede primeiro**: com conexão, cada arquivo vem da rede (o aluno recebe a versão publicada
+12. **Service worker com rede primeiro**: com conexão, cada arquivo vem da rede (o usuário recebe a versão publicada
     sem precisar limpar cache) e a cópia é atualizada; sem conexão, ou sem resposta em 4 s, usa a cópia. O
     `clients.claim()` faz o service worker atender o aplicativo já na primeira visita (inclui as fontes, que o navegador
     só busca quando um caractere de cada subconjunto aparece).
 13. **Fileira de objetos abaixo de Marcar ponto e Rastrear**: posta logo abaixo das ferramentas, ela empurrava
-    *Marcar ponto* para fora da tela num celular de 412 × 915, e o aluno teria de rolar a página entre tocar no
+    *Marcar ponto* para fora da tela num celular de 412 × 915, e o usuário teria de rolar a página entre tocar no
     vídeo e marcar. Cuidado ao pôr qualquer coisa entre o vídeo e a barra de marcação. Os botões quebram linha:
     com rolagem para o lado, alguns ficavam escondidos.
 14. **Salvamento no formato 2** (`v: 2`, com `objs`, `ativo` e `massUnit`). O formato 1 (uma massa, `marks` e `mass`)
-    ainda é lido e vira a massa A; não remova essa leitura enquanto houver alunos com dados antigos. A cor de uma
+    ainda é lido e vira a massa A; não remova essa leitura enquanto houver usuários com dados antigos. A cor de uma
     massa só é guardada (campo opcional `cor`) quando o usuário a trocou; sem o campo, vale a cor padrão da letra.
 15. **Cores lidas do CSS pelo JavaScript**: o desenho sobre o vídeo e o gráfico leem os tokens (`--amber`, `--line`,
     `--ov-edge`…) com `getComputedStyle` (`readOV` em `desenho.js`, `drawPlot` em `dados.js`) e redesenham quando o
@@ -374,7 +376,7 @@ do eixo x medido no sentido anti-horário.
     e com o Laboratório de Oscilações. O `sw.js` apagava, ao ativar, todas as cópias com nome diferente do seu: com
     dois aplicativos na mesma origem, um apagaria as do outro. Agora o nome tem o prefixo `vam-`, e cada um só apaga
     as cópias com o seu prefixo; o service worker de despedida do endereço antigo só apaga as `videoanalise-N`. O
-    `localStorage` dividido é o que leva as marcações dos alunos para o endereço novo sem nada a fazer (mesmas
+    `localStorage` dividido é o que leva as marcações dos usuários para o endereço novo sem nada a fazer (mesmas
     chaves). Mudar de conta do GitHub ou usar um domínio próprio mudaria a origem, e as marcações ficariam para trás.
 
 ## Testes
@@ -404,7 +406,7 @@ python tests/medir_desempenho.py [--software] [--leitura-lenta] v.mp4   # não �
 
 Cada teste imprime `ok`/`FALHA` por item e sai com código 1 se algo falhar. Variáveis opcionais: `CHROME_PATH`
 (outro executável do Chrome). Por hora o aplicativo só funciona deitado; `helpers.abrir()` libera a diagramação em pé
-(chave "va-retrato"), onde roda a maior parte dos testes, e o `test_paisagem.py` abre sem ela, como o aluno. Os vídeos ficam em `tests/videos/`, fora do git.
+(chave "va-retrato"), onde roda a maior parte dos testes, e o `test_paisagem.py` abre sem ela, como o usuário. Os vídeos ficam em `tests/videos/`, fora do git.
 
 Resultados de referência (computador, decodificação por software): tempo de cada quadro igual ao do arquivo
 (erro ≤ 6 µs, resolução do próprio arquivo); rastreamento com erro máximo de 0,4 px nos vídeos de 360 a
@@ -471,7 +473,7 @@ Vídeo 1080p a 30 quadros/s, H.264: decodificação por hardware; cerca de 10 ms
         nela, marcação, zoom e rastreamento no original). Só ela tiraria a espera de ~0,5 s ao saltar no meio de um
         grupo longo.
      Dica de gravação ("grave em 1080p"): não, por hora; fica para a versão beta (decisão do autor).
-  3. ~~Modelo de dados com vários objetos, no molde do Tracker, com migração do que os alunos já salvaram~~ (feito
+  3. ~~Modelo de dados com vários objetos, no molde do Tracker, com migração do que os usuários já salvaram~~ (feito
      em 14/11/2026, antes da fase 2, a pedido do autor; junto vieram a interface para até 10 massas, o centro de
      massa e a escala genérica).
   4. Rastrear todas as massas numa passada só de decodificação (hoje o rastreamento é da massa ativa).
@@ -497,7 +499,7 @@ Vídeo 1080p a 30 quadros/s, H.264: decodificação por hardware; cerca de 10 ms
      para baixo perto do topo e de lado perto das bordas; sem lupa na mira; desenho juntado em um por quadro de tela
      (requestAnimationFrame); 5. variação B (vídeo em pé); 6. variação C (tela cheia).
   5. Futuro: exportar e importar `.trk` (arquivo de projeto do Tracker).
-- **Manuais** (pedido do autor em 22/11/2026: primeiro o técnico, depois o do aluno). Feito: os comentários de
+- **Manuais** (pedido do autor em 22/11/2026: primeiro o técnico, depois o do usuário). Feito: os comentários de
   todas as funções no padrão (ver "Como trabalhar com o autor"), que são a fonte do manual técnico; ele pode ser
   gerado deles a qualquer momento por um script em Node sem dependências, com a introdução tirada deste HandOff
   (arquitetura, coordenadas, decisões técnicas). Antes de escrever o gerador, combinar com o autor: o leitor (quem

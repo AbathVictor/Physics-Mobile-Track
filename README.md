@@ -10,7 +10,7 @@ export t, x, y for analysis in a spreadsheet, in Python or in the
 (Android, Chrome). The interface is in Brazilian Portuguese.
 
 The workflow follows [Tracker](https://physlets.org/tracker/), the free video analysis and modeling tool from Open
-Source Physics, adapted to a phone screen and to a class where each student uses their own device.
+Source Physics, adapted to a phone screen, so that each user can work on their own device.
 
 ## Features
 
@@ -19,7 +19,7 @@ Source Physics, adapted to a phone screen and to a class where each student uses
 - **Marking:** by hand, with pinch zoom, or with **automatic tracking**: template matching on each frame, a template
   that evolves slowly while anchored to the original one, and position prediction by constant acceleration or
   velocity.
-- **Several objects:** up to 10 masses in the same video, plus centers of mass made of the masses the student
+- **Several objects:** up to 10 masses in the same video, plus centers of mass made of the masses the user
   chooses. Without a scale, positions are in pixels (1 px = 1 arbitrary unit, as in Tracker).
 - **Graph and table:** y(t) or x(t) and a t, x, y table for the active object, kept in sync with playback and with
   the frame bar.

@@ -145,6 +145,11 @@ export function pontosDe(o) {
  */
 export const objAtivo = () => S.objs[S.ativo] || null;
 /**
+ * Diz se há pelo menos uma massa (a última pode ser excluída; sem massas, não há o que marcar).
+ * @returns {boolean} Há massa.
+ */
+export const temMassa = () => S.objs.some((o) => o.tipo === "massa");
+/**
  * Diz se o objeto ativo é uma massa (só massas se marcam; o centro de massa é calculado).
  * @returns {boolean} É uma massa.
  */
@@ -189,7 +194,8 @@ export function desserializar(lista, N) {
   }
   const nomes = new Set(objs.map((o) => o.nome)), cms = [];
   for (const s of lista || []) {
-    if (s.tipo !== "cm" || !objs.length || cms.length >= MAX_CMS) continue;
+    // um centro de massa sem massas também volta (a última massa pode ser excluída desde 22/11/2026)
+    if (s.tipo !== "cm" || cms.length >= MAX_CMS) continue;
     const l = LETRAS.includes(s.letra) && !cms.some((c) => c.letra === s.letra) ? s.letra : letraLivre(cms);
     cms.push({ tipo: "cm", letra: l, nome: "cm " + l, cor: COR_CM, massas: (s.massas || []).filter((n) => nomes.has(n)) });
   }

@@ -6,7 +6,7 @@
 import { inInterval, persist, predict } from "./analise.js";
 import { ensureVisible, render } from "./desenho.js";
 import { S } from "./estado.js";
-import { ativoEhMassa, objAtivo } from "./objetos.js";
+import { ativoEhMassa, objAtivo, temMassa } from "./objetos.js";
 import { show, stopPlay } from "./navegacao.js";
 import { renderPanels } from "./paineis.js";
 import { stopTrack, trackMsg } from "./rastreio/rastreador.js";
@@ -49,11 +49,12 @@ export function renderHint() {
   const el = $("modeHint");
   let txt = HINTS[S.mode], warn = false;
   if (S.mode === "marcar" && S.objs.length > 1 && ativoEhMassa()) txt = `Marcando a ${objAtivo().nome}. ` + txt;
-  if (S.mode === "marcar" && !ativoEhMassa()) { txt = `O ${objAtivo().nome} é calculado a partir das massas que você escolheu para ele (logo abaixo dos botões dos objetos). Para marcar, escolha uma massa nesses botões.`; warn = true; }
+  if (S.mode === "marcar" && !temMassa()) { txt = "Não há massas para marcar. Crie uma em + massa."; warn = true; }
+  else if (S.mode === "marcar" && !ativoEhMassa()) { txt = `O ${objAtivo().nome} é calculado a partir das massas que você escolheu para ele (logo abaixo dos botões dos objetos). Para marcar, escolha uma massa nesses botões.`; warn = true; }
   else if (S.mode === "marcar" && !inInterval(S.cur)) { txt = "Este quadro está fora do intervalo de análise. Vá para um quadro entre o início e o fim, ou ajuste o intervalo no passo 2."; warn = true; }
   el.textContent = txt; el.classList.toggle("warn", warn);
   // com o celular deitado, a escolha das massas do cm já está à vista no painel: este aviso fica só em pé
-  el.classList.toggle("cm", S.mode === "marcar" && !ativoEhMassa());
+  el.classList.toggle("cm", S.mode === "marcar" && !ativoEhMassa() && temMassa());
 }
 document.querySelectorAll("[data-mode]").forEach((b) => b.addEventListener("click", () => { if (S.frames.length) setMode(b.dataset.mode); }));
 document.querySelectorAll("[data-goto-mode]").forEach((b) => b.addEventListener("click", () => {
@@ -67,7 +68,7 @@ document.querySelectorAll("[data-goto-mode]").forEach((b) => b.addEventListener(
  */
 export function markPoint() {
   if (!S.frames.length || !S.cross || S.tracking) return;
-  if (!ativoEhMassa()) { toast("Escolha uma massa para marcar: o centro de massa é calculado."); return; }
+  if (!ativoEhMassa()) { toast(temMassa() ? "Escolha uma massa para marcar: o centro de massa é calculado." : "Não há massas para marcar. Crie uma em + massa."); return; }
   stopPlay();
   if (!inInterval(S.cur)) { toast("Este quadro está fora do intervalo de análise."); return; }
   S.marks.set(S.cur, { x: S.cross.x, y: S.cross.y });

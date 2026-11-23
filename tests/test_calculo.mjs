@@ -82,6 +82,9 @@ const sc = serializar([C1, C2]);
 const vc = desserializar(JSON.parse(JSON.stringify(sc)).concat([{ tipo: "massa", letra: "C", cor: "vermelho", massa: {}, marks: [] }]), 2);
 conferir(!("cor" in sc[0]) && sc[1].cor === "#123456" && vc[0].cor === "#ff3030" && vc[1].cor === "#123456" && vc[2].cor === "#ff40ff",
   "cor escolhida pelo usuário salva e reaberta; a cor padrão não é gravada; cor inválida volta à padrão");
+const semMassas = desserializar([{ tipo: "cm", letra: "A", massas: ["massa A"] }], 2);
+conferir(desserializar([], 2).length === 0 && semMassas.length === 1 && semMassas[0].nome === "cm A" && semMassas[0].massas.length === 0,
+  "sem massas (a última pode ser excluída): a lista volta vazia, e um cm volta sem as massas que não existem mais");
 
 console.log(falhas ? `\n${falhas} falha(s).` : "\nTudo certo.");
 process.exit(falhas ? 1 : 0);

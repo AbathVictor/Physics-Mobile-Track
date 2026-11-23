@@ -200,7 +200,7 @@ export function stopTrack() { if (TR.running) { TR.stop = true; TR.userStop = tr
 async function runTrack() {
   if (TR.running || !S.frames.length) return;
   const alvo = objAtivo();
-  if (!alvo || alvo.tipo !== "massa") { trackMsg("Escolha uma massa para rastrear: o centro de massa é calculado a partir delas.", "bad"); return; }
+  if (!alvo || alvo.tipo !== "massa") { trackMsg(S.objs.some((o) => o.tipo === "massa") ? "Escolha uma massa para rastrear: o centro de massa é calculado a partir delas." : "Não há massas para rastrear. Crie uma em + massa.", "bad"); return; }
   // os pontos vão para a massa ativa no início (trocar de objeto para o rastreamento antes)
   const marks = alvo.marks;
   if (!S.cross) { trackMsg("Toque na massa para pôr a mira nela antes de rastrear.", "bad"); return; }

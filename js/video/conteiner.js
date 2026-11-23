@@ -59,7 +59,7 @@ function rotationOf(m) {
   return ((Math.round(deg / 90) * 90) % 360 + 360) % 360;
 }
 /**
- * Nome do formato para o aluno (H.264, HEVC, VP9, AV1) a partir do codec.
+ * Nome do formato para o usuário (H.264, HEVC, VP9, AV1) a partir do codec.
  * @param {string} c Codec (por exemplo "avc1.42001f").
  * @returns {string} O nome, ou o próprio codec se não conhecido.
  */

@@ -2,7 +2,7 @@
 /**
  * @file Janela do gráfico na tela cheia (variação C do celular deitado).
  *
- * O gráfico flutua sobre o vídeo numa janela que o aluno arrasta por qualquer ponto, redimensiona puxando as bordas e os
+ * O gráfico flutua sobre o vídeo numa janela que o usuário arrasta por qualquer ponto, redimensiona puxando as bordas e os
  * cantos, e maximiza com um toque duplo (outro toque duplo volta ao tamanho e ao lugar de antes). Maximizada, ela ocupa
  * a área do vídeo que os controles flutuantes não cobrem: da coluna de etapas até a borda direita, do topo até a barra
  * de quadros. Play, ±1 e a barra de quadros continuam funcionando; Marcar ponto e Rastrear somem enquanto isso, porque o

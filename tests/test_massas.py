@@ -173,6 +173,27 @@ async def main():
         R.conferir(n == 10 and not await pg.evaluate("!!document.getElementById('addMass')"), f"no máximo 10 massas ({n}); o botão + massa some")
         R.conferir(await pg.evaluate("document.querySelectorAll('#massList .mrow').length") == 10, "o passo 5 lista as 10 massas")
 
+        print("excluir todas as massas")
+        await pg.click("[data-mode=marcar]")
+        for _ in range(10):
+            letra = await pg.evaluate("(document.querySelector('#massList [data-del]') || {}).dataset?.del || ''")
+            if not letra:
+                break
+            await pg.click(f"#massList [data-del={letra}]"); await pg.click(f"#massList [data-del={letra}]")
+        R.conferir(await pg.evaluate("__va.objs.map((o) => o.nome).join() === 'cm A' && __va.objs[0].massas.length === 0"),
+                   "a última massa também tem ✕ e pode ser excluída; o cm A fica, vazio")
+        R.conferir(await pg.evaluate("document.getElementById('bMark').disabled") and "Crie uma em + massa" in await txt("#modeHint"),
+                   "sem massas: Marcar ponto desligado e a dica manda criar uma em + massa")
+        await pg.click("#delCm"); await pg.click("#delCm")
+        R.conferir(await pg.evaluate("__va.objs.length === 0 && __va.marks.size === 0") and "Não há massas" in await txt("#table"),
+                   "sem objeto nenhum: a tabela avisa que não há massas")
+        await pg.wait_for_timeout(500)
+        await pg.reload()
+        await pg.wait_for_function("__va.frames.length === 120 && __va.low.has(0)", timeout=30000)
+        R.conferir(await pg.evaluate("__va.objs.length === 0"), "ao recarregar, continua sem objetos (a massa A não volta sozinha)")
+        await pg.click("#addMass")
+        R.conferir(await pg.evaluate("__va.objs.length === 1 && __va.objs[__va.ativo].nome === 'massa A'"), "+ massa cria a massa A de novo, ativa")
+
         print("formato antigo de salvamento")
         await pg.wait_for_timeout(500)
         antigo = {"v": 1, "start": 0, "end": 119, "every": 1, "mass": {"val": "0,1", "sig": "", "unit": "kg"},
