@@ -453,6 +453,13 @@ Vídeo 1080p a 30 quadros/s, H.264: decodificação por hardware; cerca de 10 ms
     botões). Também é preciso decidir quais colunas a tabela mostra e como ficam o CSV, a cópia da tabela e o gráfico
     comparado. O CSV deve seguir o formato do Tracker (nomes das colunas r, vx, vy, v, ax, ay, a).
   - **Unidades**: cm/s e cm/s² a partir da escala; u.a./s e u.a./s² sem escala.
+- **Rastro curto no vídeo** (pedido do autor em 22/11/2026, para depois do próximo passo): hoje o rastro (a opção
+  "rastro" e os pontos da massa ativa em Marcar, `drawOverlays` em `desenho.js`) mostra **todos** os pontos de cada
+  objeto. Como no Tracker, que tem o comprimento do rastro ajustável, mostrar **só os últimos 5** pontos antes do
+  quadro atual, para cada objeto. O número pode mudar depois (5 é o valor inicial do autor). Combinar com o autor:
+  - se o rastro curto vale também para a massa ativa durante a marcação;
+  - o que acontece com os pontos futuros (hoje em cinza);
+  - se os 5 são os 5 últimos pontos marcados ou os 5 últimos quadros.
 - Decididas para depois: **suporte a iOS** e **otimizar a sensibilidade do toque**.
 - **Roteiro combinado em 14/11/2026** (fases em ordem):
   0. ~~Dividir em módulos e usar cópias locais do mp4box e das fontes~~ (feito).
