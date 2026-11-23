@@ -12,6 +12,7 @@ import { axisHandle, persist } from "./analise.js";
 import { agendarRender, clampView, cv, maxZoom, render, resetView, viewK, zoomAt } from "./desenho.js";
 import { renderTrR } from "./entradas.js";
 import { S } from "./estado.js";
+import { abrirFita, tocouNoRotulo } from "./fita.js";
 import { stopPlay } from "./navegacao.js";
 import { renderPanels, renderScaleInfo } from "./paineis.js";
 import { autoSizeAt, stopTrack } from "./rastreio/rastreador.js";
@@ -76,7 +77,9 @@ cv.addEventListener("pointerdown", (e) => {
     const d0 = dist(p, S.axes.o), da = dist(p, axisHandle());
     if (Math.min(d0, da) < R) grab = d0 <= da ? "o" : "a";
   }
-  gest = { type: grab ? "handle" : "pending", grab, id: e.pointerId, sx: e.clientX, sy: e.clientY, lx: e.clientX, ly: e.clientY, t: performance.now(), multi: false, start: p, hp: grab === "a" ? axisHandle() : null };
+  // na ferramenta Escala, um toque curto na etiqueta da fita (fora das pontas) abre o campo da distância (fita.js)
+  const q = canvasXY(e.clientX, e.clientY), rotulo = !grab && S.mode === "escala" && tocouNoRotulo(q.x, q.y);
+  gest = { type: grab ? "handle" : "pending", grab, rotulo, id: e.pointerId, sx: e.clientX, sy: e.clientY, lx: e.clientX, ly: e.clientY, t: performance.now(), multi: false, start: p, hp: grab === "a" ? axisHandle() : null };
   if (grab) {
     S.grab = grab; S.lastGrab = grab;
     // a lupa acompanha o dedo ao arrastar uma ponta da escala
@@ -104,7 +107,8 @@ cv.addEventListener("pointermove", (e) => {
 });
 /**
  * Termina o toque de um dedo: na pinça, o dedo que ficou passa a arrastar a imagem; um toque curto em Marcar põe
- * a mira (e mede o tamanho do alvo, com a medição automática); soltar uma ponta guarda a escala ou os eixos.
+ * a mira (e mede o tamanho do alvo, com a medição automática); um toque curto na etiqueta da fita, em Escala, abre o
+ * campo da distância (fita.js); soltar uma ponta guarda a escala ou os eixos.
  * @param {PointerEvent} e Evento pointerup ou pointercancel.
  */
 function endPointer(e) {
@@ -120,6 +124,7 @@ function endPointer(e) {
   }
   if (e.pointerId !== gest.id) return;
   const g = gest; gest = null;
+  if (g.type === "pending" && g.rotulo && !g.multi && e.type === "pointerup" && performance.now() - g.t < 700) { render(); abrirFita(); return; }
   if (g.type === "pending" && !g.multi && e.type === "pointerup" && S.mode === "marcar" && performance.now() - g.t < 700) {
     S.cross = { x: clampF(g.start.x, 0, S.dispW), y: clampF(g.start.y, 0, S.dispH) };
     if (S.trAuto && autoSizeAt(S.cross)) { renderTrR(); persist(); }

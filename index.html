@@ -257,6 +257,8 @@
 </div>
 <!-- lupa da escala (js/lupa.js): aparece só enquanto se arrasta uma ponta da fita de calibração -->
 <canvas class="lupa" id="lupa" hidden aria-hidden="true"></canvas>
+<!-- número da fita de calibração (js/fita.js): aparece ao tocar na etiqueta da fita, na ferramenta Escala -->
+<div class="fita-ed" id="fitaEd" hidden><input class="num" id="fitaIn" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="ex.: 30" aria-label="Distância real entre as pontas da fita"><span id="fitaUn">cm</span></div>
 <!-- gaveta ≡ (js/gaveta.js) -->
 <div class="gaveta-fundo" id="gavetaFundo"></div>
 <aside class="gaveta" id="gaveta" role="dialog" aria-modal="true" aria-labelledby="gavetaT" aria-hidden="true" inert>

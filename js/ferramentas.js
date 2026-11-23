@@ -15,7 +15,7 @@ import { pump } from "./video/decodificador.js";
 
 const HINTS = {
   nav: "Use o play e os botões para achar o trecho do movimento. Pince o vídeo com dois dedos para aproximar. Escolha uma ferramenta para calibrar e marcar.",
-  escala: "Pince com dois dedos para aproximar a régua. Arraste cada ponta amarela até uma marca da régua e digite a distância no passo 3.",
+  escala: "Pince com dois dedos para aproximar a régua. Arraste cada ponta amarela até uma marca da régua e toque no número da fita para digitar a distância.",
   eixos: "Pince para aproximar. Arraste o círculo da origem até o ponto de referência; para girar os eixos, arraste o círculo na ponta do eixo x.",
   marcar: "Pince com dois dedos para aproximar e arraste com um dedo para mover a imagem. Toque no centro da massa para pôr a mira ali e depois em Marcar ponto.",
 };

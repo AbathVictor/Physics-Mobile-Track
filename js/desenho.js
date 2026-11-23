@@ -198,13 +198,23 @@ function circle(g, x, y, r, color, fill, edge) {
  * @param {number} x Centro x (px da tela).
  * @param {number} y Centro y (px da tela).
  * @param {string} color Cor do texto.
+ * @returns {{x: number, y: number, w: number, h: number}} O retângulo da etiqueta (px do canvas).
  */
 function label(g, text, x, y, color) {
   g.font = "500 11px " + OV.mono; g.textAlign = "center"; g.textBaseline = "middle";
   const w = g.measureText(text).width + 10;
   g.fillStyle = OV.dark; g.beginPath(); g.roundRect ? g.roundRect(x - w / 2, y - 9, w, 18, 4) : g.rect(x - w / 2, y - 9, w, 18); g.fill();
   g.fillStyle = color; g.fillText(text, x, y + 0.5);
+  return { x: x - w / 2, y: y - 9, w, h: 18 };
 }
+// retângulo da etiqueta da fita no último desenho, só na ferramenta Escala (null fora dela)
+let fitaRect = null;
+/**
+ * Retângulo da etiqueta da fita de calibração no último desenho (px do canvas), para o toque que abre o campo da
+ * distância (fita.js). Só existe na ferramenta Escala.
+ * @returns {{x: number, y: number, w: number, h: number}|null} O retângulo, ou null.
+ */
+export const rotuloDaFita = () => fitaRect;
 /**
  * Desenha as sobreposições: eixos (fortes na ferramenta Eixos), escala com a distância, trajetórias e pontos do
  * quadro atual de todos os objetos (cada um na sua cor, o ativo por cima; com mais de um objeto, a letra da massa ou o
@@ -216,6 +226,7 @@ function label(g, text, x, y, color) {
 function drawOverlays(g, T) {
   const P = (p) => [p.x * T.k + T.ox, p.y * T.k + T.oy];
   const W = S.dispW, H = S.dispH, diag = Math.hypot(W, H);
+  fitaRect = null;
   // eixos
   const a = S.axes.ang, o = S.axes.o, ux = { x: Math.cos(a), y: -Math.sin(a) }, uy = { x: -Math.sin(a), y: -Math.cos(a) };
   const strongAx = S.mode === "eixos";
@@ -250,7 +261,9 @@ function drawOverlays(g, T) {
       if (S.grab === "p2") circle(g, p2[0], p2[1], 3, OV.scale, true);
     }
     const Lv = parseNum(S.scale.len);
-    label(g, Lv > 0 ? `${fmt(Lv, decOf(S.scale.len))} ${S.scale.unit}` : "digite a distância", (p1[0] + p2[0]) / 2 + nx * 2.4, (p1[1] + p2[1]) / 2 + ny * 2.4, OV.scale);
+    const rr = label(g, Lv > 0 ? `${fmt(Lv, decOf(S.scale.len))} ${S.scale.unit}` : "digite a distância", (p1[0] + p2[0]) / 2 + nx * 2.4, (p1[1] + p2[1]) / 2 + ny * 2.4, OV.scale);
+    // na ferramenta Escala, um toque na etiqueta abre o campo para digitar a distância (fita.js, como no Tracker)
+    if (S.mode === "escala") fitaRect = rr;
     g.globalAlpha = 1;
   }
   // trajetórias e pontos do quadro atual de todos os objetos, cada um na sua cor, com o objeto ativo por cima;

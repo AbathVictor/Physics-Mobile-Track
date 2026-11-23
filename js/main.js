@@ -15,6 +15,7 @@ import "./video/conteiner.js";
 import "./video/decodificador.js";
 import "./analise.js";
 import "./desenho.js";
+import "./fita.js";
 import "./gestos.js";
 import "./rastreio/rastreador.js";
 import "./navegacao.js";

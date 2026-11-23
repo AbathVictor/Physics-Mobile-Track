@@ -26,6 +26,8 @@ There are no releases yet. Version 1.0.0 will be the first one, archived on Zeno
   and memory stays within limits.
 - *Sobre* (About) screen with the author, the license, a link to the source code, credits and third-party
   notices.
+- Tapping the number on the calibration stick (Scale tool) opens a field right there to type the real distance, as
+  in Tracker.
 - License files: AGPL-3.0-or-later for the code, CC BY-SA 4.0 for the documentation, and a NOTICE for third-party
   components; an SPDX license line in every source file; citation metadata (CITATION.cff).
 

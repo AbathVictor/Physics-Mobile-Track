@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Service worker da Videoanálise Móvel: guarda uma cópia de todos os arquivos do aplicativo no aparelho, para que ele
-// continue funcionando sem internet (modo avião, por exemplo) e possa até ser recarregada sem conexão.
+// continue funcionando sem internet (modo avião, por exemplo) e possa até ser recarregado sem conexão.
 //
 // Estratégia: rede primeiro. Com conexão, cada arquivo vem da rede (o usuário recebe sempre a versão publicada) e a
 // cópia guardada é atualizada; sem conexão, ou se a rede demorar, usa a cópia guardada.
@@ -12,7 +12,7 @@
 // de Oscilações. Por isso o nome tem um prefixo próprio, e cada um apaga só as cópias com o seu prefixo (antes, o
 // service worker apagava todas as outras, o que apagaria as de outro aplicativo no mesmo endereço).
 const PREFIXO = "vam-";
-const VERSAO = PREFIXO + "11";
+const VERSAO = PREFIXO + "12";
 const ARQUIVOS = [
   "./",
   "index.html",
@@ -50,6 +50,7 @@ const ARQUIVOS = [
   "js/entradas.js",
   "js/estado.js",
   "js/ferramentas.js",
+  "js/fita.js",
   "js/gaveta.js",
   "js/gestos.js",
   "js/icones.js",

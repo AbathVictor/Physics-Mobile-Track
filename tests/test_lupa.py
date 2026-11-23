@@ -2,8 +2,9 @@
 """Lupa da escala: aparece só ao arrastar uma ponta da fita de calibração (não nos eixos, na mira, ao marcar ou ao
 arrastar a imagem); fica acima do dedo, passa para baixo perto do topo da tela e para o outro lado perto das bordas
 laterais; acompanha o dedo; o centro mostra o pixel do vídeo onde está a ponta; aumento de 2,5× a vista (de 3 a 12 px
-de tela por pixel do vídeo); some ao soltar. Em pé (412 × 915) e deitado (915 × 412, na tela cheia, como a página
-abre).
+de tela por pixel do vídeo); some ao soltar. Número da fita: um toque na etiqueta, em Escala, abre o campo da distância
+(Enter e toque fora confirmam, Esc e Voltar cancelam; em Marcar, não abre). Em pé (412 × 915) e deitado (915 × 412,
+na tela cheia, como o aplicativo abre).
 
 Usa o vídeo de exemplo. Uso:  python tests/test_lupa.py
 """
@@ -130,6 +131,81 @@ async def caso(R, pg, cdp, nome):
     R.conferir(await pg.evaluate(LUPA) is None, f"[{nome}] tocar para pôr a mira não mostra a lupa")
 
 
+ROTULO = """() => import('./js/desenho.js').then((m) => { const r = m.rotuloDaFita(); if (!r) return null;
+  const c = document.getElementById('cv').getBoundingClientRect(); return [c.left + r.x + r.w / 2, c.top + r.y + r.h / 2]; })"""
+EDITOR = """() => { const e = document.getElementById('fitaEd'); if (e.hidden) return null; const r = e.getBoundingClientRect();
+  return { x: r.left, y: r.top, w: r.width, h: r.height, foco: document.activeElement && document.activeElement.id,
+           hist: history.state && history.state.va, un: document.getElementById('fitaUn').textContent }; }"""
+
+
+async def fita(R, pg, cdp, nome):
+    """Número da fita: um toque na etiqueta, na ferramenta Escala, abre o campo da distância ali mesmo."""
+    print(f"número da fita {nome}")
+    d = Dedo(cdp)
+    sel = (lambda m: f"#etapas [data-etapa={m}]") if nome == "deitado" else (lambda m: f".modes [data-mode={m}]")
+    await pg.click(sel("escala")); await quadro(pg)
+    W, H = await pg.evaluate("[innerWidth, innerHeight]")
+    # na tela cheia, a janela do gráfico flutua sobre o vídeo e cobre a etiqueta no vídeo de exemplo: recolhida
+    recolheu = nome == "deitado" and not await pg.evaluate("document.getElementById('pMini').classList.contains('fechado')")
+    if recolheu:
+        await pg.click("#pMiniRec"); await quadro(pg)
+
+    async def tocar_rotulo():
+        p = await pg.evaluate(ROTULO)
+        await d.descer(*p); await d.subir(); await quadro(pg)
+        return p
+
+    await tocar_rotulo()
+    E = await pg.evaluate(EDITOR)
+    R.conferir(E is not None and E["foco"] == "fitaIn" and E["hist"] == "fita" and E["un"] == "cm",
+               f"[{nome}] tocar no número da fita abre o campo, com o foco e a unidade ({E})")
+    if E is None:
+        return
+    R.conferir(E["x"] >= 0 and E["y"] >= 0 and E["x"] + E["w"] <= W and E["y"] + E["h"] <= H, f"[{nome}] o campo fica inteiro na tela")
+    await pg.fill("#fitaIn", "45"); await pg.press("#fitaIn", "Enter")
+    await pg.wait_for_function("history.state === null || history.state.va !== 'fita'", timeout=3000)
+    R.conferir(await pg.evaluate("__va.scale.len === '45' && document.getElementById('scaleLen').value === '45' && document.getElementById('fitaEd').hidden"),
+               f"[{nome}] Enter confirma: a distância vai para a escala e para o campo do passo 3")
+
+    await tocar_rotulo()
+    await pg.fill("#fitaIn", "abc"); await pg.press("#fitaIn", "Enter")
+    R.conferir(await pg.evaluate(EDITOR) is not None and await pg.evaluate("document.getElementById('fitaIn').classList.contains('bad')"),
+               f"[{nome}] um valor que não é número não entra, e o campo fica aberto para corrigir")
+    await pg.press("#fitaIn", "Escape")
+    await pg.wait_for_function("history.state === null || history.state.va !== 'fita'", timeout=3000)
+    R.conferir(await pg.evaluate("__va.scale.len") == "45" and await pg.evaluate(EDITOR) is None, f"[{nome}] Esc cancela")
+
+    await tocar_rotulo()
+    await pg.fill("#fitaIn", "99")
+    await pg.evaluate("history.back()")
+    await pg.wait_for_function("document.getElementById('fitaEd').hidden", timeout=3000)
+    R.conferir(await pg.evaluate("__va.scale.len") == "45", f"[{nome}] o Voltar cancela, sem sair do aplicativo")
+
+    await tocar_rotulo()
+    await pg.fill("#fitaIn", "12,5")
+    c = await pg.evaluate("(() => { const r = document.getElementById('cv').getBoundingClientRect(); return [r.left + r.width * 0.75, r.top + r.height * 0.5]; })()")
+    await d.descer(*c); await d.subir(); await quadro(pg)
+    await pg.wait_for_function("history.state === null || history.state.va !== 'fita'", timeout=3000)
+    R.conferir(await pg.evaluate("__va.scale.len") == "12,5" and await pg.evaluate(EDITOR) is None, f"[{nome}] um toque fora confirma")
+
+    # tocar no ≡ com o campo aberto: confirma, e a gaveta abre e continua aberta (sem o history.back() da fita)
+    await tocar_rotulo()
+    await pg.fill("#fitaIn", "7")
+    await pg.click("#menuBtn")
+    await pg.wait_for_timeout(400)
+    R.conferir(await pg.evaluate("__va.scale.len === '7' && document.getElementById('gaveta').getAttribute('aria-hidden') === 'false'"),
+               f"[{nome}] tocar no ≡ com o campo aberto confirma o valor e abre a gaveta, que continua aberta")
+    await pg.keyboard.press("Escape"); await pg.wait_for_timeout(300)
+
+    p = await pg.evaluate(ROTULO)
+    await pg.click(sel("marcar")); await quadro(pg)
+    await d.descer(*p); await d.subir(); await quadro(pg)
+    R.conferir(await pg.evaluate(EDITOR) is None, f"[{nome}] em Marcar, o toque no lugar do número põe a mira e não abre o campo")
+    await pg.evaluate("document.getElementById('scaleLen').value = '30'; document.getElementById('scaleLen').dispatchEvent(new Event('input'))")
+    if recolheu:
+        await pg.click("#pMiniRec")
+
+
 async def main():
     R = Resultado()
     async with async_playwright() as p:
@@ -141,10 +217,12 @@ async def main():
         R.conferir(a == [3, 5, 12], f"2,5× a vista, entre 3 e 12 px de tela por pixel do vídeo ({a})")
 
         await caso(R, pg, cdp, "em pé")
+        await fita(R, pg, cdp, "em pé")
         await pg.set_viewport_size({"width": 915, "height": 412})
         await pg.wait_for_function("document.body.classList.contains('paisagem')")
         await pg.wait_for_timeout(200)
         await caso(R, pg, cdp, "deitado")
+        await fita(R, pg, cdp, "deitado")
 
         R.conferir(not erros, "sem erros de JavaScript" + (f": {erros}" if erros else ""))
         await nav.close()
