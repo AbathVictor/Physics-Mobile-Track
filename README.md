@@ -1,7 +1,7 @@
 # Videoanálise Móvel
 
 **Mobile video analysis for physics labs.** Videoanálise Móvel is a web application for frame-by-frame video
-analysis on an Android phone. Students record an experiment (a mass-spring system, a pendulum) with the phone's
+analysis on an Android phone. Users record an experiment (a mass-spring system, a pendulum) with the phone's
 camera, calibrate the scale and the axes, mark the position of each object by hand or with automatic tracking, and
 export t, x, y for analysis in a spreadsheet, in Python or in the
 [Laboratório de Oscilações](https://abathvictor.github.io/Physics_artifacts/laboratorio-oscilacoes/OscLab.html).
