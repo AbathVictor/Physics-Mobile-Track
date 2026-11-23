@@ -5,7 +5,7 @@
  *
  * Tocar ou arrastar no trilho muda o quadro. Arrastar uma alça (abaixo do trilho) muda o início ou o fim, sempre num
  * quadro inteiro (a alça gruda no quadro mais próximo), e mostra no vídeo o quadro em que ela está. Os botões "Início no
- * quadro atual" e "Fim no quadro atual" continuam no Parâmetros do Intervalo, para o ajuste fino com −1/+1. Enquanto o
+ * quadro atual" e "Fim no quadro atual" continuam no Parâmetros da etapa Vídeo, para o ajuste fino com −1/+1. Enquanto o
  * dedo arrasta (no trilho ou numa alça), a imagem é a prévia do quadro-chave mais próximo (S.arrasto, decodificador.js),
  * que sai rápido mesmo em vídeos pesados; quando o dedo para (0,25 s parado) ou solta, vem o quadro exato. O número do
  * quadro é sempre o exato. Um toque sem arrastar vai direto ao quadro exato. Teclado: setas mudam o quadro ou a alça em

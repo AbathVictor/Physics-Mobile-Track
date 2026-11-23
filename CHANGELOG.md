@@ -45,3 +45,4 @@ There are no releases yet. Version 1.0.0 will be the first one, archived on Zeno
   to the object it was armed for.
 - The object picker also takes the active mass's value, uncertainty and unit (the same fields as step 5), so a mass
   can be set right when it is chosen.
+- In landscape, the first step is now called *Vídeo* (it was *Intervalo*), with a screen-and-play icon.

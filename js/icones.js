@@ -33,7 +33,8 @@ export const IC = {
   abaixo: svg('<path d="M6 9l6 6 6-6"/>'),
   painel: svg('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M14 4v16M16.5 8.5h2M16.5 12h2"/>'),
   // etapas (coluna da esquerda, com o celular deitado)
-  intervalo: svg('<path d="M4 12h16M7 8v8M17 8v8"/>'),
+  // etapa Vídeo: uma tela com o triângulo de play (antes, o do Intervalo lembrava um halter)
+  video: svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.2v5.6l4.6-2.8z" fill="currentColor"/>'),
   escala: svg('<path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/>'),
   eixos: svg('<path d="M5 3v16h16"/><path d="M5 19l7-7"/>'),
   massas: svg('<circle cx="8" cy="15" r="4"/><circle cx="17" cy="8" r="3"/>'),

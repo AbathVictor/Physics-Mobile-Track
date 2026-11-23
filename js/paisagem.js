@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * @file Celular deitado (paisagem, com no máximo 500 px de altura): diagramação em três colunas.
- *   esquerda: coluna das etapas (Intervalo, Escala, Eixos, Massas, Marcar, Dados);
+ *   esquerda: coluna das etapas (Vídeo, Escala, Eixos, Massas, Marcar, Dados);
  *   centro:   o vídeo na altura toda e, embaixo, a barra de controles (play, voltar ao início, barra de quadros com
  *             as duas alças do intervalo, −1, +1);
  *   direita:  painel com a gaveta dos objetos (uma linha só: a alça com o objeto ativo e y(t)/x(t); a fileira dos
@@ -61,7 +61,9 @@ avisoGire();
 
 // aba: a que abre ao escolher a etapa (Parâmetros nas de preparação, Gráfico em Marcar e Dados)
 const ETAPAS = [
-  { id: "intervalo", rotulo: "Intervalo", icone: IC.intervalo, modo: "nav", aba: "param" },
+  // "Vídeo" (pedido do autor, 22/11/2026; antes "Intervalo"): abrir o vídeo e escolher o intervalo. O id continua
+  // "intervalo" (estado e testes)
+  { id: "intervalo", rotulo: "Vídeo", icone: IC.video, modo: "nav", aba: "param" },
   { id: "escala", rotulo: "Escala", icone: IC.escala, modo: "escala", aba: "param" },
   { id: "eixos", rotulo: "Eixos", icone: IC.eixos, modo: "eixos", aba: "param" },
   { id: "massas", rotulo: "Massas", icone: IC.massas, modo: "nav", aba: "param" },
@@ -147,7 +149,7 @@ function reorganizar(v) {
   // avisos ficam no painel, nunca sobre o vídeo
   mover($("trackMsg"), $("pAvisos")); mover($("modeHint"), $("pAvisos"));
   mover($("markbar"), $("pRodape")); mover($("trackRow"), $("pRodape"));
-  // "Reproduzir do início ao fim" e "Repetir" vão para o Parâmetros do Intervalo
+  // "Reproduzir do início ao fim" e "Repetir" vão para o Parâmetros da etapa Vídeo
   mover($("introw"), $("blocoInt"));
   for (const bl of [...document.querySelectorAll(".panel > .block")]) mover(bl, $("pParam"));
   // y(t)/x(t) na linha da alça dos objetos; na tela cheia, no cabeçalho da janela do gráfico (janela.js)
