@@ -38,6 +38,9 @@ export const S = {
   // objetos (massas e centro de massa, ver objetos.js), unidade das massas e contador de alterações; S.marks
   // (pontos do objeto ativo) é definido em objetos.js
   objs: [], ativo: 0, massUnit: "g", ver: 0,
+  // nomes dos objetos comparados no gráfico além do ativo (comparar.js; vai no salvamento por vídeo) e os nomes das
+  // curvas do último desenho do gráfico (dados.js; os testes conferem)
+  comparar: new Set(), graficoCurvas: [],
   // celular deitado (paisagem.js): etapa e aba do painel escolhidas e tela cheia; não vão no salvamento por vídeo.
   // O aplicativo abre em tela cheia (pedido do autor, 21/11/2026); sair dela é escolha do usuário, no botão do canto de cima
   etapa: "intervalo", aba: "param", telaCheia: true,

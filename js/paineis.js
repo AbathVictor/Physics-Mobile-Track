@@ -6,6 +6,7 @@
 
 import { UA, dtMedio, escalaReal, inInterval, tempo } from "./analise.js";
 import { atualizarBarra } from "./barra.js";
+import { renderComparar } from "./comparar.js";
 import { renderData } from "./dados.js";
 import { ctx, cv } from "./desenho.js";
 import { renderTrR } from "./entradas.js";
@@ -128,7 +129,7 @@ export function renderPanels() {
   const isDef = Math.abs(S.axes.o.x - S.dispW / 2) < 0.5 && Math.abs(S.axes.o.y - S.dispH / 2) < 0.5 && S.axes.ang === 0;
   $("stAxes").className = isDef ? "st def" : "st ok"; $("stAxes").textContent = isDef ? "padrão: origem no centro" : "definidos";
   // objetos e massas
-  renderObjs(); renderMassas();
+  renderObjs(); renderMassas(); renderComparar();
   // marcação
   const cl = $("clearMarks"), o = objAtivo();
   if (!cl.classList.contains("arm")) cl.textContent = ativoEhMassa() ? `Apagar as marcações da ${o.nome}` : "Apagar as marcações";

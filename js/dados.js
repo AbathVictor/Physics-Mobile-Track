@@ -95,32 +95,54 @@ $("table").addEventListener("click", (e) => { const tr = e.target.closest("tr[da
 function niceStep(raw) { const p = 10 ** Math.floor(Math.log10(raw)), r = raw / p; return (r < 1.5 ? 1 : r < 3.5 ? 2 : r < 7.5 ? 5 : 10) * p; }
 let plotMap = null;
 /**
- * Desenha o gráfico y(t) ou x(t) do objeto ativo: grade, números dos eixos, linha e pontos (os futuros na cor de
- * borda) e o anel âmbar no ponto do quadro atual; guarda a escala para o toque no gráfico.
+ * Curvas do gráfico: o objeto ativo e os objetos comparados com ele (S.comparar, comparar.js), na ordem da lista
+ * dos objetos, com o ativo por último (desenhado por cima).
+ * @returns {Array<{o: object, R: Array<object>, ativo: boolean}>} Cada objeto com as linhas que têm posição.
+ */
+function curvas() {
+  if (!S.frames.length) return [];
+  const a = objAtivo();
+  const outros = S.objs.filter((o) => o !== a && S.comparar.has(o.nome));
+  return [...outros, ...(a ? [a] : [])].map((o) => ({ o, R: rows(o).filter((q) => Number.isFinite(q.x)), ativo: o === a }));
+}
+/**
+ * Desenha o gráfico y(t) ou x(t) do objeto ativo e dos objetos comparados com ele (como o "Comparar com" do
+ * Tracker; pedido do autor, 22/11/2026): grade e números dos eixos (cobrindo todas as curvas), linha e pontos de cada
+ * curva na cor do objeto e o anel âmbar no ponto do quadro atual do ativo; guarda a escala para o toque no gráfico.
+ *
+ * Com uma curva só, os pontos futuros (depois do quadro atual) ficam na cor de borda, como antes. Com várias, o
+ * futuro de cada curva fica na cor do próprio objeto, apagado (decisão do autor: em cinza, as curvas não se
+ * distinguiriam), e cada curva leva o nome na ponta direita ("A", "cm A": os cm têm todos o verde do Tracker).
  */
 export function drawPlot() {
   const c = $("plot"), g = c.getContext("2d");
   const r = c.getBoundingClientRect(), k = Math.min(3, window.devicePixelRatio || 1);
   c.width = Math.max(1, Math.round(r.width * k)); c.height = Math.max(1, Math.round(r.height * k));
   g.setTransform(k, 0, 0, k, 0, 0); g.clearRect(0, 0, r.width, r.height);
-  const o = objAtivo(), R = S.frames.length ? rows(o).filter((q) => Number.isFinite(q.x)) : [];
-  $("plotEmpty").hidden = R.length >= 1;
+  const o = objAtivo(), todas = curvas(), vis = todas.filter((s) => s.R.length), comp = todas.length > 1;
+  $("plotEmpty").hidden = vis.length >= 1;
   const sc = o && o.tipo === "cm" ? situacaoCm(o) : null;
   $("plotEmpty").textContent = !o ? SEM_OBJETOS : sc && sc.bad ? "O centro de massa ainda não tem posições." : "Os pontos marcados aparecem aqui.";
   plotMap = null;
   // quadro que o gráfico mostra como o atual (anel âmbar); os testes conferem que acompanha o vídeo no play
   S.graficoNoQuadro = S.cur;
-  if (!R.length) return;
+  S.graficoCurvas = vis.map((s) => s.o.nome);
+  if (!vis.length) return;
   const cs = getComputedStyle(document.documentElement), tok = (n) => cs.getPropertyValue(n).trim();
   // pontos na cor do objeto, com contorno fino (escuro no tema claro, claro no escuro); os futuros (depois do
-  // quadro atual) na cor de borda; o ponto do quadro atual com um anel âmbar (o indicador do quadro atual)
-  const ink = tok("--ink-soft"), grid = tok("--grid"), cor = o.cor, cinza = tok("--line"), edge = tok("--ov-edge"), hi = tok("--amber");
-  const key = S.plotVar, ys = R.map((q) => q[key]), ts = R.map((q) => q.t);
+  // quadro atual) na cor de borda (com várias curvas, na cor do objeto, apagada); o ponto do quadro atual do ativo
+  // com um anel âmbar (o indicador do quadro atual)
+  const ink = tok("--ink-soft"), grid = tok("--grid"), cinza = tok("--line"), edge = tok("--ov-edge"), hi = tok("--amber"), escuro = tok("--ov-dark");
+  const key = S.plotVar, R = vis.flatMap((s) => s.R), ys = R.map((q) => q[key]), ts = R.map((q) => q.t);
   let tmin = Math.min(...ts), tmax = Math.max(...ts), ymin = Math.min(...ys), ymax = Math.max(...ys);
   if (tmax - tmin < 1e-9) { tmin -= 0.5; tmax += 0.5; }
   if (ymax - ymin < 1e-12) { const pad = Math.abs(ymin) * 0.1 || 1; ymin -= pad; ymax += pad; }
   const py = (ymax - ymin) * 0.08; ymin -= py; ymax += py;
-  const L = 52, Rm = 10, Tm = 10, B = 26, W = r.width - L - Rm, H = r.height - Tm - B;
+  // com várias curvas, a margem da direita abre espaço para os nomes nas pontas
+  const nomeCurto = (x) => x.tipo === "massa" ? x.letra : x.nome;
+  g.font = "500 10px " + tok("--font-mono");
+  const Rm = comp ? 14 + Math.max(...vis.map((s) => g.measureText(nomeCurto(s.o)).width)) : 10;
+  const L = 52, Tm = 10, B = 26, W = r.width - L - Rm, H = r.height - Tm - B;
   const X = (t) => L + (t - tmin) / (tmax - tmin) * W, Y = (v) => Tm + (1 - (v - ymin) / (ymax - ymin)) * H;
   g.font = "10px " + tok("--font-mono"); g.lineWidth = 1;
   const ys0 = niceStep((ymax - ymin) / 4), ts0 = niceStep((tmax - tmin) / 5);
@@ -131,14 +153,36 @@ export function drawPlot() {
   for (let v = Math.ceil(tmin / ts0) * ts0; v <= tmax + 1e-12; v += ts0) { g.beginPath(); g.moveTo(X(v), Tm); g.lineTo(X(v), Tm + H); g.stroke(); g.fillText(fmt(Math.abs(v) < ts0 * 1e-6 ? 0 : v, dt), X(v), Tm + H + 4); }
   g.save(); g.translate(11, Tm + H / 2); g.rotate(-Math.PI / 2); g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(`${key} (${unidade()})`, 0, 0); g.restore();
   g.textAlign = "right"; g.textBaseline = "bottom"; g.fillText("t (s)", L + W, Tm + H - 2);
-  const linha = (Q, c, a) => { if (Q.length < 2) return; g.strokeStyle = c; g.lineWidth = 1.2; g.globalAlpha = a; g.beginPath(); Q.forEach((q, j) => { j ? g.lineTo(X(q.t), Y(q[key])) : g.moveTo(X(q.t), Y(q[key])); }); g.stroke(); g.globalAlpha = 1; };
-  const passados = R.filter((q) => q.i <= S.cur), futuros = R.filter((q) => q.i >= S.cur);
-  linha(futuros, cinza, 1); linha(passados, cor, 0.6);
-  for (const q of R) {
-    g.fillStyle = edge; g.beginPath(); g.arc(X(q.t), Y(q[key]), 3.4, 0, 2 * Math.PI); g.fill();
-    g.fillStyle = q.i > S.cur ? cinza : cor; g.beginPath(); g.arc(X(q.t), Y(q[key]), 2.4, 0, 2 * Math.PI); g.fill();
+  const linha = (Q, c, a, w) => { if (Q.length < 2) return; g.strokeStyle = c; g.lineWidth = w; g.globalAlpha = a; g.beginPath(); Q.forEach((q, j) => { j ? g.lineTo(X(q.t), Y(q[key])) : g.moveTo(X(q.t), Y(q[key])); }); g.stroke(); g.globalAlpha = 1; };
+  // os comparados primeiro; o ativo por cima, com a linha mais grossa
+  for (const s of vis) {
+    const cor = s.o.cor, w = !comp ? 1.2 : s.ativo ? 1.6 : 1.1, rp = s.ativo ? 2.4 : 2;
+    const passados = s.R.filter((q) => q.i <= S.cur), futuros = s.R.filter((q) => q.i >= S.cur);
+    if (comp) linha(futuros, cor, 0.25, w); else linha(futuros, cinza, 1, w);
+    linha(passados, cor, comp ? 0.75 : 0.6, w);
+    for (const q of s.R) {
+      const futuro = q.i > S.cur;
+      g.globalAlpha = comp && futuro ? 0.3 : 1;
+      g.fillStyle = edge; g.beginPath(); g.arc(X(q.t), Y(q[key]), rp + 1, 0, 2 * Math.PI); g.fill();
+      g.fillStyle = futuro && !comp ? cinza : cor; g.beginPath(); g.arc(X(q.t), Y(q[key]), rp, 0, 2 * Math.PI); g.fill();
+    }
+    g.globalAlpha = 1;
   }
-  const cq = R.find((q) => q.i === S.cur);
+  // nome de cada curva na ponta direita, numa etiqueta escura (como as do vídeo), sem sobrepor as outras
+  if (comp) {
+    const et = vis.map((s) => { const q = s.R[s.R.length - 1]; return { s, x: X(q.t) + 6, y: Y(q[key]) }; }).sort((a, b) => a.y - b.y);
+    for (let j = 1; j < et.length; j++) if (et[j].y - et[j - 1].y < 14) et[j].y = et[j - 1].y + 14;
+    const sobra = et.length ? et[et.length - 1].y - (Tm + H) : 0;
+    if (sobra > 0) et.forEach((e) => { e.y -= sobra; });
+    g.font = "500 10px " + tok("--font-mono"); g.textAlign = "left"; g.textBaseline = "middle";
+    for (const e of et) {
+      const t = nomeCurto(e.s.o), w = g.measureText(t).width + 6;
+      const x = Math.min(e.x, r.width - w - 1);
+      g.fillStyle = escuro; g.beginPath(); g.roundRect ? g.roundRect(x, e.y - 7, w, 14, 3) : g.rect(x, e.y - 7, w, 14); g.fill();
+      g.fillStyle = e.s.o.cor; g.fillText(t, x + 3, e.y + 0.5);
+    }
+  }
+  const at = vis.find((s) => s.ativo), cq = at && at.R.find((q) => q.i === S.cur);
   if (cq) {
     g.lineWidth = 4.5; g.strokeStyle = edge; g.beginPath(); g.arc(X(cq.t), Y(cq[key]), 6, 0, 2 * Math.PI); g.stroke();
     g.lineWidth = 2.5; g.strokeStyle = hi; g.stroke();

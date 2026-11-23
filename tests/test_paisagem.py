@@ -108,6 +108,14 @@ async def janela_do_grafico(pg, R):
     await pg.evaluate("__va.objs[0].marks.clear(); for (let i = 10; i <= 40; i++) __va.objs[0].marks.set(i, { x: 300 + 2 * i, y: 150 + 30 * Math.sin(i / 4) })")
     await pg.click("#pMini [data-plot=x]"); await pg.click("#pMini [data-plot=y]")
     R.conferir(await pg.evaluate("__va.plotVar === 'y' && document.getElementById('plotEmpty').hidden"), "y(t)/x(t) do cabeçalho funcionam; gráfico da massa A com pontos")
+    # comparar: o botão vai com y(t)/x(t) para o cabeçalho; a lista abre dentro da tela, por cima da janela
+    await pg.click("#cmpBtn")
+    L = await ret(pg, "#cmpLista")
+    R.conferir(await pg.evaluate("document.getElementById('pMiniCab').contains(document.getElementById('cmpBtn')) && !document.getElementById('cmpLista').hidden")
+               and L[0] >= 0 and L[1] >= 0 and L[0] + L[2] <= W and L[1] + L[3] <= H and perto(await ret(pg, "#pMini"), j),
+               "comparar no cabeçalho da janela: a lista abre inteira na tela, e a janela não se move")
+    await pg.keyboard.press("Escape")
+    await pg.wait_for_function("document.getElementById('cmpLista').hidden && !(history.state && history.state.va === 'comparar')", timeout=3000)
 
     # recolher e abrir
     await pg.click("#pMiniRec")
@@ -158,6 +166,8 @@ async def janela_do_grafico(pg, R):
     m = await puxar("e", -2000, 0)
     m = await puxar("n", 0, 2000)
     R.conferir(perto(m[2:], [220, 140]), f"tamanho mínimo de 220 × 140 px ({m[2]:.0f} × {m[3]:.0f})")
+    R.conferir(await pg.evaluate("document.getElementById('cmpBtn').getBoundingClientRect().right <= document.getElementById('pMini').getBoundingClientRect().right + 0.5"),
+               "no tamanho mínimo, o botão comparar ainda cabe no cabeçalho")
     R.conferir(await pg.evaluate("(() => { const c = document.getElementById('plot'); return Math.abs(c.width / c.getBoundingClientRect().width - Math.min(3, devicePixelRatio)) < 0.05; })()"),
                "o gráfico é redesenhado no tamanho novo")
     x, y = await centro(pg, "#pMini .pj-se")
@@ -339,6 +349,15 @@ async def main():
                    f"uma linha só ({h:.0f} px): a alça com o objeto ativo; a fileira dos objetos escondida")
         R.conferir(await pg.evaluate("document.getElementById('pAlca').contains(document.getElementById('plotSeg')) && !document.querySelector('#pGraf .objnome')") and await dentro(pg, "#plotSeg"),
                    "y(t)/x(t) na linha da alça; sem a linha repetida do nome acima do gráfico")
+        R.conferir(await dentro(pg, "#cmpBtn") and await pg.evaluate("document.getElementById('cmpBtn').getBoundingClientRect().right <= document.getElementById('pAlca').getBoundingClientRect().right + 0.5"),
+                   "o botão comparar na mesma linha, à vista")
+        await pg.click("#cmpBtn")
+        W0, H0 = await pg.evaluate("[innerWidth, innerHeight]")
+        L = await ret(pg, "#cmpLista")
+        R.conferir(L[0] >= 0 and L[1] >= 0 and L[0] + L[2] <= W0 and L[1] + L[3] <= H0, f"a lista do comparar abre inteira na tela ({[round(v) for v in L]})")
+        await tocar(pg, 300, 150)
+        await pg.wait_for_function("document.getElementById('cmpLista').hidden && !(history.state && history.state.va === 'comparar')", timeout=3000)
+        R.conferir(True, "um toque no vídeo fecha a lista")
         await pg.click("#pObjBtn")
         await esperar_gaveta(pg, True)
         R.conferir(await dentro(pg, "#addMass") and await pg.get_attribute("#pObjBtn", "aria-expanded") == "true", "tocar na alça abre a gaveta por cima do conteúdo")

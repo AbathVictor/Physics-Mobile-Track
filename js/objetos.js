@@ -126,8 +126,9 @@ export function pontosCm(cm, objs) {
   return out;
 }
 // pontos de um objeto; o centro de massa é recalculado só quando algo mudou (S.ver muda a cada alteração de
-// pontos, massas ou sistema: persist() e o rastreamento aumentam S.ver)
-let cache = { ver: -1, cm: null, pts: null };
+// pontos, massas ou sistema: persist() e o rastreamento aumentam S.ver). Um mapa por centro de massa: o gráfico
+// comparado desenha vários a cada quadro do play
+let cache = { ver: -1, porCm: new Map() };
 /**
  * Pontos de um objeto: os marcados de uma massa, ou os calculados de um centro de massa, recalculados só quando
  * algo mudou (S.ver muda a cada alteração de pontos, massas ou sistema: persist() e o rastreamento aumentam S.ver).
@@ -136,8 +137,10 @@ let cache = { ver: -1, cm: null, pts: null };
  */
 export function pontosDe(o) {
   if (o.tipo === "massa") return o.marks;
-  if (cache.ver !== S.ver || cache.cm !== o) cache = { ver: S.ver, cm: o, pts: pontosCm(o, S.objs) };
-  return cache.pts;
+  if (cache.ver !== S.ver) cache = { ver: S.ver, porCm: new Map() };
+  let pts = cache.porCm.get(o);
+  if (!pts) { pts = pontosCm(o, S.objs); cache.porCm.set(o, pts); }
+  return pts;
 }
 /**
  * O objeto ativo (o que se marca, rastreia e vê na tabela).

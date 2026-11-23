@@ -83,6 +83,7 @@ Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (antes, era s
 | Sem escala | como no Tracker, **1 px = 1 u.a.** (unidade arbitrária), a partir da origem dos eixos. A tabela, o gráfico e o CSV funcionam sem escala; digitar a distância real converte tudo na hora (os pontos ficam sempre em pixels) |
 | Massas sem valor | **nenhuma** informada: massas iguais, 1 u.a. cada (a massa padrão do Tracker é 1). **Todas**: valores reais, numa unidade só para todas (g ou kg), como no Tracker. **Só parte**: o centro de massa fica sem posição, com o aviso **"massa B faltante"** (texto pedido pelo autor) |
 | Tabela e gráfico | de **um objeto por vez**, o ativo, como no Tracker (uma tabela por trilha). Copiar e CSV levam todos os objetos com pontos |
+| Comparar no gráfico | pedido do autor em 22/11/2026, como o "Comparar com" do gráfico do Tracker: o botão **comparar** (ícone de duas curvas, com "+2" quando há comparados) fica ao lado de y(t)/x(t) e vai com eles para a linha da alça e para o cabeçalho da janela do gráfico. Ele abre uma lista com uma caixa por objeto; o ativo vem marcado e não se desmarca. Cada curva na cor do objeto, o ativo por cima (linha mais grossa, anel âmbar no quadro atual), eixos cobrindo todas as curvas e o **nome na ponta direita** de cada curva ("A", "cm A"; etiquetas escuras como as do vídeo, empurradas para não se sobrepor), porque os cm têm todos o mesmo verde. Com uma curva só, nada muda (futuros na cor de borda). **Com várias, o futuro de cada curva fica na cor do próprio objeto, apagado** (decisão do autor). A tabela continua só com o ativo. A escolha vai no salvamento do vídeo (armadilha 14) e continua ao trocar o objeto ativo. A lista fecha num toque fora, no botão, com Esc e com o Voltar (entra no histórico) |
 | Fluxo | vídeo (câmera ou galeria) → intervalo → escala → eixos → massa → marcação → tabela e gráfico |
 | Dados | apenas **t, x, y** por quadro de cada objeto, mais a **massa** de cada um (valor ± incerteza, g ou kg). Velocidade e aceleração ficaram de fora por decisão |
 | Saída | **Copiar tabela** (tabulação) e **Exportar CSV** em dois formatos que o usuário escolhe: *Excel/Planilhas Google* (`;` entre colunas, vírgula decimal, com marca UTF-8 no início) e *Internacional/Python* (`,` entre colunas, ponto decimal) |
@@ -187,6 +188,8 @@ js/rastreio/previsao.js    predictNext (pura: recebe as dimensões da imagem)
 js/rastreio/rastreador.js  TR, autoSizeAt, initTemplate, trackFrame, runTrack
 js/medicao.js              "Medir este vídeo" (≡ → Diagnóstico): salto, arrasto, play e decodificador à parte, no
                            próprio celular; o resultado (S.medicao) entra no diagnóstico
+js/comparar.js             botão "comparar" e lista dos objetos comparados no gráfico (S.comparar); o desenho das curvas
+                           fica em dados.js (drawPlot). Controla o próprio histórico, como o fita.js
 js/navegacao.js · ferramentas.js · paineis.js · dados.js · entradas.js · arquivos.js · diagnostico.js
 ```
 
@@ -272,6 +275,9 @@ do eixo x medido no sentido anti-horário.
 14. **Salvamento no formato 2** (`v: 2`, com `objs`, `ativo` e `massUnit`). O formato 1 (uma massa, `marks` e `mass`)
     ainda é lido e vira a massa A; não remova essa leitura enquanto houver usuários com dados antigos. A cor de uma
     massa só é guardada (campo opcional `cor`) quando o usuário a trocou; sem o campo, vale a cor padrão da letra.
+    O campo opcional `comparar` (22/11/2026) guarda os nomes dos objetos comparados no gráfico; ao reabrir, só os que
+    ainda existem entram. Excluir um objeto tira o nome dele de `S.comparar` (um objeto novo com a mesma letra não
+    entra sozinho).
 15. **Cores lidas do CSS pelo JavaScript**: o desenho sobre o vídeo e o gráfico leem os tokens (`--amber`, `--line`,
     `--ov-edge`…) com `getComputedStyle` (`readOV` em `desenho.js`, `drawPlot` em `dados.js`) e redesenham quando o
     tema muda (`main.js` observa `data-theme` e `prefers-color-scheme`). Token novo usado no canvas: leia-o ali.
@@ -397,7 +403,7 @@ python tests/gerar_videos.py               # uma vez; precisa do ffmpeg no PATH 
 python tests/test_decodificacao.py         # quadro certo, tempo de cada quadro, taxa variável, quadros B, rotação, tempo como no Tracker (salto_carimbo.mp4), HEVC
 python tests/test_marcacao.py              # play, intervalo, pinça, marcação, CSV nos dois formatos (com a calibração), play sincronizado com o gráfico, a tabela e a barra, recuperação
 python tests/test_rastreamento.py          # medição do alvo, precisão, um decodificador só, perda do alvo, botão Parar
-python tests/test_massas.py                # escala genérica, duas massas, cm vazio e escolha das massas, dois cm, CSV com vários objetos, migração
+python tests/test_massas.py                # escala genérica, duas massas, cm vazio e escolha das massas, dois cm, CSV com vários objetos, comparar no gráfico, excluir (inclusive a última massa), migração
 python tests/test_tema.py                  # cores dos dois temas, contraste de todo texto, theme-color, tema manual, mira, pontos futuros, cor da massa
 python tests/test_gaveta.py                # gaveta ≡: abrir, fechar (✕, toque fora, Esc, Voltar), páginas (Diagnóstico com "Medir este vídeo"; Sobre com a licença e o link para o código-fonte), tema, cada ação
 python tests/test_paisagem.py              # deitado (915 × 412), sem liberar o em pé: aviso "Gire o celular", abre em tela cheia, etapas, barra e alças, pinça, gaveta dos objetos, pior caso 10 massas + 2 cm, girar, B, C, janela do gráfico (arrastar, bordas, mínimo, toque duplo, lugar lembrado), gaveta ≡, Voltar uma vez só (pinça e Esc duplo), alça a 640 × 360, temas, arquivo que não é vídeo

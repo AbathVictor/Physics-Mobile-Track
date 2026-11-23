@@ -26,6 +26,8 @@ There are no releases yet. Version 1.0.0 will be the first one, archived on Zeno
   and memory stays within limits.
 - *Sobre* (About) screen with the author, the license, a link to the source code, credits and third-party
   notices.
+- Compare objects on the graph, as in Tracker's *Compare with*: besides the active object, the user picks other
+  masses and centers of mass to plot on the same axes, each in its own color and named at the end of its curve.
 - Tapping the number on the calibration stick (Scale tool) opens a field right there to type the real distance, as
   in Tracker.
 - License files: AGPL-3.0-or-later for the code, CC BY-SA 4.0 for the documentation, and a NOTICE for third-party

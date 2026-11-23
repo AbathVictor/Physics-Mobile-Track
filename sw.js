@@ -12,7 +12,7 @@
 // de Oscilações. Por isso o nome tem um prefixo próprio, e cada um apaga só as cópias com o seu prefixo (antes, o
 // service worker apagava todas as outras, o que apagaria as de outro aplicativo no mesmo endereço).
 const PREFIXO = "vam-";
-const VERSAO = PREFIXO + "12";
+const VERSAO = PREFIXO + "13";
 const ARQUIVOS = [
   "./",
   "index.html",
@@ -44,6 +44,7 @@ const ARQUIVOS = [
   "js/analise.js",
   "js/arquivos.js",
   "js/barra.js",
+  "js/comparar.js",
   "js/dados.js",
   "js/desenho.js",
   "js/diagnostico.js",

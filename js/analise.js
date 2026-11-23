@@ -29,6 +29,7 @@ export function restoreOrDefaults() {
     a.massa = { val: "250", sig: "1" };
   }
   S.cross = null;
+  S.comparar = new Set();
   const saved = LS.get(cfgKey());
   $("restoreLine").hidden = true;
   if (saved && (saved.v === 1 || saved.v === 2)) {
@@ -51,6 +52,8 @@ export function restoreOrDefaults() {
     if (typeof saved.trAuto === "boolean") S.trAuto = saved.trAuto;
     if ([0.55, 0.7, 0.85].includes(saved.trThr)) S.trThr = saved.trThr;
     if (saved.plotVar) S.plotVar = saved.plotVar;
+    // objetos comparados no gráfico (campo opcional, desde 22/11/2026): só os que ainda existem
+    if (Array.isArray(saved.comparar)) S.comparar = new Set(saved.comparar.filter((n) => S.objs.some((o) => o.nome === n)));
     if (saved.fmt) S.fmt = saved.fmt;
     S.ver++;
     const n = S.objs.reduce((s, o) => s + (o.tipo === "massa" ? o.marks.size : 0), 0);
@@ -75,12 +78,13 @@ function cfgKey() { return "videoanalise:" + (S.isSample ? "exemplo" : S.file.na
 // aplicativo), salva na hora para não perder a última marcação
 let saveTimer = null;
 /**
- * Grava agora o estado do vídeo no localStorage (formato 2: intervalo, escala, eixos, objetos e preferências).
+ * Grava agora o estado do vídeo no localStorage (formato 2: intervalo, escala, eixos, objetos, objetos comparados no
+ * gráfico e preferências).
  */
 function writeNow() {
   saveTimer = null;
   if (!S.frames.length) return;
-  LS.set(cfgKey(), { v: 2, start: S.start, end: S.end, every: S.every, scale: S.scale, axes: S.axes, massUnit: S.massUnit, objs: serializar(S.objs), ativo: S.ativo, trail: S.trail, trR: S.trR, trAuto: S.trAuto, trThr: S.trThr, plotVar: S.plotVar, fmt: S.fmt });
+  LS.set(cfgKey(), { v: 2, start: S.start, end: S.end, every: S.every, scale: S.scale, axes: S.axes, massUnit: S.massUnit, objs: serializar(S.objs), ativo: S.ativo, trail: S.trail, trR: S.trR, trAuto: S.trAuto, trThr: S.trThr, plotVar: S.plotVar, fmt: S.fmt, comparar: [...S.comparar] });
 }
 /**
  * Registra uma alteração: aumenta S.ver (avisa que o centro de massa precisa ser recalculado) e salva 0,3 s depois

@@ -138,10 +138,33 @@ async def main():
         nota = await txt("#exportNote")
         R.conferir("skiprows=8" in nota, f"a dica do Python conta as linhas de cabeçalho ({nota[:45]}…)")
 
+        print("comparar no gráfico")
+        R.conferir(await pg.evaluate("__va.graficoCurvas.join()") == "cm B", "sem comparar, o gráfico tem só o objeto ativo (cm B)")
+        await pg.click("#cmpBtn")
+        R.conferir(await pg.evaluate("""!document.getElementById('cmpLista').hidden && document.querySelectorAll('#cmpLista [data-cmp]').length === 4
+          && document.querySelector('#cmpLista [data-cmp="3"]').checked && document.querySelector('#cmpLista [data-cmp="3"]').disabled
+          && history.state && history.state.va === 'comparar'"""),
+                   "o botão comparar abre a lista dos objetos; o ativo vem marcado e não se desmarca")
+        await pg.click("#cmpLista [data-cmp='1']"); await pg.click("#cmpLista [data-cmp='2']")
+        R.conferir(await pg.evaluate("__va.graficoCurvas.join()") == "massa B,cm A,cm B" and "+2" in await txt("#cmpBtn"),
+                   f"marcar a massa B e o cm A põe as curvas deles no gráfico, com o ativo por cima ({await pg.evaluate('__va.graficoCurvas.join()')})")
+        await pg.keyboard.press("Escape")
+        await pg.wait_for_function("document.getElementById('cmpLista').hidden && !(history.state && history.state.va === 'comparar')", timeout=3000)
+        R.conferir(True, "Esc fecha a lista")
+        await pg.click("#cmpBtn")
+        await pg.evaluate("history.back()")
+        await pg.wait_for_function("document.getElementById('cmpLista').hidden", timeout=3000)
+        R.conferir(await pg.evaluate("!!window.__va && __va.frames.length === 120"), "o Voltar fecha a lista, sem sair do aplicativo")
+        await pg.click("#objs [data-obj='0']")
+        R.conferir(await pg.evaluate("__va.graficoCurvas.join()") == "massa B,cm A,massa A", "trocar o objeto ativo mantém os comparados")
+        await pg.click("#objs [data-obj='3']")
+
         print("recarregar")
         await pg.wait_for_timeout(500)
         await pg.reload()
         await pg.wait_for_function("__va.frames.length === 120 && __va.low.has(0)", timeout=30000)
+        R.conferir(await pg.evaluate("[...__va.comparar].sort().join()") == "cm A,massa B" and await pg.evaluate("__va.graficoCurvas.join()") == "massa B,cm A,cm B",
+                   "os objetos comparados no gráfico voltam ao recarregar")
         R.conferir(await pg.evaluate("__va.objs.map((o) => o.nome).join() === 'massa A,massa B,cm A,cm B' && __va.objs[__va.ativo].nome === 'cm B' && __va.objs[2].massas.length === 2 && __va.objs[3].massas.join() === 'massa A'"),
                    "as massas, os centros de massa, as escolhas de cada um e o objeto ativo voltam ao recarregar")
         R.conferir(len(await pontos(pg, "massa B")) == 10 and await pg.evaluate("__va.marks.size") == 10, "os pontos das massas e do cm voltam")
@@ -152,6 +175,7 @@ async def main():
         await pg.click("#massList [data-del=B]"); await pg.click("#massList [data-del=B]")
         R.conferir(await pg.evaluate("__va.objs.map((o) => o.nome).join() === 'massa A,cm A' && __va.objs[1].massas.join() === 'massa A'"),
                    "excluir a massa B (dois toques) tira ela também do sistema do cm A")
+        R.conferir(await pg.evaluate("[...__va.comparar].join()") == "cm A", "e do gráfico comparado")
         await pg.click("#addMass")
         R.conferir(await pg.evaluate("!document.getElementById('massDel').hidden") and await txt("#delMassa") == "Excluir a massa B",
                    "com uma massa ativa, o Excluir dela aparece abaixo dos objetos (como o do cm)")

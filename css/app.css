@@ -199,6 +199,23 @@ body.gire-on { overflow: hidden; }
 .gire .btn[hidden] { display: none; }
 /* lupa da escala: canvas fixo na tela, acima de tudo menos da gaveta; não recebe toques */
 .lupa { position: fixed; left: 0; top: 0; z-index: 25; pointer-events: none; border-radius: 50%; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); }
+/* comparar no gráfico (js/comparar.js): botão ao lado de y(t)/x(t), da altura deles, e lista fixa na tela, acima de
+   tudo menos da gaveta ≡ */
+.cmpbtn { display: inline-flex; align-items: center; gap: 2px; height: 32px; padding: 0 6px; border: 1px solid var(--line); border-radius: 7px;
+  background: var(--surface); color: var(--ink-soft); cursor: pointer; font-family: var(--font-mono); font-size: 0.78rem; font-weight: 500; touch-action: manipulation; }
+.cmpbtn svg { width: 22px; height: 22px; }
+.cmpbtn.on { border-color: var(--accent); color: var(--ink); }
+.cmpbtn[aria-expanded="true"] { background: var(--soft); }
+.cmpbtn:disabled { opacity: 0.4; cursor: default; }
+.cmp-lista { position: fixed; left: 0; top: 0; z-index: 27; display: grid; gap: 2px; min-width: 200px; max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px); overflow: auto; padding: 8px; background: var(--surface); color: var(--ink); border: 1px solid var(--line);
+  border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28); }
+.cmp-t, .cmp-vazio { margin: 0 4px 4px; font-size: 0.8rem; color: var(--ink-soft); }
+.cmp-vazio { margin-top: 4px; }
+.cmp-item { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 6px; border-radius: 7px; font-size: 0.9rem; cursor: pointer; }
+.cmp-item input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+.cmp-item .dot { margin: 0; }
+.cmp-item small { color: var(--ink-soft); }
 /* número da fita de calibração (js/fita.js): campo fixo sobre a etiqueta da fita, na ferramenta Escala; acima do vídeo
    e dos controles flutuantes, abaixo da gaveta ≡ */
 .fita-ed { position: fixed; left: 0; top: 0; z-index: 26; display: flex; align-items: center; gap: 6px; padding: 5px 8px;

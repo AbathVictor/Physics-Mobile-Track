@@ -165,6 +165,7 @@
           <button type="button" data-plot="y" aria-pressed="true">y(t)</button>
           <button type="button" data-plot="x" aria-pressed="false">x(t)</button>
         </div>
+        <button type="button" class="cmpbtn" id="cmpBtn" aria-haspopup="true" aria-expanded="false" aria-label="Comparar com outros objetos" title="Comparar com outros objetos" disabled></button>
       </div>
       <div class="plotbox" id="plotBox"><canvas id="plot" aria-label="Gráfico da posição em função do tempo"></canvas><div class="plotempty" id="plotEmpty">Os pontos marcados aparecem aqui.</div></div>
       <div class="tbl-wrap" id="tblWrap"><table class="data" id="table"></table></div>
@@ -259,6 +260,8 @@
 </div>
 <!-- lupa da escala (js/lupa.js): aparece só enquanto se arrasta uma ponta da fita de calibração -->
 <canvas class="lupa" id="lupa" hidden aria-hidden="true"></canvas>
+<!-- objetos comparados no gráfico (js/comparar.js): lista aberta pelo botão ao lado de y(t)/x(t) -->
+<div class="cmp-lista" id="cmpLista" role="group" aria-label="Objetos no gráfico" hidden></div>
 <!-- número da fita de calibração (js/fita.js): aparece ao tocar na etiqueta da fita, na ferramenta Escala -->
 <div class="fita-ed" id="fitaEd" hidden><input class="num" id="fitaIn" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="ex.: 30" aria-label="Distância real entre as pontas da fita"><span id="fitaUn">cm</span></div>
 <!-- gaveta ≡ (js/gaveta.js) -->

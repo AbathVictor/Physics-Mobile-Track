@@ -23,6 +23,7 @@ import "./ferramentas.js";
 import "./paineis.js";
 import "./massas.js";
 import "./dados.js";
+import "./comparar.js";
 import "./entradas.js";
 import "./arquivos.js";
 import "./diagnostico.js";

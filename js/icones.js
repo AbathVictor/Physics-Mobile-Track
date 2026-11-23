@@ -39,6 +39,8 @@ export const IC = {
   massas: svg('<circle cx="8" cy="15" r="4"/><circle cx="17" cy="8" r="3"/>'),
   marcar: svg('<circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>'),
   dados: svg('<path d="M4 20V4M4 20h16"/><path d="M7 15l4-5 3 3 5-7"/>'),
+  // duas curvas no mesmo gráfico (comparar objetos, ao lado de y(t)/x(t))
+  comparar: svg('<path d="M3 16c3-8 6-8 9 0s6 8 9 0"/><path d="M3 9c3 4 6 4 9 0s6-4 9 0" stroke-dasharray="2 3"/>'),
   play: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M5 3l12 7-12 7z"/></svg>',
   pausa: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M4 3h4v14H4zM12 3h4v14h-4z"/></svg>',
   inicio: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 3h3v14H3zM17 3L7 10l10 7z"/></svg>',

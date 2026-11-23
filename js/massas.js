@@ -164,6 +164,8 @@ function excluir(i) {
   stopTrack(); stopPlay();
   S.objs.splice(i, 1);
   if (o.tipo === "massa") for (const c of cmsDe(S.objs)) c.massas = c.massas.filter((n) => n !== o.nome);
+  // sai também do gráfico comparado (um objeto novo com a mesma letra não entra sozinho)
+  S.comparar.delete(o.nome);
   if (S.ativo === i) S.ativo = 0; else if (S.ativo > i) S.ativo--;
   persist(); renderPanels(); renderHint(); render();
   toast(`${o.nome} excluíd${o.tipo === "cm" ? "o" : "a"}`);
