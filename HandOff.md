@@ -85,7 +85,7 @@ Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (antes, era s
 | Tabela e gráfico | de **um objeto por vez**, o ativo, como no Tracker (uma tabela por trilha). Copiar e CSV levam todos os objetos com pontos |
 | Comparar no gráfico | pedido do autor em 22/11/2026, como o "Comparar com" do gráfico do Tracker: o botão **comparar** (ícone de duas curvas, com "+2" quando há comparados) fica ao lado de y(t)/x(t) e vai com eles para a linha da alça e para o cabeçalho da janela do gráfico. Ele abre uma lista com uma caixa por objeto; o ativo vem marcado e não se desmarca. Cada curva na cor do objeto, o ativo por cima (linha mais grossa, anel âmbar no quadro atual), eixos cobrindo todas as curvas e o **nome na ponta direita** de cada curva ("A", "cm A"; etiquetas escuras como as do vídeo, empurradas para não se sobrepor), porque os cm têm todos o mesmo verde. Com uma curva só, nada muda (futuros na cor de borda). **Com várias, o futuro de cada curva fica na cor do próprio objeto, apagado** (decisão do autor). A tabela continua só com o ativo. A escolha vai no salvamento do vídeo (armadilha 14) e continua ao trocar o objeto ativo. A lista fecha num toque fora, no botão, com Esc e com o Voltar (entra no histórico) |
 | Fluxo | vídeo (câmera ou galeria) → intervalo → escala → eixos → massa → marcação → tabela e gráfico |
-| Dados | apenas **t, x, y** por quadro de cada objeto, mais a **massa** de cada um (valor ± incerteza, g ou kg). Velocidade e aceleração ficaram de fora por decisão |
+| Dados | apenas **t, x, y** por quadro de cada objeto, mais a **massa** de cada um (valor ± incerteza, g ou kg). Velocidade e aceleração ficaram de fora por decisão (**revisto em 22/11/2026**: o próximo passo acrescenta r, v e a, ver Pendências) |
 | Saída | **Copiar tabela** (tabulação) e **Exportar CSV** em dois formatos que o usuário escolhe: *Excel/Planilhas Google* (`;` entre colunas, vírgula decimal, com marca UTF-8 no início) e *Internacional/Python* (`,` entre colunas, ponto decimal) |
 | Estrutura do CSV | igual à do Tracker, com metadados antes: `massa: (0,250 ± 0,001) kg`, `unidades: t em s · x e y em cm`, `calibração: origem x0 = 946,37 px · y0 = 668,52 px · ângulo 0,80° (0,013963 rad) · escala 12,8000 px por cm` (desde 21/11/2026, pedido do autor, para ficar em conformidade com o .trk do Tracker, que guarda a calibração: os mesmos xorigin, yorigin, angle e xscale do sistema de coordenadas da imagem; origem em pixels da imagem, x para a direita e y para baixo; ângulo do eixo x no sentido anti-horário; escala em pixels por unidade, 1 px por u.a. sem escala; a linha não tem o separador de colunas), linha do objeto (`;massa A`), cabeçalho `t;x;y`, dados. No Python: `pd.read_csv(arquivo, skiprows=4)`. O Laboratório de Oscilações lê os dois formatos (testado; a linha de calibração é texto de uma célula, como as outras de metadados) | Com vários objetos, o formato de várias trilhas do Tracker (`ExportDataDialog`): uma linha por massa (`massa A: …`), uma linha por centro de massa (`cm A: massa A + massa B · …`), `unidades`, `calibração`, `#multi:`, a linha dos nomes `;massa A;;massa B;;cm A;;`, o cabeçalho `t;x;y;x;y;x;y;` e os dados (célula vazia no quadro em que o objeto não tem ponto). Com um objeto só, o formato continua o de antes |
 | Descartado | botão "Enviar para o Laboratório de Oscilações" |
@@ -434,6 +434,25 @@ Vídeo 1080p a 30 quadros/s, H.264: decodificação por hardware; cerca de 10 ms
 
 ## Pendências
 
+- **PRÓXIMO PASSO** (pedido do autor em 22/11/2026, para quando voltarmos ao trabalho): **as grandezas cinemáticas
+  lineares que faltam**, como no Tracker. Muda a decisão antiga da linha "Dados" da especificação (velocidade e
+  aceleração tinham ficado de fora). Em ordem:
+  1. **módulo da posição**, r = |r⃗| = √(x² + y²), ao lado de x e y (o "r" do Tracker);
+  2. **velocidade**: vx, vy e o módulo v;
+  3. **aceleração**: ax, ay e o módulo a.
+
+  É funcionalidade grande: **propor o plano e esperar o autor decidir antes de escrever código**. Pontos para o plano:
+  - **Derivadas**: conferir no código do Tracker (`PointMass`, algoritmos de derivada) como ele calcula v e a a
+    partir das posições (diferenças finitas centradas e o espalhamento usado) e o que mostra nos quadros das pontas,
+    onde não há vizinhos; seguir o mesmo, pelo princípio de compatibilidade com o Tracker. Usar o Δt como no Tracker
+    (armadilha 2).
+  - **Passo "a cada"**: com marcação a cada n quadros, as derivadas usam os pontos vizinhos marcados, não os quadros
+    vizinhos. Quadros sem ponto no meio da série interrompem a derivada ali.
+  - **Centro de massa**: as mesmas grandezas, calculadas a partir das posições dele.
+  - **Interface**: o gráfico hoje só tem y(t)/x(t). Com 9 grandezas, o seletor muda (talvez uma lista em vez de
+    botões). Também é preciso decidir quais colunas a tabela mostra e como ficam o CSV, a cópia da tabela e o gráfico
+    comparado. O CSV deve seguir o formato do Tracker (nomes das colunas r, vx, vy, v, ax, ay, a).
+  - **Unidades**: cm/s e cm/s² a partir da escala; u.a./s e u.a./s² sem escala.
 - Decididas para depois: **suporte a iOS** e **otimizar a sensibilidade do toque**.
 - **Roteiro combinado em 14/11/2026** (fases em ordem):
   0. ~~Dividir em módulos e usar cópias locais do mp4box e das fontes~~ (feito).
