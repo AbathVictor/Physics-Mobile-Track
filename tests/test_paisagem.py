@@ -76,11 +76,16 @@ async def esperar_gaveta(pg, aberta):
 
 
 async def escolher(pg, sel):
-    """Abre a gaveta dos objetos (se fechada) e toca num botão dela: "[data-obj='1']", "#addMass", "#addCm"."""
+    """Abre a gaveta dos objetos (se fechada) e toca num botão dela: "[data-obj='1']", "#addMass", "#addCm". Escolher
+    uma massa deixa a gaveta aberta (com o Excluir da massa, desde 22/11/2026): aqui ela é fechada na alça depois,
+    como antes, para os passos seguintes."""
     if not await gaveta_aberta(pg):
         await pg.click("#pObjBtn")
         await esperar_gaveta(pg, True)
     await pg.click(sel if sel.startswith("#") else f"#objs {sel}")
+    if not sel.startswith("#") and await pg.evaluate("__va.objs[__va.ativo].tipo === 'massa'") and await gaveta_aberta(pg):
+        await pg.click("#pObjBtn")
+        await esperar_gaveta(pg, False)
 
 
 async def cabecalho(pg):
@@ -342,10 +347,12 @@ async def main():
         compacto = await pg.evaluate("getComputedStyle(document.querySelector('#objs [data-obj=\"1\"] .pre')).display === 'none'")
         R.conferir(compacto and await pg.evaluate("__va.ativo") == 1 and "massa B" in await pg.inner_text("#pObjBtn"),
                    "+ massa cria a massa B, fecha a gaveta e a alça mostra a massa B (na gaveta, botões compactos: bolinha e letra)")
-        await escolher(pg, "[data-obj='0']")
-        await esperar_gaveta(pg, False)
-        R.conferir("massa A" in await pg.inner_text("#pObjBtn") and await pg.evaluate("__va.ativo") == 0, "escolher uma massa troca o objeto e fecha a gaveta")
         await pg.click("#pObjBtn"); await esperar_gaveta(pg, True)
+        await pg.click("#objs [data-obj='0']")
+        await pg.wait_for_timeout(300)
+        R.conferir("massa A" in await pg.inner_text("#pObjBtn") and await pg.evaluate("__va.ativo") == 0 and await gaveta_aberta(pg)
+                   and await dentro(pg, "#delMassa") and await pg.inner_text("#delMassa") == "Excluir a massa A",
+                   "escolher uma massa troca o objeto; a gaveta fica aberta, com Excluir a massa A")
         await pg.click("#pObjBtn"); await esperar_gaveta(pg, False)
         R.conferir(True, "tocar de novo na alça fecha")
         await pg.evaluate("__va.cross = { x: 1, y: 1 }")
@@ -456,8 +463,10 @@ async def main():
                    and "massa B" in await pg.inner_text("#pObjBtn"), "a alça dos objetos sobe para o canto de cima, com o objeto ativo")
         await pg.click("#pObjBtn"); await esperar_gaveta(pg, True)
         R.conferir(await dentro(pg, "#objs [data-obj='0']") and await dentro(pg, "#addCm"), "tocar nela abre a gaveta dos objetos ali mesmo, sem abrir o painel")
-        await pg.click("#objs [data-obj='0']"); await esperar_gaveta(pg, False)
-        R.conferir(await pg.evaluate("__va.ativo") == 0 and "massa A" in await pg.inner_text("#pObjBtn"), "escolher uma massa troca o objeto e fecha")
+        await pg.click("#objs [data-obj='0']"); await pg.wait_for_timeout(300)
+        R.conferir(await pg.evaluate("__va.ativo") == 0 and "massa A" in await pg.inner_text("#pObjBtn") and await gaveta_aberta(pg) and await dentro(pg, "#delMassa"),
+                   "escolher uma massa troca o objeto, e a gaveta fica aberta com o Excluir")
+        await pg.click("#pObjBtn"); await esperar_gaveta(pg, False)
         # com o painel aberto, a linha de cima continua à vista e por cima dele: dá para trocar de objeto vendo a tabela
         await pg.click("#pPainelBtn"); await pg.wait_for_timeout(260)
         await pg.click("#pAbas [data-aba=tab]")
@@ -465,7 +474,8 @@ async def main():
         cx, cy = await centro(pg, "#objs [data-obj='1']")
         R.conferir(await pg.evaluate("([x, y]) => !!document.elementFromPoint(x, y).closest('#objs')", [cx, cy]) and await dentro(pg, "#btnTela") and await dentro(pg, "#menuBtn"),
                    "painel aberto: a alça, ⤢ e ≡ à vista, e a gaveta dos objetos desce por cima do painel")
-        await pg.click("#objs [data-obj='1']"); await esperar_gaveta(pg, False)
+        await pg.click("#objs [data-obj='1']")
+        await pg.click("#pObjBtn"); await esperar_gaveta(pg, False)
         R.conferir(await pg.evaluate("__va.ativo") == 1 and await dentro(pg, "#tblWrap"), "troca de objeto com a tabela aberta")
         await escolher(pg, "[data-obj='0']")
         await pg.click("#pFechaPainel"); await pg.wait_for_timeout(260)

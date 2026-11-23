@@ -49,6 +49,10 @@ export function renderObjs() {
     const b = $("delCm");
     if (!b.classList.contains("arm")) b.textContent = `Excluir o ${cm.nome}`;
   }
+  // massa ativa: Excluir logo abaixo (pedido do autor, 22/11/2026, como o do centro de massa)
+  const ms = o && o.tipo === "massa" ? o : null;
+  $("massDel").hidden = !ms;
+  if (ms) { const b = $("delMassa"); if (!b.classList.contains("arm")) b.textContent = `Excluir a ${ms.nome}`; }
 }
 
 /**
@@ -166,13 +170,21 @@ function excluir(i) {
 }
 /**
  * Confirmação em dois toques (como Apagar as marcações): o primeiro toque troca o texto do botão por 3,5 s; o
- * segundo, nesse tempo, faz a ação.
+ * segundo, nesse tempo, faz a ação. Com um alvo, a confirmação vale só para ele: se o objeto ativo mudou entre os
+ * dois toques (o mesmo botão serve a todos), o segundo toque arma de novo em vez de excluir o objeto novo.
  * @param {HTMLElement} b O botão.
  * @param {string} texto Texto da confirmação.
  * @param {function(): void} acao A ação.
+ * @param {object} [alvo] O objeto que o primeiro toque armou.
  */
-function armar(b, texto, acao) {
+function armar(b, texto, acao, alvo) {
+  if (b.classList.contains("arm") && alvo !== undefined && b._alvo !== alvo) {
+    clearTimeout(b._t); b.classList.remove("arm");
+    // o texto do botão é refeito para o objeto ativo agora (renderObjs não mexe nele enquanto está armado)
+    const o = objAtivo(); b.textContent = o ? `Excluir ${o.tipo === "cm" ? "o" : "a"} ${o.nome}` : b._orig;
+  }
   if (!b.classList.contains("arm")) {
+    b._alvo = alvo;
     b._orig = b.textContent;
     b.classList.add("arm"); b.textContent = texto;
     b._t = setTimeout(() => { b.classList.remove("arm"); b.textContent = b._orig; }, 3500);
@@ -198,7 +210,12 @@ $("cmSelM").addEventListener("click", (e) => {
 });
 $("delCm").addEventListener("click", () => {
   const cm = objAtivo(); if (!cm || cm.tipo !== "cm") return;
-  armar($("delCm"), "Toque de novo para excluir", () => excluir(S.ativo));
+  armar($("delCm"), "Toque de novo para excluir", () => excluir(S.ativo), cm);
+});
+$("delMassa").addEventListener("click", () => {
+  const m = objAtivo(); if (!m || m.tipo !== "massa") return;
+  const n = m.marks.size;
+  armar($("delMassa"), n ? `Toque de novo: exclui ${n} ponto${n > 1 ? "s" : ""}` : "Toque de novo para excluir", () => excluir(S.objs.indexOf(m)), m);
 });
 /**
  * A massa da linha da lista do passo 5 em que está um elemento.

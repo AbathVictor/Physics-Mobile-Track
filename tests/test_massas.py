@@ -152,6 +152,17 @@ async def main():
         await pg.click("#massList [data-del=B]"); await pg.click("#massList [data-del=B]")
         R.conferir(await pg.evaluate("__va.objs.map((o) => o.nome).join() === 'massa A,cm A' && __va.objs[1].massas.join() === 'massa A'"),
                    "excluir a massa B (dois toques) tira ela também do sistema do cm A")
+        await pg.click("#addMass")
+        R.conferir(await pg.evaluate("!document.getElementById('massDel').hidden") and await txt("#delMassa") == "Excluir a massa B",
+                   "com uma massa ativa, o Excluir dela aparece abaixo dos objetos (como o do cm)")
+        await pg.click("#delMassa")
+        await pg.click("#objs [data-obj='0']")
+        await pg.click("#delMassa")
+        R.conferir(await pg.evaluate("__va.objs.map((o) => o.nome).join() === 'massa A,massa B,cm A'") and "Toque de novo" in await txt("#delMassa"),
+                   "armado na massa B e trocado para a A: o segundo toque arma de novo, não exclui a A")
+        await pg.click("#objs [data-obj='1']")
+        await pg.click("#delMassa"); await pg.click("#delMassa")
+        R.conferir(await pg.evaluate("__va.objs.map((o) => o.nome).join() === 'massa A,cm A'"), "Excluir a massa B (dois toques) exclui a massa ativa")
 
         print("rastrear para a massa ativa")
         await pg.click("#addMass")

@@ -142,8 +142,8 @@ function reorganizar(v) {
   if (v === "retrato") { $("viewer").style.minHeight = ""; return; }
   mover($("viewer"), $("pVideo"));
   mover($("readout"), $("pInfo")); mover($("zoomRow"), $("pInfo"));
-  // a fileira dos objetos e a escolha das massas do cm ficam na gaveta dos objetos
-  mover($("objs"), $("pObjsCorpo")); mover($("cmSel"), $("pObjsCorpo"));
+  // a fileira dos objetos, a escolha das massas do cm e o Excluir da massa ativa ficam na gaveta dos objetos
+  mover($("objs"), $("pObjsCorpo")); mover($("cmSel"), $("pObjsCorpo")); mover($("massDel"), $("pObjsCorpo"));
   // avisos ficam no painel, nunca sobre o vídeo
   mover($("trackMsg"), $("pAvisos")); mover($("modeHint"), $("pAvisos"));
   mover($("markbar"), $("pRodape")); mover($("trackRow"), $("pRodape"));
@@ -350,12 +350,13 @@ window.addEventListener("popstate", (e) => {
   if (a !== objsAberta) { objsAberta = a; mostrarObjs(); }
 });
 $("pObjBtn").addEventListener("click", () => { if (objsAberta) fecharObjs(); else abrirObjs(); });
-// massas.js trata o clique antes (foi importado antes): aqui só se decide se a gaveta fecha
+// massas.js trata o clique antes (foi importado antes): aqui só se decide se a gaveta fecha. Desde 22/11/2026
+// (decisão do autor), escolher uma massa deixa a gaveta aberta, como o cm, para mostrar o Excluir da massa; um toque
+// no vídeo fecha e já põe a mira. Só "+ massa" fecha
 $("objs").addEventListener("click", (e) => {
   const b = e.target.closest("button");
   if (!b || !objsAberta) return;
-  const o = b.dataset.obj != null ? S.objs[Number(b.dataset.obj)] : null;
-  if (b.id === "addMass" || (o && o.tipo === "massa")) fecharObjs();
+  if (b.id === "addMass") fecharObjs();
 });
 // tocar fora fecha; com a gaveta ≡ aberta (ou ao tocar em ≡) quem cuida do histórico é ela
 document.addEventListener("pointerdown", (e) => {

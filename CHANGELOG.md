@@ -38,3 +38,6 @@ There are no releases yet. Version 1.0.0 will be the first one, archived on Zeno
   full history (November 2026).
 - The last remaining mass can now be deleted too (✕ in step 5); with no masses, marking waits until the user
   creates one with *+ massa*, and an empty object list is saved and restored as it is.
+- The active mass can be deleted right from the object picker (*Excluir a massa A*, two taps, like the center of
+  mass); in landscape, choosing a mass keeps the object drawer open to show it. A delete confirmation only applies
+  to the object it was armed for.
