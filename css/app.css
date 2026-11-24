@@ -120,6 +120,16 @@ input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; heigh
   border-radius: 7px; background: none; color: var(--ink); font: 500 0.9rem var(--font-ui); text-align: left; cursor: pointer; }
 .fam-item small { color: var(--ink-soft); font-family: var(--font-mono); font-size: 0.78rem; }
 .fam-item[aria-pressed="true"] { background: var(--soft); color: var(--soft-ink); }
+/* colunas da tabela: botão acima dela, à direita, e a escolha numa grade (quadro; x y r; vx vy v; ax ay a) */
+.tabcols { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+.cmp-lista.col-lista { max-width: 250px; }
+.col-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 2px 4px 4px; }
+.col-grade button { min-height: 40px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--ink);
+  font: 500 0.9rem var(--font-mono); cursor: pointer; }
+.col-grade button sub { font-size: 0.72em; line-height: 0; vertical-align: -0.2em; }
+.col-grade button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.col-grade button:disabled { cursor: default; }
+.col-grade button:disabled:not([aria-pressed="true"]) { opacity: 0.45; }
 
 .panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }

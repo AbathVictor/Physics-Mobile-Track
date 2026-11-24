@@ -75,7 +75,7 @@ async def main():
         R.conferir("genérica" in await txt("#stScale"), f"sem a distância real, a escala é genérica ({await txt('#stScale')})")
         cab = await txt("#table thead")
         R.conferir("x (u.a.)" in cab and "y (u.a.)" in cab, "a tabela mostra x e y em u.a.")
-        y1 = num(await txt("#table tr[data-i='1'] td:nth-child(4)"))
+        y1 = num(await txt("#table tr[data-i='1'] td[data-c=y]"))
         y1v = -(verdade(W, H, 1)[1] - H * 0.5)
         R.conferir(abs(y1 - y1v) < 0.06, f"1 px = 1 u.a., a partir da origem dos eixos (y₁ = {y1}, esperado {y1v:.2f})")
         await pg.fill("#scaleLen", "30")

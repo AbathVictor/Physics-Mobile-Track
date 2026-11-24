@@ -66,7 +66,7 @@ async def main():
         await pg.evaluate("(() => { const S = __va; S.start = 20; S.end = 140; const o = S.objs[S.ativo]; o.marks.clear(); for (let i = 20; i <= 140; i += 5) o.marks.set(i, { x: 100 + i, y: 50 }); S.ver++; })()")
         await pg.evaluate("import('./js/paineis.js').then((m) => m.renderPanels())")
         dt = (tf[140] - tf[20]) / 120
-        tab = await pg.evaluate("[...document.querySelectorAll('#table tr[data-i]')].map((tr) => [Number(tr.dataset.i), parseFloat(tr.children[1].textContent.replace(',', '.'))])")
+        tab = await pg.evaluate("[...document.querySelectorAll('#table tr[data-i]')].map((tr) => [Number(tr.dataset.i), parseFloat(tr.querySelector('[data-c=t]').textContent.replace(',', '.'))])")
         erro = max(abs(t - (i - 20) * dt) for i, t in tab)
         R.conferir(len(tab) == 25 and erro < 1e-4, f"tabela: o mesmo Δt para todos os quadros, {dt * 1000:.3f} ms, a média do intervalo, com t = 0 no início (erro máx {erro * 1e6:.0f} µs)")
         await pg.check("input[name=fmt][value=intl]")

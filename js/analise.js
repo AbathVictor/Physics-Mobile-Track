@@ -30,7 +30,7 @@ export function restoreOrDefaults() {
     a.massa = { val: "250", sig: "1" };
   }
   S.cross = null;
-  S.comparar = new Set();
+  S.comparar = new Set(); S.colunas = ["x", "y"];
   const saved = LS.get(cfgKey());
   $("restoreLine").hidden = true;
   if (saved && (saved.v === 1 || saved.v === 2)) {
@@ -55,6 +55,8 @@ export function restoreOrDefaults() {
     if (GRANDEZAS.includes(saved.plotVar)) S.plotVar = saved.plotVar;
     // objetos comparados no gráfico (campo opcional, desde 22/11/2026): só os que ainda existem
     if (Array.isArray(saved.comparar)) S.comparar = new Set(saved.comparar.filter((n) => S.objs.some((o) => o.nome === n)));
+    // colunas da tabela (campo opcional, desde 23/11/2026)
+    if (Array.isArray(saved.colunas)) S.colunas = saved.colunas.filter((c) => c === "quadro" || GRANDEZAS.includes(c));
     if (saved.fmt) S.fmt = saved.fmt;
     S.ver++;
     const n = S.objs.reduce((s, o) => s + (o.tipo === "massa" ? o.marks.size : 0), 0);
@@ -85,7 +87,7 @@ let saveTimer = null;
 function writeNow() {
   saveTimer = null;
   if (!S.frames.length) return;
-  LS.set(cfgKey(), { v: 2, start: S.start, end: S.end, every: S.every, scale: S.scale, axes: S.axes, massUnit: S.massUnit, objs: serializar(S.objs), ativo: S.ativo, trail: S.trail, trR: S.trR, trAuto: S.trAuto, trThr: S.trThr, plotVar: S.plotVar, fmt: S.fmt, comparar: [...S.comparar] });
+  LS.set(cfgKey(), { v: 2, start: S.start, end: S.end, every: S.every, scale: S.scale, axes: S.axes, massUnit: S.massUnit, objs: serializar(S.objs), ativo: S.ativo, trail: S.trail, trR: S.trR, trAuto: S.trAuto, trThr: S.trThr, plotVar: S.plotVar, fmt: S.fmt, comparar: [...S.comparar], colunas: S.colunas });
 }
 /**
  * Registra uma alteração: aumenta S.ver (avisa que o centro de massa precisa ser recalculado) e salva 0,3 s depois

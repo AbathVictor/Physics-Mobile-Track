@@ -6,7 +6,7 @@
  */
 
 import { dtMedio, inInterval, persist, phys, tempo, unidade, unitPerPx } from "./analise.js";
-import { FAMILIAS, cinematica, familia, nomeHtml, unidadeDe } from "./cinematica.js";
+import { FAMILIAS, GRANDEZAS, cinematica, familia, nomeHtml, unidadeDe } from "./cinematica.js";
 import { IC } from "./icones.js";
 import { criarPopup } from "./popup.js";
 import { decOf } from "./desenho.js";
@@ -37,6 +37,19 @@ export function rows(o) {
   // tempo como no Tracker: Δt médio do intervalo (analise.js)
   return [...cinematica(pos, S.every, dtMedio())].map(([i, q]) => ({ i, t: tempo(i), ...q }));
 }
+// colunas que se podem escolher na tabela, na ordem em que aparecem (o t vem sempre, depois de "quadro")
+const COLUNAS = ["quadro", ...GRANDEZAS];
+const MAX_COLUNAS = 4;
+/**
+ * Colunas visíveis da tabela além do t (pedido do autor, 23/11/2026): até 4 entre "quadro" e as 9 grandezas. A
+ * grandeza do gráfico sempre entra; as escolhidas pelo usuário (S.colunas; por padrão x e y) completam até 4.
+ * @returns {string[]} As colunas, na ordem da tabela.
+ */
+export function colunasVisiveis() {
+  const g = S.plotVar, escolhidas = S.colunas.filter((c) => c !== g && COLUNAS.includes(c));
+  const vis = [g, ...escolhidas].slice(0, MAX_COLUNAS);
+  return COLUNAS.filter((c) => vis.includes(c));
+}
 /**
  * Casas decimais das posições conforme a escala (mais casas para escalas finas).
  * @param {number} extra Casas a mais.
@@ -61,9 +74,22 @@ export function renderData() {
   // (celular deitado: o objeto ativo e o aviso do centro de massa ficam na alça da gaveta dos objetos, paisagem.js)
   // o aviso do centro de massa aparece uma vez só, acima do gráfico
   const vazio = !o ? SEM_OBJETOS : sc && sc.bad ? "O centro de massa ainda não tem posições." : sc ? "Nenhum quadro com todas as massas do sistema marcadas." : "Nenhum ponto marcado ainda.";
-  const head = `<thead><tr><th>quadro</th><th>t (s)</th><th>x (${u})</th><th>y (${u})</th></tr></thead>`;
-  const body = R.map((r) => `<tr data-i="${r.i}"${r.i === S.cur ? ' class="cur"' : ""}><td>${r.i}</td><td>${fmt(r.t, 4)}</td><td>${fmt(r.x, d)}</td><td>${fmt(r.y, d)}</td></tr>`).join("");
-  $("table").innerHTML = head + `<tbody>${body || `<tr><td colspan="4" style="text-align:center;cursor:default">${esc(vazio)}</td></tr>`}</tbody>`;
+  // colunas: o t sempre e até 4 entre "quadro" e as grandezas, com a do gráfico sempre entre elas (colunasVisiveis);
+  // cada célula leva o nome da coluna (data-c), que os testes usam
+  const cols = colunasVisiveis(), gr = cols.filter((c) => c !== "quadro");
+  const casas = {};
+  for (const c of gr) {
+    if (familia(c) === "pos") { casas[c] = d; continue; }
+    // velocidade e aceleração: 4 algarismos significativos do maior valor da coluna
+    const m = Math.max(0, ...R.map((q) => Math.abs(q[c])).filter(Number.isFinite));
+    casas[c] = m > 0 ? Math.max(0, Math.min(6, 3 - Math.floor(Math.log10(m)))) : 2;
+  }
+  const head = `<thead><tr>${cols.includes("quadro") ? '<th data-c="quadro">quadro</th>' : ""}<th data-c="t">t (s)</th>`
+    + gr.map((c) => `<th data-c="${c}">${nomeHtml(c)} (${unidadeDe(c, u)})</th>`).join("") + "</tr></thead>";
+  const cel = (q, c) => `<td data-c="${c}">${Number.isFinite(q[c]) ? fmt(q[c], casas[c]) : ""}</td>`;
+  const body = R.map((r) => `<tr data-i="${r.i}"${r.i === S.cur ? ' class="cur"' : ""}>${cols.includes("quadro") ? `<td data-c="quadro">${r.i}</td>` : ""}<td data-c="t">${fmt(r.t, 4)}</td>${gr.map((c) => cel(r, c)).join("")}</tr>`).join("");
+  $("table").innerHTML = head + `<tbody>${body || `<tr><td colspan="${cols.length + 1}" style="text-align:center;cursor:default">${esc(vazio)}</td></tr>`}</tbody>`;
+  renderColunas();
   // copiar e exportar levam todos os objetos com pontos
   const exp = S.frames.length ? exportaveis() : [];
   $("copyTable").disabled = !exp.length;
@@ -380,6 +406,37 @@ export function renderSeletor() {
     b.setAttribute("aria-label", j < 2 ? nomes["xy"[j]] : f === "pos" ? "módulo da posição (r)" : "módulo");
   });
 }
+/**
+ * Monta a escolha das colunas da tabela: "quadro" e as 9 grandezas numa grade (posição, velocidade, aceleração), cada
+ * uma um botão que liga ou desliga; a do gráfico vem ligada e não se desliga; com 4 ligadas, as outras ficam
+ * desligadas até o usuário tirar uma.
+ */
+function montarColunas() {
+  const vis = colunasVisiveis(), cheio = vis.length >= MAX_COLUNAS;
+  const bot = (c) => {
+    const on = vis.includes(c), fixo = c === S.plotVar;
+    const rot = c === "quadro" ? "quadro" : nomeHtml(c);
+    return `<button type="button" data-col="${c}" aria-pressed="${on}"${fixo || (!on && cheio) ? " disabled" : ""}${fixo ? ' title="no gráfico"' : ""}>${rot}</button>`;
+  };
+  $("colLista").innerHTML = `<p class="cmp-t">Colunas da tabela: o t sempre e até ${MAX_COLUNAS} destas (a do gráfico sempre entra).</p>`
+    + `<div class="col-grade">${bot("quadro")}<span></span><span></span>${GRANDEZAS.map(bot).join("")}</div>`;
+}
+const colPop = criarPopup($("colBtn"), $("colLista"), "colunas", montarColunas);
+/**
+ * Atualiza o botão "colunas" (ligado só com vídeo) e, aberta, a escolha das colunas.
+ */
+function renderColunas() {
+  $("colBtn").disabled = !S.frames.length;
+  if (colPop.aberta()) montarColunas();
+}
+$("colBtn").innerHTML = `colunas${IC.abaixo}`;
+$("colLista").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-col]"); if (!b || b.disabled) return;
+  const c = b.dataset.col;
+  if (colunasVisiveis().includes(c)) S.colunas = S.colunas.filter((x) => x !== c);
+  else S.colunas = [...S.colunas.filter((x) => x !== c), c];
+  persist(); renderData();
+});
 // a componente escolhe dentro da família
 $("plotComp").addEventListener("click", (e) => {
   const b = e.target.closest("[data-plot]"); if (!b) return;

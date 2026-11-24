@@ -179,6 +179,7 @@
         <button type="button" class="cmpbtn" id="cmpBtn" aria-haspopup="true" aria-expanded="false" aria-label="Comparar com outros objetos" title="Comparar com outros objetos" disabled></button>
       </div>
       <div class="plotbox" id="plotBox"><canvas id="plot" aria-label="Gráfico da posição em função do tempo"></canvas><div class="plotempty" id="plotEmpty">Os pontos marcados aparecem aqui.</div></div>
+      <div class="tabcols" id="tabCols"><button type="button" class="cmpbtn fambtn" id="colBtn" aria-haspopup="true" aria-expanded="false" aria-label="Colunas da tabela" disabled>colunas</button></div>
       <div class="tbl-wrap" id="tblWrap"><table class="data" id="table"></table></div>
       <p class="note" id="outsideNote" hidden></p>
       <div class="radio" role="radiogroup" aria-label="Formato da tabela">
@@ -273,6 +274,8 @@
 <canvas class="lupa" id="lupa" hidden aria-hidden="true"></canvas>
 <!-- objetos comparados no gráfico (js/comparar.js): lista aberta pelo botão ao lado de y(t)/x(t) -->
 <div class="cmp-lista" id="cmpLista" role="group" aria-label="Objetos no gráfico" hidden></div>
+<!-- colunas da tabela (js/dados.js): lista aberta pelo botão "colunas ▾" acima da tabela -->
+<div class="cmp-lista col-lista" id="colLista" role="group" aria-label="Colunas da tabela" hidden></div>
 <!-- família da grandeza do gráfico (js/dados.js): lista aberta pelo botão "pos ▾" ao lado da componente -->
 <div class="cmp-lista fam-lista" id="famLista" role="group" aria-label="Grandeza no gráfico" hidden>
   <button type="button" class="fam-item" data-fam="pos">posição <small>x, y, r</small></button>

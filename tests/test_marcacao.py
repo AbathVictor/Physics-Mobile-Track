@@ -136,6 +136,29 @@ async def main():
         R.conferir(await pg.evaluate("__va.plotVar") == "r" and await pg.evaluate("__va.graficoEixo") == "r (cm)", "pos: o módulo da posição, r, em cm")
         await pg.click("#plotComp [data-plot=y]")
 
+        print("colunas da tabela")
+        cab = "[...document.querySelectorAll('#table thead th')].map((th) => th.dataset.c).join()"
+        R.conferir(await pg.evaluate(cab) == "t,x,y", f"por padrão: t, x e y (a grandeza do gráfico, y, já está) ({await pg.evaluate(cab)})")
+        await pg.click("#famBtn"); await pg.click("#famLista [data-fam=vel]"); await pg.click("#plotComp [data-plot=vx]")
+        R.conferir(await pg.evaluate(cab) == "t,x,y,vx" and "vx (cm/s)" in (await pg.inner_text("#table thead")).replace("\n", ""),
+                   "a grandeza do gráfico sempre entra: vx, em cm/s")
+        R.conferir(await pg.evaluate("document.querySelector('#table tr[data-i=\"0\"] td[data-c=vx]').textContent") == ""
+                   and await pg.evaluate("document.querySelector('#table tr[data-i=\"1\"] td[data-c=vx]').textContent") != "",
+                   "sem vx no primeiro ponto (célula vazia, como no Tracker); com vx no segundo")
+        await pg.click("#colBtn")
+        R.conferir(await pg.evaluate("!document.getElementById('colLista').hidden && document.querySelector('#colLista [data-col=vx]').disabled && document.querySelector('#colLista [data-col=vx]').getAttribute('aria-pressed') === 'true'"),
+                   "o botão colunas abre a escolha; a do gráfico vem ligada e não se desliga")
+        await pg.click("#colLista [data-col=v]")
+        R.conferir(await pg.evaluate(cab) == "t,x,y,vx,v" and await pg.evaluate("document.querySelector('#colLista [data-col=quadro]').disabled"),
+                   "ligar v: 4 colunas além do t; as outras ficam desligadas")
+        await pg.click("#colLista [data-col=x]"); await pg.click("#colLista [data-col=quadro]")
+        R.conferir(await pg.evaluate(cab) == "quadro,t,y,vx,v", f"tirar x e pôr quadro (que vem antes do t) ({await pg.evaluate(cab)})")
+        await pg.keyboard.press("Escape")
+        await pg.wait_for_function("document.getElementById('colLista').hidden && !(history.state && history.state.va === 'colunas')", timeout=3000)
+        await pg.click("#famBtn"); await pg.click("#famLista [data-fam=pos]"); await pg.click("#plotComp [data-plot=y]")
+        R.conferir(await pg.evaluate(cab) == "quadro,t,y,v", "voltar o gráfico para y: ficam as escolhidas (quadro, y, v)")
+        await pg.evaluate("__va.colunas = ['x', 'y']")
+
         print("exportação")
         for fmt, delim in (("excel", ";"), ("intl", ",")):
             await pg.check(f"input[name=fmt][value={fmt}]")

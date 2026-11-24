@@ -155,7 +155,7 @@ function reorganizar(v) {
   // y(t)/x(t) na linha da alça dos objetos; na tela cheia, no cabeçalho da janela do gráfico (janela.js)
   const graf = v === "B" ? $("pGrafB") : v === "C" ? $("pMiniCorpo") : $("pGraf");
   mover($("plotSeg"), v === "C" ? $("pMiniCab") : $("pAlca")); mover($("plotBox"), graf);
-  mover($("tblWrap"), $("pTab")); mover($("outsideNote"), $("pTab"));
+  mover($("tabCols"), $("pTab")); mover($("tblWrap"), $("pTab")); mover($("outsideNote"), $("pTab"));
   // tela cheia: a gaveta dos objetos sobe para o canto de cima, antes do botão do painel, de ⤢ e de ≡
   if (v === "C") { mover($("pObjs"), $("pTopo"), $("pPainelBtn")); mover($("btnTela"), $("pTopo")); mover($("menuBtn"), $("pTopo")); }
   else mover($("menuBtn"), $("pAbasBtns"));
