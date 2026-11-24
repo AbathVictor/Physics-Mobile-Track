@@ -36,6 +36,8 @@ There are no releases yet. Version 1.0.0 will be the first one, archived on Zeno
 - Choose what to export and copy, as in Tracker's export dialog: which objects and which quantities (t always goes,
   and cannot be removed). Column names follow Tracker (r, v_{x}, a_{y}…) and the units line lists every quantity.
   The default (all objects, x and y) gives the same CSV as before.
+- Trail on the video as in Tracker: none, short (the last 5 steps before the current frame, the default) or
+  full; while marking, the active mass shows only its current point.
 - Tapping the number on the calibration stick (Scale tool) opens a field right there to type the real distance, as
   in Tracker.
 - License files: AGPL-3.0-or-later for the code, CC BY-SA 4.0 for the documentation, and a NOTICE for third-party

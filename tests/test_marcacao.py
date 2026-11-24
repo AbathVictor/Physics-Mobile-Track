@@ -161,6 +161,26 @@ async def main():
         R.conferir(await pg.evaluate(cab) == "n,t,y,v,ax", "voltar o gráfico para y: ficam as escolhidas (y, v, ax)")
         await pg.evaluate("__va.colunas = ['x', 'y']")
 
+        print("rastro no vídeo (como no Tracker)")
+        await pg.click("[data-mode=nav]")
+        await ir_para(pg, 20)
+        n = "__va.rastroN['massa A']"
+        R.conferir(await pg.evaluate("__va.rastro") == "curto" and await pg.evaluate(n) == 5, f"padrão: rastro curto, os 5 passos antes do quadro atual e nenhum futuro ({await pg.evaluate(n)})")
+        await pg.click("#rastroSeg [data-rastro=completo]")
+        R.conferir(await pg.evaluate(n) == 39, f"completo: todos os pontos, passados e futuros ({await pg.evaluate(n)})")
+        await pg.click("#rastroSeg [data-rastro=nenhum]")
+        R.conferir(await pg.evaluate(n) == 0, "nenhum: só o ponto do quadro atual")
+        await pg.click("#rastroSeg [data-rastro=curto]")
+        await pg.select_option("#every", "2")
+        R.conferir(await pg.evaluate(n) == 10, f"a cada 2 quadros: a janela são os quadros 10 a 19 (5 passos), com os 10 pontos marcados nela ({await pg.evaluate(n)})")
+        guardado = await pg.evaluate("(() => { const p = __va.objs[0].marks.get(16); __va.objs[0].marks.delete(16); __va.ver++; return p; })()")
+        await ir_para(pg, 21); await ir_para(pg, 20)
+        R.conferir(await pg.evaluate(n) == 9, "um ponto faltando na janela não é trocado por um mais antigo (9 pontos)")
+        await pg.evaluate("p => { __va.objs[0].marks.set(16, p); __va.ver++; }", guardado)
+        await pg.select_option("#every", "1")
+        await pg.click("[data-mode=marcar]")
+        R.conferir(await pg.evaluate(n) == 0, "marcando, a massa ativa mostra só o ponto atual")
+
         print("exportação")
         for fmt, delim in (("excel", ";"), ("intl", ",")):
             await pg.check(f"input[name=fmt][value={fmt}]")

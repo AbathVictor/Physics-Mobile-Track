@@ -21,8 +21,11 @@ $("scaleLen").addEventListener("input", (e) => { if (!S.scale) return; S.scale.l
 $("scaleUnit").addEventListener("change", (e) => { if (!S.scale) return; S.scale.unit = e.target.value; persist(); renderPanels(); render(); });
 $("axAng").addEventListener("change", (e) => { if (!S.axes) return; const v = parseNum(e.target.value); if (Number.isFinite(v)) { S.axes.ang = v * Math.PI / 180; persist(); } renderPanels(); render(); });
 $("axZero").addEventListener("click", () => { if (!S.axes) return; S.axes.ang = 0; persist(); renderPanels(); render(); });
-$("every").addEventListener("change", (e) => { S.every = Number(e.target.value); persist(); pump(); });
-$("trail").addEventListener("change", (e) => { S.trail = e.target.checked; persist(); render(); });
+// o passo da marcação também é o passo das derivadas (velocidade e aceleração) e do rastro curto: tabela, gráfico e
+// vídeo se atualizam
+$("every").addEventListener("change", (e) => { S.every = Number(e.target.value); persist(); renderPanels(); render(); pump(); });
+// rastro no vídeo: nenhum, curto (os últimos passos antes do quadro atual) ou completo, como no Tracker
+$("rastroSeg").addEventListener("click", (e) => { const b = e.target.closest("[data-rastro]"); if (!b) return; S.rastro = b.dataset.rastro; persist(); renderPanels(); render(); });
 /**
  * Mostra o tamanho do alvo do rastreamento (círculo, em pixels do vídeo) e, com a medição automática, o tamanho
  * medido da massa; redesenha o vídeo com o círculo.

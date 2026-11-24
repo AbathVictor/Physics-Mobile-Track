@@ -102,6 +102,7 @@ Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (antes, era s
 | Abrir em tela cheia | pedido do autor em 21/11/2026: o aplicativo **abre na tela cheia (C)** (`S.telaCheia` começa `true`), e sair dela é escolha do usuário, no botão do canto de cima; nada fica guardado, a próxima abertura volta à tela cheia. No app instalado, o manifesto já tira as barras do sistema; numa aba comum, é a diagramação de tela cheia com as barras do navegador (a tela cheia do sistema exige um toque: o botão do aviso em pé ou sair e entrar de novo no botão do canto). Girar em pé na tela cheia não sai dela: o aviso cobre a tela e, ao deitar de novo, a tela cheia continua |
 | Etapas deitado | sem marca nas etapas concluídas (o ✓ saiu a pedido do autor em 16/11/2026: informação demais). Fica só o selo neutro "u.a." em Escala e Massas sem valor. A primeira etapa se chama **Vídeo** (pedido do autor em 22/11/2026; antes "Intervalo"), com o ícone de uma tela com o triângulo de play (o antigo lembrava um halter); o id continua `intervalo` |
 | Rastreamento | automático no estilo do autotracker do Tracker (ver abaixo) |
+| Rastro | decidido pelo autor em 23/11/2026, como o rastro do Tracker (opções nenhum, curto, longo e completo; o curto conta passos do clipe, só o passado): seletor **nenhum · curto · completo** no passo 6 (sem o "longo"), padrão **curto**, no salvamento do vídeo (`rastro`; um salvamento antigo com a caixa "Mostrar a trajetória" desligada fica com nenhum). **Curto**: os pontos dos **5 passos** antes do quadro atual (`RASTRO_CURTO` em `desenho.js`; um passo é o "a cada" da marcação: a janela é de 5 × (a cada) quadros, com todos os pontos marcados nela; ponto faltando não é trocado por um mais antigo) e **nenhum futuro**. **Completo**: todos, com os futuros e os fora do intervalo na cor de borda, como antes. **Marcando** (ferramenta Marcar), a massa ativa mostra **só o ponto atual**, como no Tracker; os outros objetos seguem o seletor. Vale para todos os objetos. Trocar o "a cada" redesenha o vídeo, a tabela e o gráfico (o passo das derivadas é o mesmo) |
 | Toque | sensibilidade "aceitável"; otimizar no futuro |
 
 ## Estado atual
@@ -442,13 +443,7 @@ Vídeo 1080p a 30 quadros/s, H.264: decodificação por hardware; cerca de 10 ms
 - ~~Grandezas cinemáticas~~ (plano aprovado pelo autor em 23/11/2026, feito no mesmo dia em três etapas: cálculo e
   gráfico, tabela, exportar e copiar; especificação nas linhas "Grandezas", "Tabela e gráfico", "Saída" e "Estrutura
   do CSV").
-- **PRÓXIMO PASSO: rastro curto no vídeo** (pedido do autor em 22/11/2026): hoje o rastro (a opção
-  "rastro" e os pontos da massa ativa em Marcar, `drawOverlays` em `desenho.js`) mostra **todos** os pontos de cada
-  objeto. Como no Tracker, que tem o comprimento do rastro ajustável, mostrar **só os últimos 5** pontos antes do
-  quadro atual, para cada objeto. O número pode mudar depois (5 é o valor inicial do autor). Combinar com o autor:
-  - se o rastro curto vale também para a massa ativa durante a marcação;
-  - o que acontece com os pontos futuros (hoje em cinza);
-  - se os 5 são os 5 últimos pontos marcados ou os 5 últimos quadros.
+- ~~Rastro curto no vídeo~~ (pedido do autor em 22/11/2026, feito em 23/11/2026; especificação na linha "Rastro").
 - Decididas para depois: **suporte a iOS** e **otimizar a sensibilidade do toque**.
 - **Lembrete, não é tarefa** (23/11/2026, a pedido do autor: algo a explorar só se o caso voltar a aparecer, para lembrar
   que não é inédito). **Vídeo HEVC 1080p da câmera, lento no Android.** O autor mandou dois diagnósticos do mesmo

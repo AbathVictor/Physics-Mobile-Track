@@ -17,7 +17,7 @@ import { $, LS, clampF, dist, parseNum } from "./util.js";
  */
 export function restoreOrDefaults() {
   const N = S.frames.length, W = S.dispW, H = S.dispH;
-  S.start = 0; S.end = N - 1; S.every = 1; S.trail = true;
+  S.start = 0; S.end = N - 1; S.every = 1; S.rastro = "curto";
   const a = objetosIniciais();
   S.scale = { p1: { x: W * 0.25, y: H * 0.3 }, p2: { x: W * 0.25, y: H * 0.7 }, len: "", unit: "cm" };
   S.axes = { o: { x: W / 2, y: H / 2 }, ang: 0 };
@@ -48,7 +48,8 @@ export function restoreOrDefaults() {
       if (saved.mass) { a.massa = { val: String(saved.mass.val ?? ""), sig: String(saved.mass.sig ?? "") }; if (saved.mass.unit === "kg") S.massUnit = "kg"; }
       a.marks = new Map((saved.marks || []).filter((e) => e[0] >= 0 && e[0] < N).map((e) => [e[0], { x: e[1].x, y: e[1].y }]));
     }
-    S.trail = saved.trail !== false;
+    // rastro: nenhum, curto ou completo (desde 23/11/2026); um salvamento antigo com o rastro desligado fica sem rastro
+    if (["nenhum", "curto", "completo"].includes(saved.rastro)) S.rastro = saved.rastro; else if (saved.trail === false) S.rastro = "nenhum";
     if (saved.trR > 0) S.trR = saved.trR;
     if (typeof saved.trAuto === "boolean") S.trAuto = saved.trAuto;
     if ([0.55, 0.7, 0.85].includes(saved.trThr)) S.trThr = saved.trThr;
@@ -90,7 +91,7 @@ let saveTimer = null;
 function writeNow() {
   saveTimer = null;
   if (!S.frames.length) return;
-  LS.set(cfgKey(), { v: 2, start: S.start, end: S.end, every: S.every, scale: S.scale, axes: S.axes, massUnit: S.massUnit, objs: serializar(S.objs), ativo: S.ativo, trail: S.trail, trR: S.trR, trAuto: S.trAuto, trThr: S.trThr, plotVar: S.plotVar, fmt: S.fmt, comparar: [...S.comparar], colunas: S.colunas, expFora: [...S.expFora], expGr: S.expGr });
+  LS.set(cfgKey(), { v: 2, start: S.start, end: S.end, every: S.every, scale: S.scale, axes: S.axes, massUnit: S.massUnit, objs: serializar(S.objs), ativo: S.ativo, rastro: S.rastro, trR: S.trR, trAuto: S.trAuto, trThr: S.trThr, plotVar: S.plotVar, fmt: S.fmt, comparar: [...S.comparar], colunas: S.colunas, expFora: [...S.expFora], expGr: S.expGr });
 }
 /**
  * Registra uma alteração: aumenta S.ver (avisa que o centro de massa precisa ser recalculado) e salva 0,3 s depois

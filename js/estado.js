@@ -30,7 +30,7 @@ export const S = {
   // resultado de "Medir este vídeo" (medicao.js), mostrado no diagnóstico; some ao abrir outro vídeo
   medicao: null,
   // análise
-  mode: "nav", start: 0, end: 0, every: 1, trail: true, zoom: 4, plotVar: "y", fmt: "excel",
+  mode: "nav", start: 0, end: 0, every: 1, rastro: "curto", rastroN: {}, zoom: 4, plotVar: "y", fmt: "excel",
   trR: 20, trThr: 0.7, trAuto: true, objR: 0, tracking: false,
   scale: null, axes: null, cross: null, grab: null, lastGrab: null,
   // posição do dedo (px da tela) enquanto arrasta uma ponta da escala: a lupa aparece só com ela (lupa.js)

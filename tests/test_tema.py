@@ -151,9 +151,15 @@ async def main():
             cx, cy = await pg.evaluate("[__va.cross.x, __va.cross.y]")
             px = await pixels(pg, cx + d, cy - d, 1)
             R.conferir(any(perto(q, hexrgb(tk["--amber"]), 60) for q in px), f"[{nome}] mira em anel âmbar ({px[4]})")
-            # trilha: ponto passado na cor da massa, futuro na cor de borda
+            # rastro completo (em Navegar: marcando, a massa ativa mostra só o ponto atual): ponto passado na cor da
+            # massa, futuro na cor de borda
+            await pg.evaluate("__va.rastro = 'completo'")
+            await pg.click(".modes [data-mode=nav]")
             pas = await pixels(pg, 60 + 26 * 1, 120, 0)
             fut = await pixels(pg, 60 + 26 * 7, 120, 0)
+            await pg.evaluate("__va.rastro = 'curto'")
+            await pg.click(".modes [data-mode=marcar]")
+            await pg.evaluate("__va.cross = { x: 180, y: 400 }")
             R.conferir(perto(pas[0], hexrgb("#ff3030"), 50), f"[{nome}] ponto passado da trilha na cor da massa ({pas[0]})")
             R.conferir(perto(fut[0], hexrgb(tk["--line"]), 30), f"[{nome}] ponto futuro da trilha na cor de borda ({fut[0]})")
             # gráfico: pontos futuros na cor de borda, o atual com anel âmbar

@@ -138,7 +138,7 @@ export function renderPanels() {
   $("trR").max = String(Math.max(10, Math.round(0.2 * Math.min(S.dispW, S.dispH))));
   renderTrR(); $("trAuto").checked = S.trAuto;
   $("trThr").value = String(S.trThr);
-  $("trail").checked = S.trail;
+  document.querySelectorAll("#rastroSeg [data-rastro]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.rastro === S.rastro)));
   renderSeletor();
   document.querySelectorAll("input[name=fmt]").forEach((r) => { r.checked = r.value === S.fmt; });
   renderData();

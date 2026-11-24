@@ -207,6 +207,8 @@ function label(g, text, x, y, color) {
   g.fillStyle = color; g.fillText(text, x, y + 0.5);
   return { x: x - w / 2, y: y - 9, w, h: 18 };
 }
+// passos antes do quadro atual no rastro curto (pedido do autor, 23/11/2026; pode mudar depois)
+const RASTRO_CURTO = 5;
 // retângulo da etiqueta da fita no último desenho, só na ferramenta Escala (null fora dela)
 let fitaRect = null;
 /**
@@ -266,17 +268,23 @@ function drawOverlays(g, T) {
     if (S.mode === "escala") fitaRect = rr;
     g.globalAlpha = 1;
   }
-  // trajetórias e pontos do quadro atual de todos os objetos, cada um na sua cor, com o objeto ativo por cima;
+  // rastros e pontos do quadro atual de todos os objetos, cada um na sua cor, com o objeto ativo por cima;
   // com mais de um objeto, cada ponto do quadro atual leva a letra da massa (ou o nome do centro de massa, "cm A").
-  // Pontos fora do intervalo de análise ou futuros (depois do quadro atual) ficam na cor de borda do tema.
+  // Rastro (decisões do autor, 23/11/2026, como o do Tracker): nenhum, curto ou completo. O curto mostra só os
+  // pontos dos RASTRO_CURTO passos antes do quadro atual (um passo é o "a cada" da marcação; ponto faltando na janela
+  // não é trocado por um mais antigo) e esconde os futuros; o completo mostra todos, com os futuros e os fora do
+  // intervalo na cor de borda do tema. Marcando uma massa, ela mostra só o ponto atual, como no Tracker.
   const ativo = objAtivo(), varios = S.objs.length > 1;
   const ordem = S.objs.filter((o) => o !== ativo); if (ativo) ordem.push(ativo);
+  S.rastroN = {};
   for (const o of ordem) {
-    const pts = pontosDe(o), eh = o === ativo;
-    if (S.trail || (eh && S.mode === "marcar")) {
-      const r = eh ? 2.4 : 1.8;
+    const pts = pontosDe(o), eh = o === ativo, marcando = eh && o.tipo === "massa" && S.mode === "marcar";
+    let n = 0;
+    if (S.rastro !== "nenhum" && !marcando) {
+      const r = eh ? 2.4 : 1.8, curto = S.rastro === "curto", desde = S.cur - RASTRO_CURTO * S.every;
       for (const [i, p] of pts) {
-        if (i === S.cur) continue;
+        if (i === S.cur || (curto && (i > S.cur || i < desde))) continue;
+        n++;
         const [x, y] = P(p);
         if (x < -10 || y < -10 || x > cssW + 10 || y > cssH + 10) continue;
         const cinza = i > S.cur || !inInterval(i);
@@ -285,6 +293,8 @@ function drawOverlays(g, T) {
       }
       g.globalAlpha = 1;
     }
+    // pontos do rastro desenhados de cada objeto (os testes conferem)
+    S.rastroN[o.nome] = n;
     const m = pts.get(S.cur);
     if (!m) continue;
     const [x, y] = P(m), r = eh ? 7 : 5;

@@ -152,8 +152,8 @@
       <p class="note">Na ferramenta Marcar, pince o vídeo com dois dedos para aproximar e toque no centro da massa: a mira vai exatamente para onde você tocou. Toque em <b>Marcar ponto</b>: o ponto é gravado e o vídeo avança. A mira já aparece onde a massa deve estar no quadro seguinte, e a imagem acompanha a massa quando ela se afasta.</p>
       <div class="grid2">
         <div class="field"><label for="every">Marcar a cada</label><select class="sel" id="every"><option value="1">1 quadro</option><option value="2">2 quadros</option><option value="3">3 quadros</option><option value="5">5 quadros</option><option value="10">10 quadros</option></select></div>
-        <div class="field" style="justify-content:flex-end"><label class="check"><input type="checkbox" id="trail" checked> Mostrar a trajetória</label></div>
       </div>
+      <div class="field"><span class="lbl" id="rastroT">Rastro no vídeo</span><div class="seg" id="rastroSeg" role="group" aria-labelledby="rastroT"><button type="button" data-rastro="nenhum" aria-pressed="false">nenhum</button><button type="button" data-rastro="curto" aria-pressed="true">curto</button><button type="button" data-rastro="completo" aria-pressed="false">completo</button></div></div>
       <div class="field">
         <label for="trR">Tamanho do alvo do rastreamento automático · <span id="trRv"></span></label>
         <input type="range" id="trR" min="4" max="100" step="1" value="20">
