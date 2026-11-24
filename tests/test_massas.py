@@ -138,6 +138,25 @@ async def main():
         nota = await txt("#exportNote")
         R.conferir("skiprows=8" in nota, f"a dica do Python conta as linhas de cabeçalho ({nota[:45]}…)")
 
+        print("escolher o que exportar (como o Tracker)")
+        await pg.click("#expObjs [data-exp='3']")  # cm B fica de fora
+        await pg.click("#expGr [data-expgr=vx]"); await pg.click("#expGr [data-expgr=v]")
+        L = await csv_excel(pg)
+        R.conferir(L[4] == "unidades: t em s · x e y em cm · v_{x} e v em cm/s" and L[7] == ";massa A;;;;massa B;;;;cm A;;;;"
+                   and L[8] == "t;" + "x;y;v_{x};v;" * 3,
+                   f"sem o cm B e com v_{{x}} e v: unidades, nomes (um separador por coluna) e colunas como no Tracker ({L[4]} | {L[7]} | {L[8]})")
+        dados = [l.split(";") for l in L[9:] if l]
+        R.conferir(len(dados) == 10 and all(len(d) == 13 for d in dados) and dados[0][3] == "" and dados[1][3] != "",
+                   "t e 4 colunas por objeto; sem v_{x} no primeiro ponto (célula vazia)")
+        R.conferir(await pg.evaluate("document.querySelector('#expGr button').disabled && document.querySelector('#expGr button').getAttribute('aria-pressed') === 'true'"),
+                   "o t está sempre marcado e não se desmarca")
+        await pg.click("#expGr [data-expgr=x]"); await pg.click("#expGr [data-expgr=y]"); await pg.click("#expGr [data-expgr=vx]")
+        await pg.click("#expGr [data-expgr=v]")
+        R.conferir(await pg.evaluate("__va.expGr.join()") == "v", "ao menos uma grandeza além do t: a última não sai")
+        await pg.click("#expGr [data-expgr=x]"); await pg.click("#expGr [data-expgr=y]"); await pg.click("#expGr [data-expgr=v]")
+        await pg.click("#expObjs [data-exp='3']")
+        R.conferir((await csv_excel(pg))[7] == ";massa A;;massa B;;cm A;;cm B;;", "de volta ao padrão: todos os objetos, x e y")
+
         print("comparar no gráfico")
         R.conferir(await pg.evaluate("__va.graficoCurvas.join()") == "cm B", "sem comparar, o gráfico tem só o objeto ativo (cm B)")
         await pg.click("#cmpBtn")

@@ -184,6 +184,20 @@ async def main():
             yv = float(dados[1][2].replace(",", "."))
             R.conferir(len(dados) == 40 and abs(yv - y_cm(1 / 30)) < 0.05, f"{fmt}: 40 linhas e valores corretos (y₁ = {yv})")
             R.conferir(sv["filename"] == "exemplo_trajetoria.csv", f"{fmt}: nome do arquivo {sv['filename']}")
+        # um objeto só, com a aceleração: a_{y} como no Tracker, em cm/s², e vazia nos dois primeiros pontos
+        await pg.click("#expGr [data-expgr=ay]")
+        await pg.check("input[name=fmt][value=intl]")
+        await pg.evaluate("window.__salvo = null")
+        await pg.click("#exportCsv")
+        await pg.wait_for_function("window.__salvo", timeout=5000)
+        L = (await pg.evaluate("window.__salvo.data")).splitlines()
+        d = [l.split(",") for l in L[5:]]
+        ay = [float(r[3]) for r in d[2:-2]]
+        R.conferir(L[1] == "unidades: t em s · x e y em cm · a_{y} em cm/s²" and L[4] == "t,x,y,a_{y}" and d[0][3] == "" and d[1][3] == "" and d[2][3] != "" and d[-1][3] == "",
+                   f"um objeto com a_{{y}}: unidades, cabeçalho e células vazias nas pontas ({L[1]} | {L[4]})")
+        q = await pg.evaluate("import('./js/dados.js').then((m) => m.rows(__va.objs[0]).filter((q) => Number.isFinite(q.ay)).map((q) => q.ay))")
+        R.conferir(len(ay) == len(q) and max(abs(a - b) for a, b in zip(ay, q)) < 0.01, "os valores do CSV são os da tabela e do gráfico")
+        await pg.click("#expGr [data-expgr=ay]"); await pg.check("input[name=fmt][value=excel]")
 
         print("play sincronizado com o gráfico, a tabela e a barra")
         # antes, o play só redesenhava o vídeo: o ponto do gráfico, a linha da tabela e a barra ficavam parados

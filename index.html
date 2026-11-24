@@ -182,6 +182,12 @@
       <div class="tabcols" id="tabCols"><button type="button" class="cmpbtn fambtn" id="colBtn" aria-haspopup="true" aria-expanded="false" aria-label="Colunas da tabela" disabled>colunas</button></div>
       <div class="tbl-wrap" id="tblWrap"><table class="data" id="table"></table></div>
       <p class="note" id="outsideNote" hidden></p>
+      <!-- o que exportar e copiar (como o diálogo de exportação do Tracker): objetos e grandezas; o t vai sempre -->
+      <div class="expsel" id="expSel">
+        <p class="exp-t">Exportar e copiar</p>
+        <div class="objs" id="expObjs" role="group" aria-label="Objetos a exportar"></div>
+        <div class="col-grade" id="expGr" role="group" aria-label="Grandezas a exportar"></div>
+      </div>
       <div class="radio" role="radiogroup" aria-label="Formato da tabela">
         <label><input type="radio" name="fmt" value="excel" checked><span>Excel e Planilhas Google<small>ponto e vírgula entre colunas, vírgula decimal</small></span></label>
         <label><input type="radio" name="fmt" value="intl"><span>Internacional (Python, Origin)<small>vírgula entre colunas, ponto decimal</small></span></label>

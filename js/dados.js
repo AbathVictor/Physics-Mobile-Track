@@ -6,7 +6,7 @@
  */
 
 import { dtMedio, inInterval, persist, phys, tempo, unidade, unitPerPx } from "./analise.js";
-import { FAMILIAS, GRANDEZAS, cinematica, familia, nomeHtml, unidadeDe } from "./cinematica.js";
+import { FAMILIAS, GRANDEZAS, cinematica, familia, nomeHtml, nomeTracker, unidadeDe } from "./cinematica.js";
 import { IC } from "./icones.js";
 import { criarPopup } from "./popup.js";
 import { decOf } from "./desenho.js";
@@ -88,13 +88,16 @@ export function renderData() {
   const body = R.map((r) => `<tr data-i="${r.i}"${r.i === S.cur ? ' class="cur"' : ""}><td data-c="n">${r.i}</td><td data-c="t">${fmt(r.t, 4)}</td>${gr.map((c) => cel(r, c)).join("")}</tr>`).join("");
   $("table").innerHTML = head + `<tbody>${body || `<tr><td colspan="${gr.length + 2}" style="text-align:center;cursor:default">${esc(vazio)}</td></tr>`}</tbody>`;
   renderColunas();
-  // copiar e exportar levam todos os objetos com pontos
+  // copiar e exportar levam os objetos e as grandezas escolhidos (renderExport), com o t sempre
+  renderExport();
   const exp = S.frames.length ? exportaveis() : [];
   $("copyTable").disabled = !exp.length;
   $("exportCsv").disabled = !exp.length || !S.dl;
-  $("exportNote").innerHTML = exp.length > 1
-    ? `No Python: <code>pd.read_csv(arquivo, skiprows=${cabecalho(exp).length - 1})</code> pula as linhas das massas, das unidades, da calibração e dos nomes; as colunas de cada objeto ficam x, y, x.1, y.1… na ordem dos nomes.`
-    : "No Python: <code>pd.read_csv(arquivo, skiprows=4)</code> pula as linhas da massa, das unidades, da calibração e do nome do objeto.";
+  const ex = nomeTracker(grandezasExp()[0]);
+  $("exportNote").innerHTML = !exp.length && S.frames.length && S.objs.some((o) => rows(o).length) ? "Escolha ao menos um objeto com pontos para exportar."
+    : exp.length > 1
+      ? `No Python: <code>pd.read_csv(arquivo, skiprows=${cabecalho(exp).length - 1})</code> pula as linhas das massas, das unidades, da calibração e dos nomes; as colunas de cada objeto repetem os nomes (${ex}, ${ex}.1…) na ordem dos objetos.`
+      : "No Python: <code>pd.read_csv(arquivo, skiprows=4)</code> pula as linhas da massa, das unidades, da calibração e do nome do objeto.";
   drawPlot();
   // a coluna das etapas (celular deitado) atualiza os selos: renderData roda depois de toda mudança de dados
   document.dispatchEvent(new Event("va:paineis"));
@@ -243,14 +246,54 @@ export function irAoPontoDoGrafico(clientX) {
 $("plot").addEventListener("click", (e) => { if (!document.body.classList.contains("pais-c")) irAoPontoDoGrafico(e.clientX); });
 
 /**
- * Objetos com pontos no intervalo, com as linhas de cada um, para copiar e exportar.
+ * Objetos escolhidos para copiar e exportar que têm pontos no intervalo, com as linhas de cada um.
  *
- * Mesma estrutura do Tracker, com as massas e as unidades antes. Com um objeto só, uma linha com o nome e t, x, y. Com
- * vários, como o Tracker exporta várias trilhas: a linha "#multi:", a linha dos nomes (cada nome seguido de um separador
- * por coluna) e t, x, y, x, y…; o quadro em que um objeto não tem ponto fica com as células vazias.
+ * Como o diálogo de exportação do Tracker (pedido do autor, 23/11/2026), o usuário escolhe os objetos (S.expFora: os
+ * que ficam de fora; um objeto novo entra sozinho) e as grandezas (S.expGr; o t vai sempre, sem opção de tirar: sem
+ * ele a tabela perde sentido e rastreabilidade). Por padrão, todos os objetos e x, y: o CSV é o de antes.
+ *
+ * Mesma estrutura do Tracker, com as massas e as unidades antes. Com um objeto só, uma linha com o nome e t e as
+ * grandezas. Com vários, como o Tracker exporta várias trilhas: a linha "#multi:", a linha dos nomes (cada nome seguido
+ * de um separador por coluna) e t e as grandezas de cada objeto; o quadro em que um objeto não tem ponto fica com as
+ * células vazias, como as grandezas que não existem num ponto (v e a nas pontas).
  * @returns {Array<{o: object, R: Array<object>}>} Objetos e linhas.
  */
-const exportaveis = () => S.objs.map((o) => ({ o, R: rows(o) })).filter((e) => e.R.length);
+const exportaveis = () => S.objs.filter((o) => !S.expFora.has(o.nome)).map((o) => ({ o, R: rows(o) })).filter((e) => e.R.length);
+/**
+ * Grandezas escolhidas para exportar, na ordem das colunas do Tracker (ao menos uma).
+ * @returns {string[]} As grandezas.
+ */
+const grandezasExp = () => { const g = GRANDEZAS.filter((c) => S.expGr.includes(c)); return g.length ? g : ["x", "y"]; };
+/**
+ * Unidades das grandezas exportadas, por família: "t em s · x e y em cm · v_{x} e v em cm/s".
+ * @param {string[]} gs As grandezas.
+ * @returns {string} A linha "unidades: …".
+ */
+function unidadesTxt(gs) {
+  const u = unidade(), partes = ["t em s"];
+  const lista = (n) => n.length > 1 ? `${n.slice(0, -1).join(", ")} e ${n[n.length - 1]}` : n[0];
+  for (const f of ["pos", "vel", "acel"]) {
+    const n = gs.filter((g) => familia(g) === f);
+    if (n.length) partes.push(`${lista(n.map(nomeTracker))} em ${unidadeDe(n[0], u)}`);
+  }
+  return "unidades: " + partes.join(" · ");
+}
+/**
+ * Casas decimais de cada grandeza exportada: as posições com as da escala (mais 2); velocidade e aceleração com 5
+ * algarismos significativos do maior valor entre os objetos exportados.
+ * @param {string[]} gs As grandezas.
+ * @param {Array<{R: Array<object>}>} exp Objetos exportáveis.
+ * @returns {Object<string, number>} Grandeza → casas decimais.
+ */
+function casasExp(gs, exp) {
+  const pd = posDec(2), c = {};
+  for (const g of gs) {
+    if (familia(g) === "pos") { c[g] = pd; continue; }
+    const m = Math.max(0, ...exp.flatMap((e) => e.R.map((q) => Math.abs(q[g]))).filter(Number.isFinite));
+    c[g] = m > 0 ? Math.max(0, Math.min(8, 4 - Math.floor(Math.log10(m)))) : 3;
+  }
+  return c;
+}
 /**
  * Separador de colunas e formatação dos números de cada formato.
  * @param {"excel"|"intl"|"tsv"} kind Excel e Planilhas (; e vírgula decimal), internacional (, e ponto) ou tabulação.
@@ -296,10 +339,10 @@ function calibracaoTxt(num) {
  * @returns {string[]} As linhas.
  */
 function cabecalho(exp, kind = "excel") {
-  const { delim, num } = formato(kind), u = unidade();
+  const { delim, num } = formato(kind), gs = grandezasExp(), nomes = gs.map(nomeTracker);
   if (exp.length === 1) {
     const o = exp[0].o;
-    return [`massa: ${massaTxt(o, num)}`, `unidades: t em s · x e y em ${u}`, calibracaoTxt(num), delim + o.nome, ["t", "x", "y"].join(delim)];
+    return [`massa: ${massaTxt(o, num)}`, unidadesTxt(gs), calibracaoTxt(num), delim + o.nome, ["t", ...nomes].join(delim)];
   }
   const L = [];
   for (const { o } of exp) if (o.tipo === "massa") L.push(`${o.nome}: ${massaTxt(o, num)}`);
@@ -309,9 +352,10 @@ function cabecalho(exp, kind = "excel") {
     const md = Math.max(0, ...s.membros.map((m) => decOf(m.massa.val)));
     L.push(`${cm.nome}: ${nomes}` + (s.faltam.length ? ` · ${avisoFaltam(s.faltam)}` : s.generica ? " · massas iguais (1 u.a. cada)" : s.pesos ? ` · massa total ${num(s.total, md)} ${S.massUnit}` : ""));
   }
-  L.push(`unidades: t em s · x e y em ${u}`, calibracaoTxt(num), "#multi:");
-  L.push(delim + exp.map((e) => e.o.nome + delim + delim).join(""));
-  L.push("t" + delim + exp.map(() => "x" + delim + "y" + delim).join(""));
+  L.push(unidadesTxt(gs), calibracaoTxt(num), "#multi:");
+  // como o Tracker: cada nome seguido de um separador por coluna do objeto
+  L.push(delim + exp.map((e) => e.o.nome + delim.repeat(gs.length)).join(""));
+  L.push("t" + delim + exp.map(() => nomes.map((n) => n + delim).join("")).join(""));
   return L;
 }
 /**
@@ -320,18 +364,16 @@ function cabecalho(exp, kind = "excel") {
  * @returns {string} O texto, com fim de linha CRLF.
  */
 function exportText(kind) {
-  const exp = exportaveis(), { delim, num } = formato(kind), pd = posDec(2);
+  const exp = exportaveis(), { delim, num } = formato(kind);
   if (!exp.length) return "";
-  const lines = cabecalho(exp, kind);
-  if (exp.length === 1) exp[0].R.forEach((r) => lines.push([num(r.t, 6), num(r.x, pd), num(r.y, pd)].join(delim)));
+  const gs = grandezasExp(), casas = casasExp(gs, exp), lines = cabecalho(exp, kind);
+  // células vazias onde a grandeza não existe (v e a nas pontas) ou o objeto não tem ponto
+  const cels = (r) => gs.map((g) => r ? num(r[g], casas[g]) : "");
+  if (exp.length === 1) exp[0].R.forEach((r) => lines.push([num(r.t, 6), ...cels(r)].join(delim)));
   else {
     const por = exp.map((e) => new Map(e.R.map((r) => [r.i, r])));
     const quadros = [...new Set(exp.flatMap((e) => e.R.map((r) => r.i)))].sort((a, b) => a - b);
-    for (const i of quadros) {
-      const c = [num(tempo(i), 6)];
-      for (const m of por) { const r = m.get(i); c.push(r ? num(r.x, pd) : "", r ? num(r.y, pd) : ""); }
-      lines.push(c.join(delim));
-    }
+    for (const i of quadros) lines.push([num(tempo(i), 6), ...por.flatMap((m) => cels(m.get(i)))].join(delim));
   }
   return lines.join("\r\n") + "\r\n";
 }
@@ -432,6 +474,33 @@ $("colLista").addEventListener("click", (e) => {
   const c = b.dataset.col;
   if (colunasVisiveis().includes(c)) S.colunas = S.colunas.filter((x) => x !== c);
   else S.colunas = [...S.colunas.filter((x) => x !== c), c];
+  persist(); renderData();
+});
+/**
+ * Monta a escolha do que exportar e copiar: os objetos (bolinha e nome; ligados os que vão) e as grandezas numa grade
+ * com o t ligado e fixo na primeira linha. Os objetos sem pontos no intervalo ficam desligados e sem efeito.
+ */
+function renderExport() {
+  const on = S.frames.length > 0;
+  $("expObjs").innerHTML = S.objs.map((o, i) => {
+    const vai = !S.expFora.has(o.nome), tem = on && rows(o).length > 0;
+    return `<button type="button" data-exp="${i}" aria-pressed="${vai && tem}"${tem ? "" : " disabled"} aria-label="${esc(o.nome)}"><i class="dot" style="background:${o.cor}"></i>${esc(o.nome)}</button>`;
+  }).join("");
+  const gs = grandezasExp();
+  $("expGr").innerHTML = `<button type="button" aria-pressed="true" disabled title="o tempo vai sempre">t</button><span></span><span></span>`
+    + GRANDEZAS.map((g) => `<button type="button" data-expgr="${g}" aria-pressed="${gs.includes(g)}"${on ? "" : " disabled"}>${nomeHtml(g)}</button>`).join("");
+}
+$("expObjs").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-exp]"), o = b && S.objs[Number(b.dataset.exp)]; if (!o || b.disabled) return;
+  if (S.expFora.has(o.nome)) S.expFora.delete(o.nome); else S.expFora.add(o.nome);
+  persist(); renderData();
+});
+$("expGr").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-expgr]"); if (!b || b.disabled) return;
+  const g = b.dataset.expgr, gs = grandezasExp();
+  // ao menos uma grandeza além do t
+  if (gs.includes(g)) { if (gs.length === 1) { toast("Escolha ao menos uma grandeza além do t."); return; } S.expGr = gs.filter((x) => x !== g); }
+  else S.expGr = [...gs, g];
   persist(); renderData();
 });
 // a componente escolhe dentro da família

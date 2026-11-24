@@ -130,6 +130,10 @@ input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; heigh
 .col-grade button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .col-grade button:disabled { cursor: default; }
 .col-grade button:disabled:not([aria-pressed="true"]) { opacity: 0.45; }
+/* o que exportar e copiar: objetos (os mesmos botões da fileira dos objetos) e grandezas (grade com o t fixo) */
+.expsel { display: grid; gap: 8px; margin: 12px 0 8px; }
+.exp-t { margin: 0; font-size: 0.86rem; font-weight: 600; }
+.expsel .col-grade { padding: 0; max-width: 320px; }
 
 .panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }

@@ -33,6 +33,9 @@ There are no releases yet. Version 1.0.0 will be the first one, archived on Zeno
   step. The graph picks a family (position, velocity, acceleration) and a component (x, y, magnitude).
 - Table columns: the frame number (*n*) and t are always shown, plus up to 4 of the 9 quantities; the graph's
   quantity is always among them (*colunas ▾* button above the table).
+- Choose what to export and copy, as in Tracker's export dialog: which objects and which quantities (t always goes,
+  and cannot be removed). Column names follow Tracker (r, v_{x}, a_{y}…) and the units line lists every quantity.
+  The default (all objects, x and y) gives the same CSV as before.
 - Tapping the number on the calibration stick (Scale tool) opens a field right there to type the real distance, as
   in Tracker.
 - License files: AGPL-3.0-or-later for the code, CC BY-SA 4.0 for the documentation, and a NOTICE for third-party

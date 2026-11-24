@@ -45,6 +45,8 @@ export const S = {
   graficoEixo: "",
   // colunas da tabela escolhidas pelo usuário, além do t e da grandeza do gráfico (dados.js; vai no salvamento)
   colunas: ["x", "y"],
+  // o que exportar e copiar (dados.js; vai no salvamento): objetos deixados de fora (nomes) e grandezas (o t vai sempre)
+  expFora: new Set(), expGr: ["x", "y"],
   // celular deitado (paisagem.js): etapa e aba do painel escolhidas e tela cheia; não vão no salvamento por vídeo.
   // O aplicativo abre em tela cheia (pedido do autor, 21/11/2026); sair dela é escolha do usuário, no botão do canto de cima
   etapa: "intervalo", aba: "param", telaCheia: true,
