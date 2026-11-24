@@ -85,7 +85,8 @@ Decidido pelo autor em 22/11/2026, ao tornar o aplicativo público (antes, era s
 | Tabela e gráfico | de **um objeto por vez**, o ativo, como no Tracker (uma tabela por trilha). Copiar e CSV levam todos os objetos com pontos |
 | Comparar no gráfico | pedido do autor em 22/11/2026, como o "Comparar com" do gráfico do Tracker: o botão **comparar** (ícone de duas curvas, com "+2" quando há comparados) fica ao lado de y(t)/x(t) e vai com eles para a linha da alça e para o cabeçalho da janela do gráfico. Ele abre uma lista com uma caixa por objeto; o ativo vem marcado e não se desmarca. Cada curva na cor do objeto, o ativo por cima (linha mais grossa, anel âmbar no quadro atual), eixos cobrindo todas as curvas e o **nome na ponta direita** de cada curva ("A", "cm A"; etiquetas escuras como as do vídeo, empurradas para não se sobrepor), porque os cm têm todos o mesmo verde. Com uma curva só, nada muda (futuros na cor de borda). **Com várias, o futuro de cada curva fica na cor do próprio objeto, apagado** (decisão do autor). A tabela continua só com o ativo. A escolha vai no salvamento do vídeo (armadilha 14) e continua ao trocar o objeto ativo. A lista fecha num toque fora, no botão, com Esc e com o Voltar (entra no histórico) |
 | Fluxo | vídeo (câmera ou galeria) → intervalo → escala → eixos → massa → marcação → tabela e gráfico |
-| Dados | apenas **t, x, y** por quadro de cada objeto, mais a **massa** de cada um (valor ± incerteza, g ou kg). Velocidade e aceleração ficaram de fora por decisão (**revisto em 22/11/2026**: o próximo passo acrescenta r, v e a, ver Pendências) |
+| Dados | apenas **t, x, y** por quadro de cada objeto, mais a **massa** de cada um (valor ± incerteza, g ou kg). Velocidade e aceleração ficaram de fora por decisão (**revisto em 22/11/2026**: ver a linha "Grandezas") |
+| Grandezas | pedido do autor em 22/11/2026, feito em 23/11/2026 como no Tracker (`PointMass` com o algoritmo padrão `FINITE_DIFF`, `FirstDerivative` e `SecondDerivative`; `js/cinematica.js`): **r** = √(x² + y²) a partir da origem dos eixos; **velocidade** por diferença centrada, vx(n) = (x(n+1) − x(n−1)) / (2Δt); **aceleração** pelo ajuste de 5 pontos por mínimos quadrados do Tracker, ax(n) = (2x(n−2) − x(n−1) − 2x(n) − x(n+1) + 2x(n+2)) / (7Δt²), exato para movimento uniformemente acelerado e menos sensível ao ruído da marcação; v e a são os módulos. Um **passo** é o "a cada" da marcação (o step size do clipe do Tracker): n ± 1 é o quadro ± (a cada), e Δt é o tempo de um passo, (a cada) × o Δt do Tracker (armadilha 2). Sem um vizinho (pontas, ponto faltando, fora do intervalo), a grandeza não existe, como as células vazias do Tracker: **v falta no primeiro e no último ponto; a, nos dois primeiros e nos dois últimos**. O cm usa o mesmo cálculo sobre as posições dele. Unidades cm/s e cm/s² (u.a./s e u.a./s² sem escala). **Gráfico**: dois seletores (decisão do autor), a **família** num botão com menu ("pos ▾": posição, velocidade, aceleração; os dois seletores lado a lado não cabiam numa linha) e a **componente** em três botões que mudam com a família (x y r, vx vy v, ax ay a, com índice abaixo da linha); trocar a família mantém a componente. Sem a grandeza em nenhum ponto, o gráfico avisa quantos pontos seguidos ela precisa (3 para v, 5 para a). O cabeçalho da janela do gráfico deixa o seletor descer para uma segunda linha só quando a janela é estreita demais (tamanho mínimo) |
 | Saída | **Copiar tabela** (tabulação) e **Exportar CSV** em dois formatos que o usuário escolhe: *Excel/Planilhas Google* (`;` entre colunas, vírgula decimal, com marca UTF-8 no início) e *Internacional/Python* (`,` entre colunas, ponto decimal) |
 | Estrutura do CSV | igual à do Tracker, com metadados antes: `massa: (0,250 ± 0,001) kg`, `unidades: t em s · x e y em cm`, `calibração: origem x0 = 946,37 px · y0 = 668,52 px · ângulo 0,80° (0,013963 rad) · escala 12,8000 px por cm` (desde 21/11/2026, pedido do autor, para ficar em conformidade com o .trk do Tracker, que guarda a calibração: os mesmos xorigin, yorigin, angle e xscale do sistema de coordenadas da imagem; origem em pixels da imagem, x para a direita e y para baixo; ângulo do eixo x no sentido anti-horário; escala em pixels por unidade, 1 px por u.a. sem escala; a linha não tem o separador de colunas), linha do objeto (`;massa A`), cabeçalho `t;x;y`, dados. No Python: `pd.read_csv(arquivo, skiprows=4)`. O Laboratório de Oscilações lê os dois formatos (testado; a linha de calibração é texto de uma célula, como as outras de metadados) | Com vários objetos, o formato de várias trilhas do Tracker (`ExportDataDialog`): uma linha por massa (`massa A: …`), uma linha por centro de massa (`cm A: massa A + massa B · …`), `unidades`, `calibração`, `#multi:`, a linha dos nomes `;massa A;;massa B;;cm A;;`, o cabeçalho `t;x;y;x;y;x;y;` e os dados (célula vazia no quadro em que o objeto não tem ponto). Com um objeto só, o formato continua o de antes |
 | Descartado | botão "Enviar para o Laboratório de Oscilações" |
@@ -188,6 +189,10 @@ js/rastreio/previsao.js    predictNext (pura: recebe as dimensões da imagem)
 js/rastreio/rastreador.js  TR, autoSizeAt, initTemplate, trackFrame, runTrack
 js/medicao.js              "Medir este vídeo" (≡ → Diagnóstico): salto, arrasto, play e decodificador à parte, no
                            próprio celular; o resultado (S.medicao) entra no diagnóstico
+js/cinematica.js           r, velocidade e aceleração de uma trilha, como no Tracker (sem DOM: testado no Node); nomes,
+                           famílias e unidades das grandezas
+js/popup.js                lista suspensa presa a um botão (comparar, família da grandeza do gráfico): abre abaixo dele,
+                           fecha num toque fora, Esc ou Voltar (entra no histórico, como as gavetas)
 js/comparar.js             botão "comparar" e lista dos objetos comparados no gráfico (S.comparar); o desenho das curvas
                            fica em dados.js (drawPlot). Controla o próprio histórico, como o fita.js
 js/navegacao.js · ferramentas.js · paineis.js · dados.js · entradas.js · arquivos.js · diagnostico.js
@@ -401,7 +406,7 @@ no topo da imagem).
 pip install -r tests/requirements.txt      # Playwright e Pillow; não precisa de "playwright install"
 python tests/gerar_videos.py               # uma vez; precisa do ffmpeg no PATH (libx265 é opcional)
 python tests/test_decodificacao.py         # quadro certo, tempo de cada quadro, taxa variável, quadros B, rotação, tempo como no Tracker (salto_carimbo.mp4), HEVC
-python tests/test_marcacao.py              # play, intervalo, pinça, marcação, CSV nos dois formatos (com a calibração), play sincronizado com o gráfico, a tabela e a barra, recuperação
+python tests/test_marcacao.py              # play, intervalo, pinça, marcação, velocidade e aceleração contra as derivadas da equação e o seletor da grandeza, CSV nos dois formatos (com a calibração), play sincronizado com o gráfico, a tabela e a barra, recuperação
 python tests/test_rastreamento.py          # medição do alvo, precisão, um decodificador só, perda do alvo, botão Parar
 python tests/test_massas.py                # escala genérica, duas massas, cm vazio e escolha das massas, dois cm, CSV com vários objetos, comparar no gráfico, excluir (inclusive a última massa), migração
 python tests/test_tema.py                  # cores dos dois temas, contraste de todo texto, theme-color, tema manual, mira, pontos futuros, cor da massa
@@ -410,7 +415,7 @@ python tests/test_paisagem.py              # deitado (915 × 412), sem liberar o
 python tests/test_lupa.py                  # lupa da escala: só nas pontas da fita, lado certo perto das bordas, pixel do centro, some ao soltar; número da fita (abrir, Enter, valor errado, Esc, Voltar, toque fora, ≡, não abre em Marcar)
 python tests/test_desempenho.py            # fases 1 e 2, com a leitura lenta do celular simulada (0,9 s) e decodificação por software: arquivo em poucas leituras, abrir vídeo durante a decodificação do anterior, arrasto na barra e na alça com prévia, quadro exato e certo ao soltar, quadros B com trabalho abandonado, play sem pular quadros, play com grupos longos sem recomeçar do quadro-chave (gop150.mp4), memória dentro dos limites, segundo plano, vídeo de até 960 px sem cópia repetida
 python tests/test_offline.py               # modo avião com o aplicativo aberto, recarregar sem conexão, lista do sw.js, nada externo, app instalável e deitado
-node tests/test_calculo.mjs                # previsão, máscara, correlação e modelo de objetos, direto no Node (sem navegador)
+node tests/test_calculo.mjs                # previsão, máscara, correlação, modelo de objetos e grandezas cinemáticas (exatas no movimento uniformemente acelerado, pontas, ponto faltando), direto no Node (sem navegador)
 node tests/test_comentarios.mjs            # padrão dos comentários: bloco @file em cada arquivo e JSDoc em cada função do módulo, com um @param por parâmetro, e a linha da licença em cada arquivo de código
 python tests/medir_desempenho.py [--software] [--leitura-lenta] v.mp4   # não é teste: a mesma medição do "Medir este vídeo" do celular, para comparar antes e depois
 ```
@@ -434,25 +439,17 @@ Vídeo 1080p a 30 quadros/s, H.264: decodificação por hardware; cerca de 10 ms
 
 ## Pendências
 
-- **PRÓXIMO PASSO** (pedido do autor em 22/11/2026, para quando voltarmos ao trabalho): **as grandezas cinemáticas
-  lineares que faltam**, como no Tracker. Muda a decisão antiga da linha "Dados" da especificação (velocidade e
-  aceleração tinham ficado de fora). Em ordem:
-  1. **módulo da posição**, r = |r⃗| = √(x² + y²), ao lado de x e y (o "r" do Tracker);
-  2. **velocidade**: vx, vy e o módulo v;
-  3. **aceleração**: ax, ay e o módulo a.
-
-  É funcionalidade grande: **propor o plano e esperar o autor decidir antes de escrever código**. Pontos para o plano:
-  - **Derivadas**: conferir no código do Tracker (`PointMass`, algoritmos de derivada) como ele calcula v e a a
-    partir das posições (diferenças finitas centradas e o espalhamento usado) e o que mostra nos quadros das pontas,
-    onde não há vizinhos; seguir o mesmo, pelo princípio de compatibilidade com o Tracker. Usar o Δt como no Tracker
-    (armadilha 2).
-  - **Passo "a cada"**: com marcação a cada n quadros, as derivadas usam os pontos vizinhos marcados, não os quadros
-    vizinhos. Quadros sem ponto no meio da série interrompem a derivada ali.
-  - **Centro de massa**: as mesmas grandezas, calculadas a partir das posições dele.
-  - **Interface**: o gráfico hoje só tem y(t)/x(t). Com 9 grandezas, o seletor muda (talvez uma lista em vez de
-    botões). Também é preciso decidir quais colunas a tabela mostra e como ficam o CSV, a cópia da tabela e o gráfico
-    comparado. O CSV deve seguir o formato do Tracker (nomes das colunas r, vx, vy, v, ax, ay, a).
-  - **Unidades**: cm/s e cm/s² a partir da escala; u.a./s e u.a./s² sem escala.
+- **EM ANDAMENTO: grandezas cinemáticas** (plano aprovado pelo autor em 23/11/2026; especificação na linha "Grandezas"
+  da tabela). Etapas, uma por commit:
+  1. ~~cálculo e gráfico~~ (feito em 23/11/2026);
+  2. **tabela**: t sempre, fora da conta; até 4 grandezas visíveis, entre as 9 e "quadro". Por padrão, x, y e a
+     grandeza do gráfico, que **sempre entra** (as escolhas do usuário completam até 4). Um botão "colunas" abre a
+     escolha;
+  3. **exportar e copiar**, como o diálogo de exportação do Tracker: o usuário marca quais objetos e quais grandezas.
+     O **t vai sempre**, sem opção de tirar (decisão do autor: sem ele, a tabela perde sentido e rastreabilidade). Por
+     padrão, todos os objetos com pontos e x, y (o CSV fica igual ao de hoje, o que o Laboratório de Oscilações e a
+     dica do Python esperam). Nomes das colunas como no Tracker: r, v_{x}, v_{y}, v, a_{x}, a_{y}, a. A linha
+     "unidades" ganha as das grandezas escolhidas.
 - **Rastro curto no vídeo** (pedido do autor em 22/11/2026, para depois do próximo passo): hoje o rastro (a opção
   "rastro" e os pontos da massa ativa em Marcar, `drawOverlays` em `desenho.js`) mostra **todos** os pontos de cada
   objeto. Como no Tracker, que tem o comprimento do rastro ajustável, mostrar **só os últimos 5** pontos antes do

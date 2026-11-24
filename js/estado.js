@@ -41,6 +41,8 @@ export const S = {
   // nomes dos objetos comparados no gráfico além do ativo (comparar.js; vai no salvamento por vídeo) e os nomes das
   // curvas do último desenho do gráfico (dados.js; os testes conferem)
   comparar: new Set(), graficoCurvas: [],
+  // texto do eixo vertical do último desenho do gráfico, com a unidade (dados.js; os testes conferem)
+  graficoEixo: "",
   // celular deitado (paisagem.js): etapa e aba do painel escolhidas e tela cheia; não vão no salvamento por vídeo.
   // O aplicativo abre em tela cheia (pedido do autor, 21/11/2026); sair dela é escolha do usuário, no botão do canto de cima
   etapa: "intervalo", aba: "param", telaCheia: true,

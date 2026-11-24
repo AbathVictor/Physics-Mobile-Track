@@ -107,6 +107,19 @@ input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; heigh
 .seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 2px; gap: 2px; }
 .seg button { border: none; background: none; cursor: pointer; padding: 4px 10px; border-radius: 5px; font-size: 0.82rem; font-weight: 500; color: var(--ink-soft); font-family: var(--font-mono); }
 .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+/* seletor da grandeza do gráfico: família (pos, vel, acel) e componente (x, y, módulo), compactos para caber na
+   linha da alça e no cabeçalho da janela do gráfico */
+#plotSeg { gap: 6px; }
+#plotSeg .seg button { padding: 4px 7px; }
+.seg sub, .fam-item sub { font-size: 0.72em; line-height: 0; vertical-align: -0.2em; }
+.fambtn { color: var(--ink); padding: 0 4px 0 8px; }
+.fambtn svg { width: 16px; height: 16px; }
+.fambtn[aria-expanded="true"] svg { transform: rotate(180deg); }
+.fam-lista { min-width: 170px; }
+.fam-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; padding: 0 10px; border: none;
+  border-radius: 7px; background: none; color: var(--ink); font: 500 0.9rem var(--font-ui); text-align: left; cursor: pointer; }
+.fam-item small { color: var(--ink-soft); font-family: var(--font-mono); font-size: 0.78rem; }
+.fam-item[aria-pressed="true"] { background: var(--soft); color: var(--soft-ink); }
 
 .panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }

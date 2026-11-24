@@ -4,6 +4,7 @@
 // Uso:  node tests/test_calculo.mjs
 import { predictNext } from "../js/rastreio/previsao.js";
 import { finalizeT, nccSearch } from "../js/rastreio/modelo.js";
+import { FAMILIAS, cinematica, familia, nomeTracker, unidadeDe } from "../js/cinematica.js";
 import { avisoFaltam, desserializar, novaMassa, novoCm, pontosCm, serializar, sistemaCm } from "../js/objetos.js";
 
 let falhas = 0;
@@ -85,6 +86,42 @@ conferir(!("cor" in sc[0]) && sc[1].cor === "#123456" && vc[0].cor === "#ff3030"
 const semMassas = desserializar([{ tipo: "cm", letra: "A", massas: ["massa A"] }], 2);
 conferir(desserializar([], 2).length === 0 && semMassas.length === 1 && semMassas[0].nome === "cm A" && semMassas[0].massas.length === 0,
   "sem massas (a última pode ser excluída): a lista volta vazia, e um cm volta sem as massas que não existem mais");
+
+console.log("grandezas cinemáticas (como no Tracker)");
+{
+  // movimento uniformemente acelerado em x e uniforme em y: a diferença centrada (v) e o ajuste de 5 pontos (a) do
+  // Tracker são exatos para um polinômio de grau 2
+  const dt = 1 / 30, x0 = 3, v0x = 2, ax = -9.8, vy = 1.5;
+  for (const h of [1, 2]) {
+    const pos = new Map();
+    for (let i = 0; i <= 40; i += h) { const t = i * dt; pos.set(i, { x: x0 + v0x * t + ax * t * t / 2, y: -1 + vy * t }); }
+    const g = cinematica(pos, h, dt), L = [...g.values()], idx = [...g.keys()];
+    let eV = 0, eA = 0;
+    for (const [i, q] of g) {
+      const t = i * dt;
+      if (Number.isFinite(q.vx)) eV = Math.max(eV, Math.abs(q.vx - (v0x + ax * t)), Math.abs(q.vy - vy), Math.abs(q.v - Math.hypot(v0x + ax * t, vy)));
+      if (Number.isFinite(q.ax)) eA = Math.max(eA, Math.abs(q.ax - ax), Math.abs(q.ay), Math.abs(q.a - Math.abs(ax)));
+    }
+    const semV = idx.filter((i) => !Number.isFinite(g.get(i).v)), semA = idx.filter((i) => !Number.isFinite(g.get(i).a));
+    conferir(eV < 1e-9 && eA < 1e-6, `a cada ${h}: v e a exatos num movimento uniformemente acelerado (erros ${eV.toExponential(1)} e ${eA.toExponential(1)})`);
+    conferir(semV.join() === [0, 40].join() && semA.join() === [0, h, 40 - h, 40].join(),
+      `a cada ${h}: sem v no primeiro e no último ponto; sem a nos dois primeiros e nos dois últimos (${semV} / ${semA})`);
+    conferir(Math.abs(L[3].r - Math.hypot(L[3].x, L[3].y)) < 1e-12, `a cada ${h}: r = √(x² + y²), a partir da origem`);
+  }
+  // ponto faltando no meio: as grandezas dos vizinhos que dependiam dele não existem
+  const pos = new Map(); for (let i = 0; i <= 20; i++) if (i !== 10) pos.set(i, { x: i * i, y: 0 });
+  const g = cinematica(pos, 1, 1);
+  const semV = [...g.keys()].filter((i) => !Number.isFinite(g.get(i).v)), semA = [...g.keys()].filter((i) => !Number.isFinite(g.get(i).a));
+  conferir(semV.join() === "0,9,11,20" && semA.join() === "0,1,8,9,11,12,19,20", `ponto 10 faltando: sem v em ${semV}; sem a em ${semA}`);
+  // movimento harmônico: v com erro pequeno (diferença centrada, 30 pontos por período)
+  const w = 2 * Math.PI, hp = new Map(); for (let i = 0; i <= 60; i++) hp.set(i, { x: Math.sin(w * i / 30), y: 0 });
+  const gh = cinematica(hp, 1, 1 / 30);
+  let eh = 0; for (const [i, q] of gh) if (Number.isFinite(q.vx)) eh = Math.max(eh, Math.abs(q.vx - w * Math.cos(w * i / 30)) / w);
+  conferir(eh < 0.01, `movimento harmônico (30 pontos por período): erro relativo de v ${(eh * 100).toFixed(2)} %`);
+  conferir(unidadeDe("x", "cm") === "cm" && unidadeDe("vy", "cm") === "cm/s" && unidadeDe("a", "u.a.") === "u.a./s²" && familia("ax") === "acel" && familia("r") === "pos",
+    "unidades e famílias: cm, cm/s, u.a./s²");
+  conferir(nomeTracker("vx") === "v_{x}" && nomeTracker("a") === "a" && FAMILIAS.vel.join() === "vx,vy,v", "nomes como no Tracker: v_{x}");
+}
 
 console.log(falhas ? `\n${falhas} falha(s).` : "\nTudo certo.");
 process.exit(falhas ? 1 : 0);

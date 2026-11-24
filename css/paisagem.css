@@ -82,6 +82,9 @@ body.paisagem > header.top, body.paisagem > main.app, body.paisagem > footer.cre
 .pobjs.aberta .palca-btn { border-color: var(--accent); }
 .pobjs.aberta .palca-btn svg { transform: rotate(180deg); }
 .palca #plotSeg { flex: none; margin-left: auto; }
+/* uma linha só (decisão de 15/11/2026): com pouco espaço, a alça encolhe (o nome e o aviso terminam em "…") e o
+   seletor da grandeza fica inteiro */
+#plotSeg .seg button { padding: 4px 6px; }
 /* painel estreito (celular pequeno, vídeo em pé): a alça mostra só a letra da massa ("● A"), para o nome caber ao lado
    de y(t)/x(t). Na tela cheia não: lá a linha da alça tem a largura do conteúdo, e a contenção a encolheria a zero */
 body.paisagem:not(.pais-c) .palca { container-type: inline-size; }
@@ -180,6 +183,9 @@ body.pais-c .pmini.fechado { height: auto; }
 body.pais-c .pmini.max { background: var(--surface); }
 .pmini-cab { display: flex; align-items: center; gap: 6px; min-width: 0; padding: 4px max(8px, var(--pj-reserva, 0px)) 4px 4px; cursor: grab; }
 .pmini-cab #plotSeg { flex: none; margin-left: auto; }
+/* sem espaço ao lado do recolher, o seletor da grandeza desce para uma segunda linha do cabeçalho: a primeira fica
+   com espaço livre para segurar e arrastar a janela */
+.pmini-cab { flex-wrap: wrap; row-gap: 2px; }
 .pmini-cab .seg button { padding: 4px 8px; min-height: 32px; }
 .pmini-rec { width: 36px; height: 36px; flex: none; }
 .pmini-rec svg { width: 20px; height: 20px; transition: transform 0.15s; }

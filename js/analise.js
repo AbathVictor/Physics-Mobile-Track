@@ -5,6 +5,7 @@
  * marcação.
  */
 
+import { GRANDEZAS } from "./cinematica.js";
 import { S } from "./estado.js";
 import { desserializar, objetosIniciais, serializar } from "./objetos.js";
 import { $, LS, clampF, dist, parseNum } from "./util.js";
@@ -51,7 +52,7 @@ export function restoreOrDefaults() {
     if (saved.trR > 0) S.trR = saved.trR;
     if (typeof saved.trAuto === "boolean") S.trAuto = saved.trAuto;
     if ([0.55, 0.7, 0.85].includes(saved.trThr)) S.trThr = saved.trThr;
-    if (saved.plotVar) S.plotVar = saved.plotVar;
+    if (GRANDEZAS.includes(saved.plotVar)) S.plotVar = saved.plotVar;
     // objetos comparados no gráfico (campo opcional, desde 22/11/2026): só os que ainda existem
     if (Array.isArray(saved.comparar)) S.comparar = new Set(saved.comparar.filter((n) => S.objs.some((o) => o.nome === n)));
     if (saved.fmt) S.fmt = saved.fmt;

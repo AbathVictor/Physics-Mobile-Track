@@ -108,6 +108,34 @@ async def main():
         erro = max(abs(yv - y_cm(t)) for t, yv in linhas)
         R.conferir(len(linhas) == 40 and erro < 0.05, f"40 pontos marcados; y igual à equação (erro máx {erro:.3f} cm)")
 
+        print("velocidade e aceleração (como no Tracker)")
+        # y = −11 e^(−bt) sen(wt) cm: as derivadas da equação, comparadas com a diferença centrada (v) e o ajuste de 5
+        # pontos (a) do Tracker sobre os pontos marcados à mão (erro de marcação de ~0,05 cm)
+        b, w = 0.15, 2 * math.pi * 1.1
+        vy_cm = lambda t: -11 * math.exp(-b * t) * (w * math.cos(w * t) - b * math.sin(w * t))
+        ay_cm = lambda t: -11 * math.exp(-b * t) * ((b * b - w * w) * math.sin(w * t) - 2 * b * w * math.cos(w * t))
+        L = await pg.evaluate("import('./js/dados.js').then((m) => m.rows(__va.objs[0]).map((q) => [q.i, q.t, q.vy, q.ay, q.v, q.vx, q.r, q.y]))")
+        com_v = [q for q in L if q[2] is not None and math.isfinite(q[2])]
+        com_a = [q for q in L if q[3] is not None and math.isfinite(q[3])]
+        ev = max(abs(q[2] - vy_cm(q[1])) for q in com_v) / (11 * w)
+        ea = max(abs(q[3] - ay_cm(q[1])) for q in com_a) / (11 * w * w)
+        R.conferir(len(com_v) == 38 and len(com_a) == 36, f"v em 38 pontos e a em 36 (sem v nas pontas; sem a nos dois primeiros e nos dois últimos): {len(com_v)} e {len(com_a)}")
+        R.conferir(ev < 0.04 and ea < 0.1, f"vy e ay seguem as derivadas da equação (erro máx {ev * 100:.1f} % e {ea * 100:.1f} % da amplitude)")
+        R.conferir(all(abs(q[4] - math.hypot(q[5], q[2])) < 1e-9 for q in com_v), "v é o módulo de (vx, vy)")
+        await pg.click("#famBtn"); await pg.click("#famLista [data-fam=vel]")
+        R.conferir(await pg.evaluate("__va.plotVar") == "vy" and await pg.evaluate("__va.graficoEixo") == "vy (cm/s)"
+                   and await pg.evaluate("[...document.querySelectorAll('#plotComp button')].map((b) => b.textContent).join()") == "vx,vy,v",
+                   "vel: o gráfico passa a vy (a componente continua), em cm/s; os botões viram vx, vy e v")
+        R.conferir(await pg.evaluate("document.getElementById('famLista').hidden && !(history.state && history.state.va === 'familia') && document.getElementById('famBtn').textContent === 'vel'"),
+                   "escolher no menu da família o fecha (sem entrada sobrando no histórico); o botão mostra \"vel\"")
+        await pg.click("#famBtn"); await pg.click("#famLista [data-fam=acel]")
+        R.conferir(await pg.evaluate("__va.plotVar") == "ay" and await pg.evaluate("__va.graficoEixo") == "ay (cm/s²)", "acel: ay, em cm/s²")
+        await pg.click("#plotComp [data-plot=a]")
+        R.conferir(await pg.evaluate("__va.plotVar") == "a" and await pg.evaluate("document.getElementById('plotEmpty').hidden"), "o módulo a no gráfico")
+        await pg.click("#famBtn"); await pg.click("#famLista [data-fam=pos]")
+        R.conferir(await pg.evaluate("__va.plotVar") == "r" and await pg.evaluate("__va.graficoEixo") == "r (cm)", "pos: o módulo da posição, r, em cm")
+        await pg.click("#plotComp [data-plot=y]")
+
         print("exportação")
         for fmt, delim in (("excel", ";"), ("intl", ",")):
             await pg.check(f"input[name=fmt][value={fmt}]")

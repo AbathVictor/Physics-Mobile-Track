@@ -7,7 +7,7 @@
 import { UA, dtMedio, escalaReal, inInterval, tempo } from "./analise.js";
 import { atualizarBarra } from "./barra.js";
 import { renderComparar } from "./comparar.js";
-import { renderData } from "./dados.js";
+import { renderData, renderSeletor } from "./dados.js";
 import { ctx, cv } from "./desenho.js";
 import { renderTrR } from "./entradas.js";
 import { S } from "./estado.js";
@@ -139,7 +139,7 @@ export function renderPanels() {
   renderTrR(); $("trAuto").checked = S.trAuto;
   $("trThr").value = String(S.trThr);
   $("trail").checked = S.trail;
-  document.querySelectorAll("[data-plot]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.plot === S.plotVar)));
+  renderSeletor();
   document.querySelectorAll("input[name=fmt]").forEach((r) => { r.checked = r.value === S.fmt; });
   renderData();
 }

@@ -170,9 +170,11 @@
       <h2><span class="n">7</span>Dados<span class="objtag" id="dataObj"></span></h2>
       <p class="status" id="objNote" hidden></p>
       <div class="row" id="plotSeg">
-        <div class="seg" role="group" aria-label="Grandeza no gráfico">
-          <button type="button" data-plot="y" aria-pressed="true">y(t)</button>
-          <button type="button" data-plot="x" aria-pressed="false">x(t)</button>
+        <button type="button" class="cmpbtn fambtn" id="famBtn" aria-haspopup="true" aria-expanded="false" aria-label="Grandeza no gráfico: posição">pos</button>
+        <div class="seg" id="plotComp" role="group" aria-label="Componente no gráfico">
+          <button type="button" data-plot="x" aria-pressed="false">x</button>
+          <button type="button" data-plot="y" aria-pressed="true">y</button>
+          <button type="button" data-plot="r" aria-pressed="false">r</button>
         </div>
         <button type="button" class="cmpbtn" id="cmpBtn" aria-haspopup="true" aria-expanded="false" aria-label="Comparar com outros objetos" title="Comparar com outros objetos" disabled></button>
       </div>
@@ -271,6 +273,12 @@
 <canvas class="lupa" id="lupa" hidden aria-hidden="true"></canvas>
 <!-- objetos comparados no gráfico (js/comparar.js): lista aberta pelo botão ao lado de y(t)/x(t) -->
 <div class="cmp-lista" id="cmpLista" role="group" aria-label="Objetos no gráfico" hidden></div>
+<!-- família da grandeza do gráfico (js/dados.js): lista aberta pelo botão "pos ▾" ao lado da componente -->
+<div class="cmp-lista fam-lista" id="famLista" role="group" aria-label="Grandeza no gráfico" hidden>
+  <button type="button" class="fam-item" data-fam="pos">posição <small>x, y, r</small></button>
+  <button type="button" class="fam-item" data-fam="vel">velocidade <small>v<sub>x</sub>, v<sub>y</sub>, v</small></button>
+  <button type="button" class="fam-item" data-fam="acel">aceleração <small>a<sub>x</sub>, a<sub>y</sub>, a</small></button>
+</div>
 <!-- número da fita de calibração (js/fita.js): aparece ao tocar na etiqueta da fita, na ferramenta Escala -->
 <div class="fita-ed" id="fitaEd" hidden><input class="num" id="fitaIn" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="ex.: 30" aria-label="Distância real entre as pontas da fita"><span id="fitaUn">cm</span></div>
 <!-- gaveta ≡ (js/gaveta.js) -->

@@ -89,9 +89,11 @@ async def escolher(pg, sel):
 
 
 async def cabecalho(pg):
-    """Ponto livre do cabeçalho da janela do gráfico, entre o botão de recolher e y(t)/x(t)."""
-    return await pg.evaluate("""(() => { const a = document.getElementById('pMiniRec').getBoundingClientRect(), b = document.getElementById('plotSeg').getBoundingClientRect();
-      return [(a.right + b.left) / 2, a.top + a.height / 2]; })()""")
+    """Ponto livre do cabeçalho da janela do gráfico, à direita do botão de recolher (o seletor da grandeza desce para
+    uma segunda linha quando não cabe ao lado dele; senão, entre os dois)."""
+    return await pg.evaluate("""(() => { const a = document.getElementById('pMiniRec').getBoundingClientRect(), b = document.getElementById('plotSeg').getBoundingClientRect(),
+      c = document.getElementById('pMiniCab').getBoundingClientRect(), fim = b.top >= a.bottom - 1 ? c.right : b.left;
+      return [(a.right + fim) / 2, a.top + a.height / 2]; })()""")
 
 
 async def janela_do_grafico(pg, R):
@@ -116,6 +118,15 @@ async def janela_do_grafico(pg, R):
                "comparar no cabeçalho da janela: a lista abre inteira na tela, e a janela não se move")
     await pg.keyboard.press("Escape")
     await pg.wait_for_function("document.getElementById('cmpLista').hidden && !(history.state && history.state.va === 'comparar')", timeout=3000)
+    # grandeza do gráfico: família no botão com menu e componente em três botões, numa linha só com o recolher
+    a, s = await ret(pg, "#pMiniRec"), await ret(pg, "#plotSeg")
+    R.conferir(abs(a[1] - s[1]) < 12 and s[0] + s[2] <= j[0] + j[2] + 0.5, f"família, componente e comparar na mesma linha do recolher ({[round(v) for v in s]})")
+    await pg.click("#famBtn")
+    F = await ret(pg, "#famLista")
+    R.conferir(F[0] >= 0 and F[1] >= 0 and F[0] + F[2] <= W and F[1] + F[3] <= H, "o menu da família abre inteiro na tela")
+    await pg.click("#famLista [data-fam=vel]")
+    R.conferir(await pg.evaluate("__va.plotVar === 'vy' && document.getElementById('famLista').hidden"), "escolher velocidade no menu: vy no gráfico")
+    await pg.click("#famBtn"); await pg.click("#famLista [data-fam=pos]")
 
     # recolher e abrir
     await pg.click("#pMiniRec")

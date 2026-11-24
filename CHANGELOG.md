@@ -28,6 +28,9 @@ There are no releases yet. Version 1.0.0 will be the first one, archived on Zeno
   notices.
 - Compare objects on the graph, as in Tracker's *Compare with*: besides the active object, the user picks other
   masses and centers of mass to plot on the same axes, each in its own color and named at the end of its curve.
+- Position magnitude, velocity and acceleration (components and magnitudes) on the graph, computed as in Tracker:
+  central differences for velocity and Tracker's 5-point least-squares stencil for acceleration, over the marking
+  step. The graph picks a family (position, velocity, acceleration) and a component (x, y, magnitude).
 - Tapping the number on the calibration stick (Scale tool) opens a field right there to type the real distance, as
   in Tracker.
 - License files: AGPL-3.0-or-later for the code, CC BY-SA 4.0 for the documentation, and a NOTICE for third-party

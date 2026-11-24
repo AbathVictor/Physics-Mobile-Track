@@ -5,7 +5,10 @@
  * unidades e calibração antes dos dados.
  */
 
-import { inInterval, persist, phys, tempo, unidade, unitPerPx } from "./analise.js";
+import { dtMedio, inInterval, persist, phys, tempo, unidade, unitPerPx } from "./analise.js";
+import { FAMILIAS, cinematica, familia, nomeHtml, unidadeDe } from "./cinematica.js";
+import { IC } from "./icones.js";
+import { criarPopup } from "./popup.js";
 import { decOf } from "./desenho.js";
 import { S } from "./estado.js";
 import { show, stopPlay } from "./navegacao.js";
@@ -17,16 +20,22 @@ import { $, esc, fmt, parseNum, toast } from "./util.js";
 // aviso da tabela e do gráfico sem objeto nenhum (a última massa pode ser excluída desde 22/11/2026)
 const SEM_OBJETOS = "Não há massas. Crie uma em + massa.";
 /**
- * Linhas de um objeto dentro do intervalo de análise: quadro, tempo (como no Tracker, analise.js) e posição em
- * unidades físicas.
+ * Linhas de um objeto dentro do intervalo de análise: quadro, tempo (como no Tracker, analise.js) e as grandezas
+ * cinemáticas em unidades físicas (posição x, y e r; velocidade e aceleração, cinematica.js, NaN onde falta um
+ * vizinho). O passo das derivadas é o "a cada" da marcação, como o step size do clipe do Tracker.
  * @param {object|null} o O objeto.
- * @returns {Array<{i: number, t: number, x: number, y: number}>} As linhas, em ordem de quadro.
+ * @returns {Array<{i: number, t: number, x: number, y: number, r: number, vx: number, vy: number, v: number, ax: number, ay: number, a: number}>}
+ * As linhas, em ordem de quadro.
  */
-function rows(o) {
+export function rows(o) {
   if (!o) return [];
-  const pts = pontosDe(o);
+  const pts = pontosDe(o), pos = new Map();
+  for (const i of [...pts.keys()].sort((a, b) => a - b)) {
+    if (!inInterval(i)) continue;
+    const p = phys(pts.get(i)); if (p) pos.set(i, p);
+  }
   // tempo como no Tracker: Δt médio do intervalo (analise.js)
-  return [...pts.keys()].sort((a, b) => a - b).filter(inInterval).map((i) => { const p = phys(pts.get(i)); return { i, t: tempo(i), x: p ? p.x : NaN, y: p ? p.y : NaN }; });
+  return [...cinematica(pos, S.every, dtMedio())].map(([i, q]) => ({ i, t: tempo(i), ...q }));
 }
 /**
  * Casas decimais das posições conforme a escala (mais casas para escalas finas).
@@ -97,13 +106,14 @@ let plotMap = null;
 /**
  * Curvas do gráfico: o objeto ativo e os objetos comparados com ele (S.comparar, comparar.js), na ordem da lista
  * dos objetos, com o ativo por último (desenhado por cima).
- * @returns {Array<{o: object, R: Array<object>, ativo: boolean}>} Cada objeto com as linhas que têm posição.
+ * @returns {Array<{o: object, R: Array<object>, ativo: boolean, n: number}>} Cada objeto com as linhas que têm a
+ * grandeza do gráfico e quantos pontos ele tem (com ou sem a grandeza).
  */
 function curvas() {
   if (!S.frames.length) return [];
-  const a = objAtivo();
+  const a = objAtivo(), key = S.plotVar;
   const outros = S.objs.filter((o) => o !== a && S.comparar.has(o.nome));
-  return [...outros, ...(a ? [a] : [])].map((o) => ({ o, R: rows(o).filter((q) => Number.isFinite(q.x)), ativo: o === a }));
+  return [...outros, ...(a ? [a] : [])].map((o) => { const T = rows(o); return { o, R: T.filter((q) => Number.isFinite(q[key])), ativo: o === a, n: T.length }; });
 }
 /**
  * Desenha o gráfico y(t) ou x(t) do objeto ativo e dos objetos comparados com ele (como o "Comparar com" do
@@ -122,7 +132,11 @@ export function drawPlot() {
   const o = objAtivo(), todas = curvas(), vis = todas.filter((s) => s.R.length), comp = todas.length > 1;
   $("plotEmpty").hidden = vis.length >= 1;
   const sc = o && o.tipo === "cm" ? situacaoCm(o) : null;
-  $("plotEmpty").textContent = !o ? SEM_OBJETOS : sc && sc.bad ? "O centro de massa ainda não tem posições." : "Os pontos marcados aparecem aqui.";
+  // há pontos, mas a grandeza não existe em nenhum (velocidade com menos de 3 pontos seguidos; aceleração, 5)
+  const semVizinhos = todas.some((s) => s.n) && familia(S.plotVar) !== "pos";
+  $("plotEmpty").textContent = !o ? SEM_OBJETOS : sc && sc.bad ? "O centro de massa ainda não tem posições."
+    : semVizinhos ? `A ${familia(S.plotVar) === "vel" ? "velocidade precisa de 3" : "aceleração precisa de 5"} pontos seguidos (a cada ${S.every} quadro${S.every > 1 ? "s" : ""}, como na marcação).`
+    : "Os pontos marcados aparecem aqui.";
   plotMap = null;
   // quadro que o gráfico mostra como o atual (anel âmbar); os testes conferem que acompanha o vídeo no play
   S.graficoNoQuadro = S.cur;
@@ -151,7 +165,8 @@ export function drawPlot() {
   for (let v = Math.ceil(ymin / ys0) * ys0; v <= ymax + 1e-12; v += ys0) { g.beginPath(); g.moveTo(L, Y(v)); g.lineTo(L + W, Y(v)); g.stroke(); g.fillText(fmt(Math.abs(v) < ys0 * 1e-6 ? 0 : v, dy), L - 5, Y(v)); }
   g.textAlign = "center"; g.textBaseline = "top";
   for (let v = Math.ceil(tmin / ts0) * ts0; v <= tmax + 1e-12; v += ts0) { g.beginPath(); g.moveTo(X(v), Tm); g.lineTo(X(v), Tm + H); g.stroke(); g.fillText(fmt(Math.abs(v) < ts0 * 1e-6 ? 0 : v, dt), X(v), Tm + H + 4); }
-  g.save(); g.translate(11, Tm + H / 2); g.rotate(-Math.PI / 2); g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(`${key} (${unidade()})`, 0, 0); g.restore();
+  g.save(); g.translate(11, Tm + H / 2); g.rotate(-Math.PI / 2); g.textAlign = "center"; g.textBaseline = "middle"; S.graficoEixo = `${key} (${unidadeDe(key, unidade())})`;
+  g.fillText(S.graficoEixo, 0, 0); g.restore();
   g.textAlign = "right"; g.textBaseline = "bottom"; g.fillText("t (s)", L + W, Tm + H - 2);
   const linha = (Q, c, a, w) => { if (Q.length < 2) return; g.strokeStyle = c; g.lineWidth = w; g.globalAlpha = a; g.beginPath(); Q.forEach((q, j) => { j ? g.lineTo(X(q.t), Y(q[key])) : g.moveTo(X(q.t), Y(q[key])); }); g.stroke(); g.globalAlpha = 1; };
   // os comparados primeiro; o ativo por cima, com a linha mais grossa
@@ -340,4 +355,40 @@ export async function exportarCsv(kind) {
 }
 $("exportCsv").addEventListener("click", () => exportarCsv());
 document.querySelectorAll("input[name=fmt]").forEach((r) => r.addEventListener("change", () => { S.fmt = r.value; persist(); }));
-document.querySelectorAll("[data-plot]").forEach((b) => b.addEventListener("click", () => { S.plotVar = b.dataset.plot; persist(); renderPanels(); }));
+const NOME_FAMILIA = { pos: "posição", vel: "velocidade", acel: "aceleração" };
+// família num botão com menu (decisão do autor, 23/11/2026: os dois seletores lado a lado não cabiam numa linha ao
+// lado da alça dos objetos nem no cabeçalho da janela do gráfico)
+const famPop = criarPopup($("famBtn"), $("famLista"), "familia", () => {
+  const f = familia(S.plotVar);
+  $("famLista").querySelectorAll("[data-fam]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.fam === f)));
+});
+/**
+ * Atualiza o seletor da grandeza do gráfico (decisão do autor, 23/11/2026: dois seletores): a família (posição,
+ * velocidade, aceleração), num botão com menu, e a componente (x, y ou o módulo), em três botões que mudam com a
+ * família (x y r, vx vy v, ax ay a).
+ */
+export function renderSeletor() {
+  const f = familia(S.plotVar), nomes = { x: "componente x", y: "componente y" };
+  const fb = $("famBtn");
+  fb.innerHTML = `${f}${IC.abaixo}`;
+  fb.setAttribute("aria-label", `Grandeza no gráfico: ${NOME_FAMILIA[f]}`);
+  fb.disabled = !S.frames.length;
+  document.querySelectorAll("#plotComp [data-plot]").forEach((b, j) => {
+    const g = FAMILIAS[f][j];
+    if (b.dataset.plot !== g) { b.dataset.plot = g; b.innerHTML = nomeHtml(g); }
+    b.setAttribute("aria-pressed", String(g === S.plotVar));
+    b.setAttribute("aria-label", j < 2 ? nomes["xy"[j]] : f === "pos" ? "módulo da posição (r)" : "módulo");
+  });
+}
+// a componente escolhe dentro da família
+$("plotComp").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-plot]"); if (!b) return;
+  S.plotVar = b.dataset.plot; persist(); renderPanels();
+});
+// trocar a família mantém a componente (de vx para ax)
+$("famLista").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-fam]"); if (!b) return;
+  const j = Math.max(0, FAMILIAS[familia(S.plotVar)].indexOf(S.plotVar));
+  S.plotVar = FAMILIAS[b.dataset.fam][j];
+  famPop.fechar(); persist(); renderPanels();
+});
