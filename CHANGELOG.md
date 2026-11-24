@@ -31,7 +31,7 @@ There are no releases yet. Version 1.0.0 will be the first one, archived on Zeno
 - Position magnitude, velocity and acceleration (components and magnitudes) on the graph, computed as in Tracker:
   central differences for velocity and Tracker's 5-point least-squares stencil for acceleration, over the marking
   step. The graph picks a family (position, velocity, acceleration) and a component (x, y, magnitude).
-- Table columns: t is always shown, plus up to 4 chosen among the frame number and the 9 quantities; the graph's
+- Table columns: the frame number (*n*) and t are always shown, plus up to 4 of the 9 quantities; the graph's
   quantity is always among them (*colunas ▾* button above the table).
 - Tapping the number on the calibration stick (Scale tool) opens a field right there to type the real distance, as
   in Tracker.

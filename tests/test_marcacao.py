@@ -138,9 +138,10 @@ async def main():
 
         print("colunas da tabela")
         cab = "[...document.querySelectorAll('#table thead th')].map((th) => th.dataset.c).join()"
-        R.conferir(await pg.evaluate(cab) == "t,x,y", f"por padrão: t, x e y (a grandeza do gráfico, y, já está) ({await pg.evaluate(cab)})")
+        R.conferir(await pg.evaluate(cab) == "n,t,x,y" and (await pg.inner_text("#table thead th[data-c=n]")).strip() == "n",
+                   f"por padrão: n (o quadro, nome curto), t, x e y (a grandeza do gráfico, y, já está) ({await pg.evaluate(cab)})")
         await pg.click("#famBtn"); await pg.click("#famLista [data-fam=vel]"); await pg.click("#plotComp [data-plot=vx]")
-        R.conferir(await pg.evaluate(cab) == "t,x,y,vx" and "vx (cm/s)" in (await pg.inner_text("#table thead")).replace("\n", ""),
+        R.conferir(await pg.evaluate(cab) == "n,t,x,y,vx" and "vx (cm/s)" in (await pg.inner_text("#table thead")).replace("\n", ""),
                    "a grandeza do gráfico sempre entra: vx, em cm/s")
         R.conferir(await pg.evaluate("document.querySelector('#table tr[data-i=\"0\"] td[data-c=vx]').textContent") == ""
                    and await pg.evaluate("document.querySelector('#table tr[data-i=\"1\"] td[data-c=vx]').textContent") != "",
@@ -149,14 +150,15 @@ async def main():
         R.conferir(await pg.evaluate("!document.getElementById('colLista').hidden && document.querySelector('#colLista [data-col=vx]').disabled && document.querySelector('#colLista [data-col=vx]').getAttribute('aria-pressed') === 'true'"),
                    "o botão colunas abre a escolha; a do gráfico vem ligada e não se desliga")
         await pg.click("#colLista [data-col=v]")
-        R.conferir(await pg.evaluate(cab) == "t,x,y,vx,v" and await pg.evaluate("document.querySelector('#colLista [data-col=quadro]').disabled"),
-                   "ligar v: 4 colunas além do t; as outras ficam desligadas")
-        await pg.click("#colLista [data-col=x]"); await pg.click("#colLista [data-col=quadro]")
-        R.conferir(await pg.evaluate(cab) == "quadro,t,y,vx,v", f"tirar x e pôr quadro (que vem antes do t) ({await pg.evaluate(cab)})")
+        R.conferir(await pg.evaluate(cab) == "n,t,x,y,vx,v" and await pg.evaluate("document.querySelector('#colLista [data-col=ax]').disabled")
+                   and not await pg.evaluate("!!document.querySelector('#colLista [data-col=quadro], #colLista [data-col=n]')"),
+                   "ligar v: 4 grandezas além de n e t (que não estão na escolha); as outras ficam desligadas")
+        await pg.click("#colLista [data-col=x]"); await pg.click("#colLista [data-col=ax]")
+        R.conferir(await pg.evaluate(cab) == "n,t,y,vx,v,ax", f"tirar x e pôr ax ({await pg.evaluate(cab)})")
         await pg.keyboard.press("Escape")
         await pg.wait_for_function("document.getElementById('colLista').hidden && !(history.state && history.state.va === 'colunas')", timeout=3000)
         await pg.click("#famBtn"); await pg.click("#famLista [data-fam=pos]"); await pg.click("#plotComp [data-plot=y]")
-        R.conferir(await pg.evaluate(cab) == "quadro,t,y,v", "voltar o gráfico para y: ficam as escolhidas (quadro, y, v)")
+        R.conferir(await pg.evaluate(cab) == "n,t,y,v,ax", "voltar o gráfico para y: ficam as escolhidas (y, v, ax)")
         await pg.evaluate("__va.colunas = ['x', 'y']")
 
         print("exportação")

@@ -56,7 +56,7 @@ export function restoreOrDefaults() {
     // objetos comparados no gráfico (campo opcional, desde 22/11/2026): só os que ainda existem
     if (Array.isArray(saved.comparar)) S.comparar = new Set(saved.comparar.filter((n) => S.objs.some((o) => o.nome === n)));
     // colunas da tabela (campo opcional, desde 23/11/2026)
-    if (Array.isArray(saved.colunas)) S.colunas = saved.colunas.filter((c) => c === "quadro" || GRANDEZAS.includes(c));
+    if (Array.isArray(saved.colunas)) S.colunas = saved.colunas.filter((c) => GRANDEZAS.includes(c));
     if (saved.fmt) S.fmt = saved.fmt;
     S.ver++;
     const n = S.objs.reduce((s, o) => s + (o.tipo === "massa" ? o.marks.size : 0), 0);
