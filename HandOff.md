@@ -461,6 +461,36 @@ Vídeo 1080p a 30 quadros/s, H.264: decodificação por hardware; cerca de 10 ms
   - o que acontece com os pontos futuros (hoje em cinza);
   - se os 5 são os 5 últimos pontos marcados ou os 5 últimos quadros.
 - Decididas para depois: **suporte a iOS** e **otimizar a sensibilidade do toque**.
+- **Lembrete, não é tarefa** (23/11/2026, a pedido do autor: algo a explorar só se o caso voltar a aparecer, para lembrar
+  que não é inédito). **Vídeo HEVC 1080p da câmera, lento no Android.** O autor mandou dois diagnósticos do mesmo
+  pêndulo (855 quadros, 29,97 q/s), mas cada aparelho abriu uma versão diferente:
+  - **Android 10 / Chrome 157 (8 GB):** o original da câmera, `769058.mp4`. HEVC (hvc1.1.6.L123.b0), 1920 × 1080,
+    girado 180°, 56,4 MB, 15,4 Mbit/s, grupos de 30 quadros, decodificação por hardware. Ficou lento:
+    - saltos de 2,7 a 4,5 s, play a 13 % da velocidade real (17 quadros em 4,2 s), 2,5 s por grupo;
+    - a leitura do arquivo foi rápida (7 leituras, grupo lido em 0,9 ms);
+    - bancada do decodificador: 19,6 ms por quadro só decodificando, mas 47,1 ms decodificando e copiando, com a cópia
+      em si custando só 3,2 ms. A cópia segura o decodificador por hardware, o que sozinho já limitaria o play a ~70 %;
+    - quadro-chave: 97 ms com o decodificador aberto e 387 ms com um novo. No mesmo celular, H.264 1080p dava ~10 ms
+      por quadro.
+  - **iPhone (iOS 18.7, Safari 26.4):** uma cópia recomprimida (.mov, H.264, 848 × 478, 6,9 MB, 1,6 Mbit/s, grupos
+    de até 300 quadros). Tudo bem: saltos de 0,1 s e play a 98 %. Isso mostrou que o aplicativo já funciona no Safari
+    do iPhone. O arquivo em `Test_videos/teste_pendulo.mp4` é uma terceira versão, recomprimida pelo WhatsApp (H.264
+    Baseline, 816 × 464, 3,4 MB); não serve para reproduzir o caso.
+  - **Suspeita (não confirmada):** de ~70 % para 13 %, o decodificador HEVC desse celular seguraria mais quadros do
+    que as `MARGEM` (3) amostras que `decodeGop` alimenta além do quadro pedido. O quadro não sai na espera (~0,1 s),
+    a sessão termina (flush) e o pedido seguinte recomeça do quadro-chave, desfazendo a armadilha 24. O diagnóstico
+    não mostra `S.sessoes`, que confirmaria isso.
+  - **Ideias, se voltar:**
+    - mostrar `S.sessoes` (recomeços) no diagnóstico;
+    - aprender com o próprio vídeo quantos quadros o decodificador segura, em vez da `MARGEM` fixa;
+    - ver se a cópia pode atrapalhar menos o decodificador;
+    - em último caso, a "cópia leve para navegar" (fase 3 do plano de memória, dispensada em 21/11/2026).
+
+    Para os usuários, por ora, gravar em H.264 ("Alta compatibilidade" / "Mais compatível" na câmera) ou usar uma
+    cópia recomprimida.
+  - **Detalhes do diagnóstico vistos no iPhone:** a linha "navegador" mostra o começo do user agent em vez de
+    "Safari 26.4", e a memória aparece como "não informada" (o Safari não tem `navigator.deviceMemory`; o limite
+    caiu para 63 MB).
 - **Roteiro combinado em 14/11/2026** (fases em ordem):
   0. ~~Dividir em módulos e usar cópias locais do mp4box e das fontes~~ (feito).
   1. ~~Funcionamento sem internet (service worker)~~ (feito).
